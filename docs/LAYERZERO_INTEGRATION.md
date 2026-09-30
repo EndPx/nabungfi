@@ -1,18 +1,22 @@
 # LayerZero integration: implementation and evidence
 
-Rechecked 30 September 2026. The actual Solana Devnet–Base Sepolia cash-mode pair completed registration, deposits, reserve-based achievement and full claims using LayerZero V2. [Public lifecycle evidence](../contracts/deployments/layerzero-solana-base-live.json) records seven delivered messages and terminal balances; [component manifests](../contracts/deployments/) preserve deployment/source-verification receipts. The product is not audited or operational across multiple EVM peers. Funds remain on their original chains.
+Rechecked 1 October 2026. One v2 goal completed registration, 4+2+2+2-USDC deposits, all-peer reserve-based achievement and partial/full claims across Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. **All 21 LayerZero messages reached DELIVERED**, including each EVM peer's post-claim zero-balance report. [Public lifecycle evidence](../contracts/deployments/multichain/live-goal.json), [component manifests](../contracts/deployments/multichain/) and [operator runbook](MULTICHAIN_TESTNET_RUNBOOK.md) identify transactions and terminal state. Funds stayed on their original chains. This is an operator-driven testnet cash proof, not an audit, unattended service or earning demonstration.
 
-## Components
+## Active v2 components
 
-- `contracts/evm/src/NabungLzRouter.sol`: inherits the official OApp; authenticates the endpoint/peer and dispatches registered goal packets. It exposes quote/send functions for registration acknowledgments, stored READY/ABORT_ACK reports and freshly computed Base progress.
-- `contracts/evm/src/NabungVaultFactory.sol`: creates genuine vault instances, computes their CREATE address inside the transaction, and constructs the same configuration hash as Solana. Pending unregistered clones cannot reserve or rebind another owner's coordinator.
-- `contracts/evm/src/NabungGoalVault.sol`: requires authenticated pair registration before ordinary funding/preparation and stores immutable lifecycle reports by sequence, so an unsent READY remains relayable after ABORT.
-- `contracts/solana/programs/nabungfi-lz`: official Endpoint register/quote/send/clear CPIs, immutable peer configuration, route sealing, receive-account discovery v2, and goal-bound CPI calls to the coordinator.
-- `contracts/solana/programs/nabungfi`: linked-goal funding guard, registration/progress receivers, deterministic outbound commands and a remote progress snapshot. A high progress snapshot never writes readiness or achievement.
-- `contracts/solana/tests/programs/test-messagelib`: a test-only SBF message library at a dedicated local program ID. It charges a fixed fee and records packets for the send-side runtime checks. It is not a production SendULN, DVN or Executor.
-- `shared/protocol/wire-v1.json`: common Solidity/Rust packet and configuration-hash fixture. [Wire specification](../shared/protocol/README.md).
+- `NabungMultiLzRouter`: official OApp boundary per EVM chain, with strict chain/domain/EID checks, immutable Solana peer and authenticated goal registration. Sends actual goal-state progress and durable lifecycle reports.
+- `NabungMultiVaultFactory`: creates separate actual vault instances and commits domain/EID, asset, router, vault, owner, target and Solana identities in each SHA256 leaf.
+- `NabungMultiGoalVault`: reuses the reviewed parent accounting through an immutable participant-domain accessor; local reserve/claim rules remain goal-specific.
+- `NabungMultiWire`: NBFG version 2, fixed 222-byte big-endian packets, neutral `evmOwner` field and exact source/destination-domain validation.
+- `contracts/solana/programs/nabungfi-multi`: cash-only coordinator with an immutable sorted participant set, independent peer registration/progress/lifecycle state and checked all-peer reserve aggregation.
+- `contracts/solana/programs/nabungfi-multi-lz`: Endpoint register/quote/send/clear CPIs, per-domain peers, route sealing, receive-account discovery and goal-bound core CPIs.
+- [wire-v2.json](../shared/protocol/wire-v2.json): Solidity/Rust packet and three leaf-hash fixtures. [Protocol design](MULTICHAIN_V2_PLAN.md).
 
-## Pinned dependencies
+Domain/EID namespaces are Solana **1/40168**, Base **2/40245**, Arbitrum **3/40231** and Ethereum **4/40161**. Equal address bytes on different EVM chains are valid distinct participants. Neither portfolio totals nor duplicate reserve attribution may unlock a goal.
+
+V1 `NabungLzRouter`, `NabungVaultFactory`, `NabungWire`, `nabungfi` and `nabungfi-lz` remain for historical reproduction and regressions. Their public pair proof is pinned to [source commit b64280b](https://github.com/EndPx/nabungfi/tree/b64280b28ea771fa8c53beae8e8f061d7651e46a). Adding the parent vault's virtual domain accessor changes source and compilation metadata. Current v1-named source is not byte-for-byte evidence for the older deployed artifacts.
+
+## Dependencies
 
 | Dependency | Pin |
 | --- | --- |
@@ -22,51 +26,54 @@ Rechecked 30 September 2026. The actual Solana Devnet–Base Sepolia cash-mode p
 | Solana OApp | `oapp-latest` at LayerZero-v2 commit `9c741e7f9790639537b1710a203bcdfd73b0b9ac` |
 | Anchor | 0.32.1 |
 | Runtime tests | LiteSVM 1.5.0, Solana Kit 8.0.0 |
-| Public Solana operator tooling | LayerZero Solana SDK 3.0.168, UMI 0.9.2, web3.js 1.95.8 |
+| Solana operator tooling | LayerZero Solana SDK 3.0.168, UMI 0.9.2, web3.js 1.95.8 |
 
-The Solana dependency is the upstream `solana/anchor-latest` implementation, not the older Anchor 0.29 library. The endpoint-interface crate supplies CPI bindings; its placeholder Rust handlers are not deployed or used as the Endpoint implementation in the runtime tests.
+The Solana dependency is upstream `solana/anchor-latest`, not the old Anchor 0.29 library. Interface crate placeholder handlers are not the deployed Endpoint implementation.
 
-## Pair creation and messaging
+## Goal provisioning and delivery
 
-1. Configure the real route, explicit verification libraries/DVNs/confirmations, and execution budgets. Initialize the Solana Store using the transport program's upgrade authority; register it with the Endpoint. Bootstrap is not permissionless first-caller ownership.
-2. Follow the [staged seal runbook](LAYERZERO_TESTNET_RUNBOOK.md): review and seal Base first using real worker quotes and a local fork. Keep the new pair unfunded while Solana's actual goal enables its RPC app quote/discovery preflight. Seal Solana only after those checks pass. Base changes its delegate to the router and renounces ownership; Solana changes its delegate to the Store PDA. Neither exposes later configuration forwarding. Solana upgrade authority remains a separate deployment control.
-3. The Base owner calls `createGoal`, supplying the intended Solana owner/PDA, goal ID, target and idle floor. The factory returns the actual vault and canonical configuration commitment.
-4. The Solana owner initializes the corresponding Goal using that vault and Base owner. Its independently computed configuration hash must match.
-5. A caller quotes and sends Solana registration with application sequence zero. The Base receiver validates owner/goal/configuration/target and records the pair. A caller sends the Base registration acknowledgment; Solana sets `linked` only after authenticated delivery. Ordinary deposits stay disabled before registration on each side.
-6. The Solana owner starts preparation. Its transport quotes/sends the state-derived PREPARE command. After Base redemption, `markReady` persists the actual USDC report. A caller quotes/sends that stored report.
-7. The Solana receiver validates the peer and complete packet identity, then calls the real Endpoint `clear` before invoking coordinator readiness logic. The coordinator commits only when both goal-local reserves meet the target and its local readiness checks pass.
-8. A caller quotes/sends COMMIT. Base checks its exact reserve/round and enables owner claims. Claims retain permanent achievement and do not bridge tokens.
+1. Deploy fresh v2 components and configure explicit send/receive libraries, required DVN, confirmations and Executor on all three bidirectional routes. Bootstrap the Solana Store with the program's upgrade authority; it is not permissionless first-caller ownership.
+2. Independently audit configuration, worker quotes and execution budgets, then seal the EVM routes before `createGoal` is callable. This sets each delegate to its router and renounces ownership. Keep Solana unsealed at this stage.
+3. Create an unfunded EVM vault on every participant chain using the same goal ID, Solana owner/PDA and target. Record actual `VaultCreated` receipts and pair-specific hashes.
+4. Initialize one Solana Goal with the sorted immutable participant set only after all actual vault receipts exist. Each independently computed leaf must match. Run the three actual goal-dependent RPC quotes and receive-account discovery simulations, then seal Solana and set its delegate to the Store PDA. No configuration forwarding remains; retained Solana upgrade authority is a separate control. V2 supports one to three EVM domains; this proof uses all three.
+5. Send REGISTER separately to each peer, then deliver each REGISTERED acknowledgment. Solana deposits require every peer linked. Each EVM vault independently enforces its own authenticated pair registration; normal orchestration waits for all acknowledgments before any funding.
+6. Start one preparation round and send its state-derived PREPARE to each participant. Redeem any strategy position on its own chain; `markReady` requires zero remaining receipts and snapshots actual USDC. Send each durable READY report.
+7. Authenticate peer EID/OApp and complete goal/leaf/owner/vault identity before Endpoint `clear` and the atomic core CPI. Achievement requires local readiness, its cross-slot boundary, **every** participant READY for that round, and checked reserve sum at least equal to target. Missing or illiquid peers block completion. A zero-reserve participant still must register and become READY.
+8. Deliver COMMIT to every peer with its exact local reserve and the global achieved sum. Each destination enables only its owner's claims. Partial/full claims never erase achievement. Post-claim progress may decrease without relocking funds.
 
-Callers fund messaging fees. Solana send/quote instructions require the correct Endpoint/library accounts; EVM sends use the quoted native fee and caller-supplied execution options. The reviewed testnet execution used explicit options and fresh real-worker quotes. Maintaining an unattended keeper remains operational work. Events alone do not deliver a packet.
+Callers pay messaging fees. Solana quote/send requires the correct Endpoint/library/worker accounts; EVM sends use quoted native fees and execution options. DVNs verify and Executors deliver packets; the application operator or future keeper decides when to request/send them. Emitting events alone is insufficient delivery.
 
-## Retry and isolation properties
+The reviewed testnet security stack has one required LayerZero Labs DVN, no optional DVNs and explicit ULN302/Executor configuration. EVM send/receive confirmations are Base **2/10**, Arbitrum **1/10**, Ethereum **2/10**; Solana counterparts match the corresponding direction. This single-operator test stack is not a production quorum. Actual configuration and options are recorded in component/lifecycle manifests.
 
-- Base lifecycle reports remain in the outbox after phase changes. Sending a report takes its stored value; the caller cannot choose a balance.
-- Solana can reproduce PREPARE while the same round is aborting or achieved. A completed abort acknowledgment proves the previous commands were consumed before opening a new round.
-- LayerZero pathway nonces are separate from per-goal lifecycle/progress sequences. Verified stale lifecycle retries are consumed without changing an already advanced goal. Future lifecycle messages still fail until their required predecessors arrive.
-- Progress replaces the previous absolute snapshot, permits decreases, and ignores obsolete application sequences. Source observation time and receipt time are separate. A freshness projection and current Kamino NAV path remain unfinished.
-- Peer and goal/configuration/source/destination/owner checks precede application updates. Solana `clear` and the subsequent core CPI are atomic in the tested runtime: a failed core transition rolls back packet consumption.
+## Sequence, retry and accounting boundaries
 
-## Verification
+- Per-peer progress is an absolute snapshot; newer values replace rather than add, can decrease, and keep source observation time separate from receipt time. It never writes prepared reserves or achievement.
+- LayerZero pathway nonces differ from goal/peer application sequences. Stale authenticated messages do not change advanced state; future lifecycle sequences remain retryable after predecessors arrive.
+- EVM lifecycle reports survive phase changes in durable outboxes. A caller sends the stored report and cannot choose a replacement balance.
+- Abort requires all participant acknowledgments before another round. Delayed READY must not restore an aborted round; committed achievement cannot be aborted or relocked.
+- Endpoint clear and core CPI are atomic in the tested Solana runtime: a failed transition rolls back packet consumption.
+- Financial operation retries reconcile the original signature/hash and semantic intent, including goal, network, amount and claim offset. A new wallet nonce is not proof that the intended operation never succeeded.
+- EVM vaults trust their authenticated Solana coordinator's remote-reserve certification. The testnet's retained upgrade authority and worker liveness remain explicit trust/operations boundaries.
 
-| Check | Result |
+## Verification and evidence classes
+
+| Check | Latest result and scope |
 | --- | --- |
-| EVM local suite | 64 passing tests: the prior 60 plus four explicit security-stack tooling cases; conservation fuzzing runs 256 cases |
-| Pinned EVM forks | 17 retained cases plus one configuration/lifecycle fork; artificial balances, local time and injected application authentication are explicitly labeled |
-| Operator journal | Regression passes for original-signature reconciliation, changed financial intent rejection, expiry and network guards |
-| Public cash lifecycle | Seven actual messages DELIVERED, 4+6 USDC deposits, partial/full claims, zero remaining vault balances and permanent achievement |
-| Solana native | Default 35 core + 4 transport; Devnet 38 core + 4 transport; the test-only library passes its program-ID check in both |
-| Solana SBF | Both core and transport compiled with Agave 4.3.0 / platform-tools 1.57 |
-| LiteSVM | Fresh artifacts pass 6 default and 7 Devnet scenarios using the actual Endpoint snapshot; send/quote use a test-only fixed-fee library |
-| Rust checks | Clippy with warnings denied, formatting and IDL-feature compilation pass |
+| EVM units | **71 passed**, including v1 regressions, v2 codec/leaf/domain tests and exact security pins; conservation fuzzing runs 256 cases |
+| V2 EVM forks | **Three passed**, using real testnet dependencies and deployment/config scripts; balances and authenticated arrivals are local injections |
+| Native Rust | **59 checks passed** in the latest selected verification profile |
+| V2 SBF/LiteSVM | **Six scenarios passed** with fresh binaries and the actual Endpoint fixture; packet verification accounts are precommitted locally |
+| Public v2 cash journey | **21 messages DELIVERED**, actual 4+2+2+2-USDC custody, all-peer achievement and partial/full claims |
 
-The runtime cases exercise bootstrap authority and Endpoint registration/delegate sealing, bad payload hash/peer/goal rejection, replay, SPL-token deposit/claim, progress isolation, achievement with surplus, and out-of-order abort recovery with transaction rollback. The send-side scenario checks that the Core Goal supplies the registration, PREPARE and COMMIT bytes, that quote matches the fixed fee, the payer funds it, and underpayment rolls back the Endpoint nonce.
+Earlier v1 gates included 64 EVM units, 17 retained pinned fork cases plus a configuration fork, native 35+4 default or 38+4 Devnet checks, and six default/seven Devnet SVM scenarios. They remain dated prior results rather than extra new v2 public executions. The [historical v1 manifest](../contracts/deployments/layerzero-solana-base-live.json) records its separate seven-message 4+6-USDC cash proof.
 
-The LayerZero Endpoint fixture was read from the public Solana deployment `76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6`; SHA-256 is `caa868d80b000c488e60e99828e366e773dde877ccc92b67f81df03b608639d4`. Tests preload artificial token balances and the Endpoint's already-verified packet accounts. They execute the Endpoint's actual hash check/clear and subsequent CPIs, but **do not run DVNs, prove source-chain finality or deliver messages over a public network**. The Base endpoint remains an explicitly labeled harness. The Solana send/quote tests use a test-only message library and therefore do not establish SendULN/DVN/executor fee behavior.
+The v2 SVM cases cover registration/sealing, all-peer readiness and claims, wrong domain/peer/goal/account rejection, absolute progress, abort rollback, independent peer send nonces/fee failures, and multiple owner goals. Local send/quote uses a test-only message library. Neither that library nor injected verification accounts represent public DVN/Executor delivery.
 
-## Reproduce
+The Endpoint fixture is public program `76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6`, SHA256 `caa868d80b000c488e60e99828e366e773dde877ccc92b67f81df03b608639d4`. A future Endpoint upgrade requires a reviewed fixture update, not bypassing its hash guard. Interface bindings alone, tests or source verification are not network-execution proof.
 
-Install JavaScript dependencies from the root using `pnpm install --frozen-lockfile`. EVM reproduction is in its package README. Rust checks run from `contracts/solana`:
+## Reproduction
+
+Install root JavaScript dependencies with `pnpm install --frozen-lockfile`. Run Foundry commands in [the EVM package](../contracts/evm/README.md). Native checks run from `contracts/solana`:
 
 ```sh
 cargo test --workspace --locked
@@ -74,30 +81,24 @@ cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo check --workspace --features idl-build --locked
 ```
 
-For SBF and LiteSVM, use Linux/macOS (or WSL), Node 24, Agave 4.3.0 and platform-tools 1.57. Build the two packages separately so the transport's `cpi` feature does not suppress the core's standalone entrypoint:
+For Linux/macOS or WSL SBF/runtime checks, use Node 24, Agave 4.3.0 and platform-tools 1.57. Build the core/transport separately so the transport's `cpi` feature does not suppress the core entrypoint:
 
 ```sh
 # From contracts/solana
-cargo-build-sbf --tools-version v1.57 --manifest-path programs/nabungfi/Cargo.toml --sbf-out-dir target/deploy -- --locked
-cargo-build-sbf --tools-version v1.57 --manifest-path programs/nabungfi-lz/Cargo.toml --sbf-out-dir target/deploy -- --locked
+cargo-build-sbf --tools-version v1.57 --manifest-path programs/nabungfi-multi/Cargo.toml --sbf-out-dir target/deploy-multichain -- --locked
+cargo-build-sbf --tools-version v1.57 --manifest-path programs/nabungfi-multi-lz/Cargo.toml --sbf-out-dir target/deploy-multichain -- --locked
 cargo-build-sbf --tools-version v1.57 --manifest-path tests/programs/test-messagelib/Cargo.toml --sbf-out-dir target/deploy -- --locked
 
-# From repository root; this only reads a public program, it does not deploy anything.
+# From repository root; public program read only, no deployment.
 mkdir -p .local/svm-fixtures
 solana program dump --url https://api.mainnet-beta.solana.com 76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6 .local/svm-fixtures/layerzero-endpoint.so
-pnpm --filter @nabungfi/solana-runtime test:sbf
+node --test contracts/solana/tests/multichain.svm.test.mjs
 ```
 
-The SVM test enforces the fixture hash. A future Endpoint upgrade requires an explicitly reviewed fixture update; do not bypass the mismatch or call a different binary equivalent evidence. `NABUNGFI_SBF_DIR` and `NABUNGFI_ENDPOINT_ELF` can point to alternate local artifact paths. `NABUNGFI_TEST_PACKAGE_JSON` supports using a separate Linux dependency install when the checkout's node_modules were installed on Windows. Generated binaries, toolchains, local keys and snapshots are ignored by Git.
+`NABUNGFI_TEST_PACKAGE_JSON` supports an alternate Linux dependency install when checkout dependencies are Windows-native. Generated binaries, keys, toolchains and snapshots stay ignored. Recorded profiles, public-operation commands and original-signature recovery are in the [v2 runbook](MULTICHAIN_TESTNET_RUNBOOK.md) and [Solana package](../contracts/solana/README.md); public operations are separate from the local commands above.
 
-## Public cash-mode proof
+## Remaining product and release work
 
-The [receipt/state manifest](../contracts/deployments/layerzero-solana-base-live.json) records REGISTER, REGISTERED, PROGRESS, PREPARE, READY and COMMIT, followed by a seventh PROGRESS after claims. Each has actual source and destination transactions, successful DVN verification and no configuration error. The operators used the real libraries and Executor; no live packet was injected.
+All four cash balances were claimed, with permanent achievement retained; post-claim EVM snapshots returned to zero. Base/Ethereum/Solana use cash-only profiles. Arbitrum has a compatible Aave adapter but its demonstrated 2 USDC stayed idle. **No earning was demonstrated.**
 
-The 10-USDC goal received 4 USDC on Solana and 6 USDC on Base. Early claim simulations failed even when the progress estimate already summed to 10 USDC. Actual reserves then completed round 1. The owners claimed 1+3 USDC on Solana and 1+5 USDC on Base; both vaults ended at zero and both owners recovered their initial 20-USDC faucet balance. The post-claim absolute progress snapshot changed remote assets from 6 USDC to zero without relocking the goal or erasing its 10-USDC achieved total. [Operation and retry runbook](LAYERZERO_TESTNET_RUNBOOK.md).
-
-## Remaining release work
-
-Public testnet deployment profiles distinguish owned Devnet identities from the default local identities. EVM components use canonical Circle USDC; Base/Ethereum and Solana Devnet are cash-only, while Arbitrum is Aave-enabled. The separate public lifecycle manifest establishes explicit configuration, two-way delivery, measured fees/compute and cash claims for the Solana–Base pair. Persistent keeper/retry operations, actual Kamino execution/current valuation, investment policy, upgrade-authority policy and an independent security audit remain work before real funds. No mainnet transaction or live financial yield is claimed.
-
-The implemented coordinator/transport has one registered EVM peer (Base). Ethereum, Arbitrum and Robinhood Chain are additional product/track candidates; supporting several EVM peers in the same goal requires a registered peer set, per-peer sequences/readiness and reserve aggregation. The current domain `2` must not be reused to combine several chains silently.
+The shared model, API and UI still simulate one goal and are not connected to these deployed flows. Multiple concurrent public goals, wallet integration, an unattended keeper/indexer, refreshed Kamino valuation/CPI, a demonstrated v2 earning path, investment policy and production security review remain work. Robinhood and Chainlink CRE are not included. No mainnet operations or assurance against all loss scenarios are claimed.

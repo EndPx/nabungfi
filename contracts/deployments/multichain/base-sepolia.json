@@ -1,0 +1,188 @@
+{
+  "protocolVersion": 2,
+  "status": "sealed-goal-fully-claimed",
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "domain": 2,
+  "eid": 40245,
+  "deployer": "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+  "transactionHash": "0xac8510844baf5b096cab75f5a6dc9769d23a3956d6d7d26bb439049f37d86938",
+  "nonce": 44,
+  "receipt": {
+    "blockNumber": "0x2d4e62e",
+    "effectiveGasPrice": "0x5b8d80",
+    "contractAddress": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+    "status": "0x1",
+    "gasUsed": "0x61872e"
+  },
+  "router": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+  "factory": "0x3c981d151ec6060fd3f2307801d764fecb22c688",
+  "code": [
+    {
+      "keccak256": "0xc2422f531761106f8f0d6c9dd76b030194619d786d32b6cf651932de03a07724",
+      "bytes": 13059,
+      "contract": "router",
+      "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1"
+    },
+    {
+      "keccak256": "0x45c5d9acae1fbcd48192f305ef4a21a1dff408b1262e53deb942290b05269475",
+      "bytes": 15194,
+      "contract": "factory",
+      "address": "0x3c981d151ec6060fd3f2307801d764fecb22c688"
+    }
+  ],
+  "creationInputKeccak256": "0xc8a32adc953c673371b2cef931521bc15fda80d5fb9472d63a390f73e265f06e",
+  "constructorArgumentHex": "0x0000000000000000000000006edce65403992e310a62460808c4b910d972f10f000000000000000000000000c82f469aa95a2f7792300c8d11230e9023a986000000000000000000000000000000000000000000000000000000000000009ce80d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e900000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000009d35000000000000000000000000036cbd53842c5426634e7929541ec2318f3dcf7e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d79d40044d13e22c11e3a0b3f74fc8aee1828edcf10cdd4d60cb30a10f2a5ca53b442cb3912157f13a933d0134282d032b5ffecd01a2dbf1b7790608df002ea7df3c272fb477b082327a2f5e9c7f8a2c6cc3d6ea22fda0e676ba62324f5f646c",
+  "constructorArguments": [
+    "0x6edce65403992e310a62460808c4b910d972f10f",
+    "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+    40168,
+    "0x0d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e9",
+    2,
+    40245,
+    "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "0x0000000000000000000000000000000000000000",
+    "0x0000000000000000000000000000000000000000",
+    "0xd79d40044d13e22c11e3a0b3f74fc8aee1828edcf10cdd4d60cb30a10f2a5ca5",
+    "0x3b442cb3912157f13a933d0134282d032b5ffecd01a2dbf1b7790608df002ea7",
+    "0xdf3c272fb477b082327a2f5e9c7f8a2c6cc3d6ea22fda0e676ba62324f5f646c"
+  ],
+  "compiler": "v0.8.30+commit.73712a01",
+  "optimizerRuns": 200,
+  "evmVersion": "cancun",
+  "sourceVerification": [
+    {
+      "kind": "router",
+      "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+      "guid": "ziwasgpuklkbqi7hjq5x8zp4yc5yplvid1ltgevjrnx5si85js",
+      "status": "Pass - Verified",
+      "sourcePresent": true,
+      "contractName": "NabungMultiLzRouter",
+      "compilerVersion": "v0.8.30+commit.73712a01",
+      "checkedAtUtc": "2026-09-30T16:03:04.4131294Z"
+    },
+    {
+      "kind": "factory",
+      "address": "0x3c981d151ec6060fd3f2307801d764fecb22c688",
+      "guid": "qceja1uscpcq6ar3yqxfc5uk7k2jbfuzpwvj5irlzfc6i1hxeq",
+      "status": "Pass - Verified",
+      "sourcePresent": true,
+      "contractName": "NabungMultiVaultFactory",
+      "compilerVersion": "v0.8.30+commit.73712a01",
+      "checkedAtUtc": "2026-09-30T16:03:06.2150892Z"
+    }
+  ],
+  "proofBoundary": "Deployment/configuration receipts plus public four-chain lifecycle in live-goal.json; idle cash only.",
+  "configuration": {
+    "maxMessageSize": 10000,
+    "optionalDvnCount": 255,
+    "requiredDvn": "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6",
+    "executor": "0x8a3d588d9f6ac041476b094f97ff94ec30169d3d",
+    "receiveConfirmations": "10",
+    "sendConfirmations": "2",
+    "receipts": [
+      {
+        "gasUsed": "0xe182",
+        "hash": "0xb0dbc6945c91b450c8e085faba88360e87533f1b779f5128568f1368d315fcaf",
+        "effectiveGasPrice": "0x5b8d80",
+        "function": "setSendLibrary(address,uint32,address)",
+        "nonce": 45,
+        "status": "0x1",
+        "blockNumber": "0x2d4e883"
+      },
+      {
+        "gasUsed": "0xfba1",
+        "hash": "0xb364d0b7aeb119e05b94539d482197fb892ea14fd0d45831fb52b799068b6f00",
+        "effectiveGasPrice": "0x5b8d80",
+        "function": "setReceiveLibrary(address,uint32,address,uint256)",
+        "nonce": 46,
+        "status": "0x1",
+        "blockNumber": "0x2d4e884"
+      },
+      {
+        "gasUsed": "0x23049",
+        "hash": "0x39932bdab8e0b22c31b85dc14b110703eb8084023745ddf642f4d055ab913c0d",
+        "effectiveGasPrice": "0x5b8d80",
+        "function": "setConfig(address,address,(uint32,uint32,bytes)[])",
+        "nonce": 47,
+        "status": "0x1",
+        "blockNumber": "0x2d4e885"
+      },
+      {
+        "gasUsed": "0x1c331",
+        "hash": "0x9adfbda853544ab0ad1ef7080b1fe32c03c0e50d56b68cfe7fed84dbb20dfbf9",
+        "effectiveGasPrice": "0x5b8d80",
+        "function": "setConfig(address,address,(uint32,uint32,bytes)[])",
+        "nonce": 48,
+        "status": "0x1",
+        "blockNumber": "0x2d4e886"
+      }
+    ],
+    "sendLibrary": "0xc1868e054425d378095a003ecba3823a5d0135c9",
+    "receiveLibrary": "0x12523de19dc41c91f7d2093e0cfbb76b17012c8d",
+    "explicitReadbackVerified": true,
+    "auditAtUtc": "2026-09-30T16:06:50.8514121Z",
+    "feeQuote": {
+      "proof": "Real Endpoint/ULN/DVN/Executor fee quote, not public delivery",
+      "lamports": 2500000,
+      "computeUnits": 200000,
+      "nativeFeeWei": "241991470022222",
+      "payloadBytes": 222,
+      "goalIdentities": "illustrative",
+      "actualSenderAndStore": true
+    }
+  },
+  "sealed": {
+    "transaction": "0x06816ac301d4cd3056be9944ab84ef26e52e950b869e01f747f1ac2902c76435",
+    "block": "0x2d4eb98",
+    "readbackVerified": true,
+    "owner": "0x0000000000000000000000000000000000000000",
+    "delegate": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1"
+  },
+  "goal": {
+    "configHash": "0x3a12f7ed3ab15a58575de8658f44829f159c9d23e767e0b6586c9d2cab5bf2a9",
+    "creationTransaction": "0xb151ded6e040491bfe6cfc5dd60f3316abbdce86954e5e8d9cfeda773c3f0a0e",
+    "vault": "0x5f2d2322615e09bfff8f183934cab4c9a6e4c0f9",
+    "targetRaw": "10000000",
+    "funded": true,
+    "id": "0xfd1c102b6872360318e5a705b484ab51f15ca09d1ea8d5617af000a3be97dca6",
+    "solanaCoordinator": "0x0cc4a26cb81fd14499264c6d202b40326382f4d6079239d41cacd08b23536fea",
+    "owner": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+    "creationBlock": "0x2d4ebfa",
+    "registration": "authenticated-delivered",
+    "leafIndependentlyVerified": true,
+    "constructorArgumentHex": "0x000000000000000000000000c82f469aa95a2f7792300c8d11230e9023a98600fd1c102b6872360318e5a705b484ab51f15ca09d1ea8d5617af000a3be97dca63a12f7ed3ab15a58575de8658f44829f159c9d23e767e0b6586c9d2cab5bf2a90000000000000000000000000000000000000000000000000000000000989680000000000000000000000000c3BF62A605F52a2ae238766A47b2F21623DfD1A10cc4a26cb81fd14499264c6d202b40326382f4d6079239d41cacd08b23536fea0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000036CbD53842c5426634e7929541eC2318f3dCF7e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+    "sourceVerification": {
+      "provider": "Etherscan V2",
+      "status": "Pass - Verified",
+      "guid": "jh84qlhudeyagnkd2ae8xfrb7mtn36e5wkvcrk7asc5bmpyel6",
+      "sourcePresent": true,
+      "contractName": "NabungMultiGoalVault",
+      "compilerVersion": "v0.8.30+commit.73712a01",
+      "checkedAtUtc": "2026-09-30T16:46:14.9757255Z"
+    },
+    "depositRaw": "2000000",
+    "claimedRaw": "2000000",
+    "status": "fully-claimed",
+    "finalState": {
+      "domain": 2,
+      "eid": 40245,
+      "chainId": 84532,
+      "network": "base_sepolia",
+      "vault": "0x5f2d2322615e09bfff8f183934cab4c9a6e4c0f9",
+      "receiptBlock": "0x2d4f9b5",
+      "observedAt": "2026-09-30T18:17:46.939Z",
+      "phase": "3",
+      "currentRound": "1",
+      "commandSequence": "2",
+      "claimedAssets": "2000000",
+      "preparedAssets": "2000000",
+      "totalAssets": "0",
+      "claimableAssets": "0",
+      "progressSequence": "2",
+      "configHash": "0x3a12f7ed3ab15a58575de8658f44829f159c9d23e767e0b6586c9d2cab5bf2a9",
+      "ownerUsdc": "20000000"
+    },
+    "lifecycleEvidence": "live-goal.json"
+  }
+}

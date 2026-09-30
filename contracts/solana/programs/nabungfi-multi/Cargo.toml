@@ -1,0 +1,28 @@
+[package]
+name = "nabungfi-multi"
+version = "0.2.0"
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "nabungfi_multi"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+
+[dependencies]
+anchor-lang = "=0.32.1"
+anchor-spl = { version = "=0.32.1", default-features = false, features = ["token", "token_2022"] }
+solana-sha256-hasher = "2.3"
+
+[dev-dependencies]
+serde_json = "=1.0.151"

@@ -2,7 +2,7 @@
 
 The user directed development to focus on contracts first. Multiple simultaneous savings goals per owner are required. Work on the shared application model, API, goal-selection UI and new 3D assets follows the contract milestones below.
 
-Update, 30 September: the Solana Devnet–Base Sepolia cash pair completed actual registration, 4+6-USDC deposits, reserve-based achievement and partial/full claims through seven public LayerZero messages. [Public lifecycle evidence](../contracts/deployments/layerzero-solana-base-live.json) records the receipts and terminal balances; [LayerZero integration](LAYERZERO_INTEGRATION.md) records current verification and remaining strategy/operations work. Older isolation counts below remain dated historical evidence. Ethereum/Arbitrum components are staging; simultaneous multi-EVM aggregation and Robinhood remain extensions.
+Update, 1 October 2026: one v2 goal completed actual registration, 4+2+2+2-USDC deposits, all-participant reserve-based achievement and partial/full claims across Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. [Four-chain evidence](../contracts/deployments/multichain/live-goal.json), [operator runbook](MULTICHAIN_TESTNET_RUNBOOK.md) and [v2 protocol plan](MULTICHAIN_V2_PLAN.md) record this milestone. Latest checks: 71 EVM units, three v2 network forks, 59 native Rust checks and six v2 SVM scenarios. Older isolation counts below remain historical evidence. Robinhood, unattended operation and financial earning remain unfinished.
 
 ## 1. Local goal isolation — verified within the stated boundaries
 
@@ -23,24 +23,26 @@ Verification on 28 September 2026:
 
 Base isolation tests use a mock pool/token/transport. Solana tests execute native Rust logic and Anchor account validation, not SVM transactions or token CPI. The prior two pinned Aave fork tests were not rerun in this isolation pass. No deployed bridge, new protocol yield or network execution is established.
 
-## 2. Goal creation and peer registration — public cash pair verified
+## 2. Goal creation and peer registration — public four-chain cash goal verified
 
-The Base factory creates separate vaults and computes the canonical commitment; the authenticated registration/acknowledgment exchange binds the Solana goal, Base owner, target and configuration. Funding is gated by registration. Public testnet provisioning, actual two-way registration and goal-scoped operator tooling have been exercised for one cash goal. Multi-peer registration and application wallet integration remain work.
+Each v2 EVM factory creates a separate vault and commits its actual identity, domain/EID, asset, router, owner, target and Solana identities in a SHA256 leaf. Solana initializes with a fixed participant set only after all actual EVM vault receipts exist. The authenticated registration/acknowledgment exchanges were exercised for all three peers of the same cash goal. Solana deposits require all acknowledgments; each EVM vault independently gates its own authenticated pair registration, and normal orchestration waits for the global registration barrier. Application wallet integration remains work.
 
 Acceptance: wrong owner, target, peer, environment or configuration cannot register a goal pair; an existing funded goal cannot be overwritten or silently rebound. Registration and discovery must not grant an operator withdrawal authority.
 
 ## 3. Authenticated crosschain lifecycle
 
-The balance design is detailed in [crosschain balance synchronization](CROSSCHAIN_BALANCE_SYNC.md). Base OApp progress sending and Solana remote snapshot reception are implemented. Full Kamino valuation and freshness projection remain pending. Keep reported progress estimates separate from realized completion reserves.
+The balance design is detailed in [crosschain balance synchronization](CROSSCHAIN_BALANCE_SYNC.md). Each EVM OApp publishes its own absolute snapshot; Solana stores per-peer sequences, observations and reserves. All three bidirectional routes use real public LayerZero delivery. Full Kamino valuation and an application freshness projection remain pending. Keep reported progress estimates separate from realized completion reserves.
 
-The common wire format, SDK endpoint/peer checks, durable reports and retry/abort behavior are locally tested. The separate public test route now establishes explicit Endpoint/DVN/Executor configuration, configured confirmations, actual fee funding and delivered REGISTER/REGISTERED/PROGRESS/PREPARE/READY/COMMIT messages. Local packet injection remains a different evidence class. A persistent unattended keeper and production security configuration remain work.
+The NBFG v2 wire format, SDK endpoint/peer checks, durable reports and retry/abort behavior are locally tested. Public component and goal receipts establish explicit Endpoint/DVN/Executor configuration, actual fee funding and delivered REGISTER/REGISTERED/PROGRESS/PREPARE/READY/COMMIT messages across the participant set. Achievement requires local readiness and every registered peer's same-round READY reserve. Local packet injection remains a different evidence class. A persistent unattended keeper and production security configuration remain work.
 
-Acceptance: replay and cross-goal substitution fail; delayed READY/ABORT_ACK messages cannot revive an aborted round; interruption and recovery preserve each goal independently. The Base vault still depends on an honest authenticated coordinator for remote reserve evidence.
+Acceptance: replay and cross-goal substitution fail; delayed READY/ABORT_ACK messages cannot revive an aborted round; interruption and recovery preserve each goal independently. Every EVM vault still depends on its honest authenticated coordinator for remote reserve evidence. V2 domain/EID namespaces prevent equal address bytes on different chains from being counted as the same participant or being attributed twice.
 
 ## 4. Strategy and runtime integration
 
-Build Solana SBF and exercise actual custody, Kamino CPI and minimum-output checks in an explicitly identified test environment. Extend the Aave integration evidence to multiple positions where needed. Reconcile actual receipts, net USDC, rounding, losses and liquidity during preparation; mock return values are insufficient.
+SBF/runtime custody and public four-chain cash claims are verified. Next exercise actual Kamino CPI, refreshed NAV and minimum-output checks in an explicitly identified environment, and demonstrate real Aave allocation/redemption within a registered v2 goal. Arbitrum's adapter is available but was idle in the cash proof. Reconcile receipts, net USDC, rounding, losses and liquidity; cash completion or mock return values are insufficient earning evidence.
 
 ## 5. Complete contract journey before application expansion
 
-One actual cash goal has completed the full public lifecycle. Next verify three simultaneous goals through creation, deposits, strategy exits, authenticated completion, partial claims and retry/recovery across both chains. Only then expose those behaviors through the multi-goal application flow. The public single-goal cash proof does not complete multi-goal strategy/keeper/application acceptance.
+One actual four-chain cash goal has completed the full public lifecycle. Next verify three simultaneous goals through creation, deposits, strategy exits, authenticated completion, partial claims and recovery across the registered chains. The UI/shared-model collection migration remains required. The public single-goal cash proof does not complete multi-goal strategy/keeper/application acceptance.
+
+The earlier v1 pair and receipts remain historical evidence at [source commit b64280b](https://github.com/EndPx/nabungfi/tree/b64280b28ea771fa8c53beae8e8f061d7651e46a). The new virtual domain accessor changes source/compilation metadata; do not compare current v1-named compilation outputs to historical binaries as if their hashes must match.

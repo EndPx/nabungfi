@@ -73,5 +73,9 @@
     "ELF download equality is bytecode provenance, not a reproducible-build attestation or audit."
   ],
   "deploymentStatus": "programs-deployed-oapp-registered-unsealed",
-  "operationalEvidence": "layerzero-solana-base-live.json"
+  "operationalEvidence": "layerzero-solana-base-live.json",
+  "sourceProvenance": {
+    "historicalSourceCommit": "b64280b28ea771fa8c53beae8e8f061d7651e46a",
+    "note": "Historical v1 deployment/lifecycle. Current NabungGoalVault source contains a virtual destination-domain hook for v2, which changes source/metadata hashes; reproduce v1 from the pinned historical revision."
+  }
 }

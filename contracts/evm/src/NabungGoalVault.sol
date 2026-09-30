@@ -173,6 +173,11 @@ contract NabungGoalVault is AaveSupplyAdapter, ReentrancyGuard {
         return bytes32(uint256(uint160(address(this))));
     }
 
+    /// @dev v1 remains domain 2; derived v2 vaults bind their immutable participant domain.
+    function destinationDomain() public view virtual returns (uint32) {
+        return BASE_DOMAIN;
+    }
+
     /// @notice Owner deposits are permitted while earning or while a round is preparing.
     /// @dev Preparing top-ups stay idle. Ready reserves cannot change through this method.
     function deposit(uint256 amount) external onlyOwner nonReentrant {
@@ -214,7 +219,7 @@ contract NabungGoalVault is AaveSupplyAdapter, ReentrancyGuard {
         _requireRegistration();
         report = Report(6, 0, ++progressSequence, totalAssets(), block.number, block.timestamp);
         emit ProgressReported(
-            goalId, configHash, BASE_DOMAIN, vaultId(), report.sequence, report.amount, block.number
+            goalId, configHash, destinationDomain(), vaultId(), report.sequence, report.amount, block.number
         );
     }
 
@@ -231,7 +236,7 @@ contract NabungGoalVault is AaveSupplyAdapter, ReentrancyGuard {
         emit ReadyReported(
             goalId,
             configHash,
-            BASE_DOMAIN,
+            destinationDomain(),
             vaultId(),
             currentRound,
             reportSequence,
@@ -252,7 +257,7 @@ contract NabungGoalVault is AaveSupplyAdapter, ReentrancyGuard {
         _requireRegistration();
         if (sourceChain != SOLANA_DOMAIN || sender != sourceCoordinator) revert WrongPeer();
         if (command.goalId != goalId || command.configHash != configHash) revert WrongGoal();
-        if (command.destinationChain != BASE_DOMAIN || command.destinationVault != vaultId()) {
+        if (command.destinationChain != destinationDomain() || command.destinationVault != vaultId()) {
             revert WrongDestination();
         }
         if (command.sequence != commandSequence + 1) {
@@ -293,7 +298,13 @@ contract NabungGoalVault is AaveSupplyAdapter, ReentrancyGuard {
                 reports[reportSequence] =
                     Report(5, currentRound, reportSequence, 0, block.number, block.timestamp);
                 emit AbortAcknowledged(
-                    goalId, configHash, BASE_DOMAIN, vaultId(), currentRound, reportSequence, block.number
+                    goalId,
+                    configHash,
+                    destinationDomain(),
+                    vaultId(),
+                    currentRound,
+                    reportSequence,
+                    block.number
                 );
             }
         }

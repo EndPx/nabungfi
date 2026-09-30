@@ -358,5 +358,9 @@
     "One registered Base peer per goal; Arbitrum and Ethereum remain staging for a multi-peer extension.",
     "Operator drove the lifecycle; no persistent unattended keeper proven.",
     "Single required Labs DVN test stack; Solana upgrade authority retained; source verification and peer review are not audits."
-  ]
+  ],
+  "sourceProvenance": {
+    "historicalSourceCommit": "b64280b28ea771fa8c53beae8e8f061d7651e46a",
+    "note": "Historical v1 deployment/lifecycle. Current NabungGoalVault source contains a virtual destination-domain hook for v2, which changes source/metadata hashes; reproduce v1 from the pinned historical revision."
+  }
 }

@@ -1,5 +1,5 @@
 [workspace]
-members = ["programs/nabungfi", "programs/nabungfi-lz", "tests/programs/test-messagelib"]
+members = ["programs/nabungfi", "programs/nabungfi-lz", "programs/nabungfi-multi", "programs/nabungfi-multi-lz", "tests/programs/test-messagelib"]
 resolver = "2"
 
 [profile.release]

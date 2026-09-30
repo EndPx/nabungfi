@@ -10,8 +10,9 @@ This repository contains the shared model and contract implementations. The inte
 
 ```text
 shared/              @nabungfi/shared: exact-unit model, API types and tests
-contracts/evm/       Base goal vault, Aave adapter and Foundry tests
-contracts/solana/    Anchor goal/coordinator core and Kamino CPI bindings
+contracts/evm/       Domain-specific EVM goal vaults, Aave adapter and Foundry tooling/tests
+contracts/solana/    Anchor single-peer and multi-peer coordinator/transport programs
+contracts/deployments/ Public component, configuration and lifecycle receipts
 docs/                Technical interface and repository-scope documentation
 package.json         Workspace commands
 pnpm-workspace.yaml  Shared package and optional local app discovery
@@ -37,8 +38,8 @@ The [shared package](shared/README.md) exports exact six-decimal USDC conversion
 
 ## Contracts
 
-- [Base / Aave](contracts/evm/README.md): non-upgradeable goal vault, supply/redeem adapter, unit tests and pinned Base fork tests.
-- [Solana / Kamino](contracts/solana/README.md): Anchor custody/coordinator, pinned Kamino CPI code, native tests and a public account fixture.
+- [EVM vaults / Aave](contracts/evm/README.md): non-upgradeable goal vaults for Base, Arbitrum and Ethereum Sepolia, supply/redeem adapter, domain-bound factories and Foundry tooling/tests.
+- [Solana coordinator](contracts/solana/README.md): Anchor custody and authenticated multi-peer coordination. The deployed v2 Devnet program is cash-only; retained Kamino bindings are separate strategy work.
 
 Contract commands and tool requirements are documented in those packages. Root pnpm commands do not run Foundry or Cargo.
 
@@ -51,13 +52,15 @@ Contract commands and tool requirements are documented in those packages. Root p
 
 ## Evidence and current limits
 
-On 30 September 2026, the actual Solana Devnet–Base Sepolia cash-mode goal completed **deposit → authenticated messaging → reserve-based achievement → partial and full claims**. Seven LayerZero messages were delivered through the real DVN/Executor stack, including a post-claim progress update from 6 USDC to zero. The goal received 4 USDC on Solana and 6 USDC on Base; both balances were fully claimed while achievement remained permanent. [Public transaction/state evidence](contracts/deployments/layerzero-solana-base-live.json), [operator runbook](docs/LAYERZERO_TESTNET_RUNBOOK.md).
+The v2 public testnet goal completed **registration → 4+2+2+2-USDC deposits → same-round reserves → achievement → partial and full claims** across Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. The recorded achieved total is 10 USDC. Every vault ended at zero, and each chain's owner token account recovered its initial 20-USDC faucet balance. Real LayerZero DVNs/Executors delivered **21 messages**, including post-claim zero-balance reports from all three EVM peers; funds stayed on their original chains. [Four-chain transaction/state evidence](contracts/deployments/multichain/live-goal.json), [operator runbook](docs/MULTICHAIN_TESTNET_RUNBOOK.md), [v2 protocol design](docs/MULTICHAIN_V2_PLAN.md).
 
-The shared model has 14 regression tests. EVM verification includes 64 local tests (the prior 60 plus four security-stack tooling cases), the retained 17 pinned fork cases, and one additional configuration/lifecycle fork. A Solana operator-journal regression checks signature reconciliation, changed financial intent, expiry and network guards. Default native checks cover 35 core and four transport tests; the cash-only Devnet profile covers 38 core and four transport tests. Fresh SBF/LiteSVM runs pass six default and seven Devnet scenarios. These local checks are separate from the public-network receipts above. See [LayerZero implementation and reproduction](docs/LAYERZERO_INTEGRATION.md), [fork evidence](contracts/evm/test/fork/README.md), and the [contract-first plan](docs/CONTRACT_PLAN.md).
+The latest verification pass includes **71 EVM unit tests**, **three v2 testnet fork scenarios**, **59 native Rust checks** and **six v2 SBF/LiteSVM scenarios**. The shared model retains 14 regression tests. These local/fork/runtime checks are distinct from the public transaction receipts. Earlier v1 verification included 64 EVM units, 17 retained pinned fork cases, a configuration fork, 35+4 default native checks or 38+4 Devnet checks, and six default/seven Devnet SVM scenarios; these are dated prior gates rather than additional new v2 public executions. See [LayerZero implementation and reproduction](docs/LAYERZERO_INTEGRATION.md) and the [contract-first plan](docs/CONTRACT_PLAN.md).
 
-Public EVM router/factory components are deployed on Base, Arbitrum and Ethereum Sepolia using canonical Circle USDC; their [receipt manifests](contracts/deployments/) distinguish active and superseded components. Base/Ethereum are cash-only because their selected Aave testnet pools do not list Circle USDC; Arbitrum uses its Circle-USDC Aave reserve. Solana has an explicit cash-only Devnet build with canonical USDC and disabled Kamino calls. The proven Solana–Base routes are sealed and their test goal is fully claimed. The current coordinator supports one Base peer per goal, so Arbitrum/Ethereum remain staging for a multi-peer extension.
+The [v2 component manifests](contracts/deployments/multichain/) bind fresh Solana programs and EVM routers/factories to canonical Circle USDC. The coordinator has a fixed registered participant set and independent per-peer identities, sequences and readiness; completion requires every participant. Base, Ethereum and Solana use cash-only profiles. Arbitrum has a compatible Aave adapter available, but its demonstrated 2 USDC stayed idle: **this four-chain run proves cash custody and coordination, not earning**.
 
-The TypeScript application still simulates coordination. The public cash lifecycle was driven by an operator; wallet/UI integration, an unattended keeper, actual Kamino execution and an investment policy remain unfinished. Local runtime fixtures still use artificial balances and precommitted packet accounts; they must not be confused with the separate public receipts. The testnet route uses one required LayerZero Labs DVN and retained Solana upgrade authority. Source verification and peer review are not audits, and no live financial yield or production security is claimed.
+The TypeScript application still simulates coordination and models one goal. The public lifecycle was operator-driven; multiple-goal API/UI migration, wallet integration, an unattended keeper, actual Kamino execution and an investment policy remain unfinished. Local SVM fixtures use artificial balances and precommitted packets and do not prove DVN verification. The testnet routes use one required LayerZero Labs DVN and retained Solana upgrade authority. Source verification and peer review are not audits. Robinhood and Chainlink CRE are not part of this implementation, and no mainnet operation, live earning or production security is claimed.
+
+The earlier Solana–Base v1 cash proof remains preserved with its [seven-message lifecycle manifest](contracts/deployments/layerzero-solana-base-live.json) and [historical source commit](https://github.com/EndPx/nabungfi/tree/b64280b28ea771fa8c53beae8e8f061d7651e46a). The v2 domain accessor changes source/compilation metadata; current v1-named source must not be described as byte-for-byte identical to those historical deployed binaries.
 
 ## Optional local prototype
 

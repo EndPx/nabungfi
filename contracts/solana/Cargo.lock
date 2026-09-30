@@ -892,6 +892,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "nabungfi-multi"
+version = "0.2.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "serde_json",
+ "solana-sha256-hasher 2.3.0",
+]
+
+[[package]]
+name = "nabungfi-multi-lz"
+version = "0.2.0"
+dependencies = [
+ "anchor-lang",
+ "nabungfi-multi",
+ "oapp-latest",
+]
+
+[[package]]
 name = "nabungfi-test-messagelib"
 version = "0.1.0"
 dependencies = [

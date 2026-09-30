@@ -1,6 +1,18 @@
 # Testnet component deployments
 
-These manifests record public deployments on 30 September 2026. They contain public addresses, transaction receipts, code hashes and source-verification status. Private keys, API keys, buffer signer files and local submission journals are excluded.
+## Active protocol v2: four-chain proof
+
+The current [v2 manifests](multichain/) record separate programs/contracts on Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. [live-goal.json](multichain/live-goal.json) records one actual 10-USDC goal with 4+2+2+2-USDC deposits, all-participant realized reserves, permanent achievement and complete partial/full claims. **All 21 LayerZero messages were delivered**, including post-claim zero-NAV reports from all three EVM peers. Every vault is empty and each owner's initial 20 USDC restored. Funds stayed on their original chains.
+
+All v2 routes are sealed with explicit libraries/DVN/confirmations/Executor configuration. Solana upgrade authority is retained. Base/Ethereum router/factory/vault sources are verified; the three original Arbitrum verification GUIDs remain accepted but pending in the explorer queue. No earning was performed, including on the available Arbitrum Aave adapter. The proof is operator-driven and covers one public goal; UI/wallet integration, an unattended keeper and multiple concurrent public goals remain unproven. Robinhood is deferred and CRE is not used. [V2 operator runbook](../../docs/MULTICHAIN_TESTNET_RUNBOOK.md).
+
+Latest source gates passed 71 EVM units, three v2 forks, 59 native Rust checks and six v2 SBF/LiteSVM scenarios; fresh public-only checks passed frozen install, 14 shared tests, typecheck/build and the operator-journal regression. Local fixtures are distinct from public receipts.
+
+## Historical v1 deployments and checks
+
+The remainder describes the older v1 components and their dated verification. Reproduce them from [source commit b64280b](https://github.com/EndPx/nabungfi/tree/b64280b28ea771fa8c53beae8e8f061d7651e46a). The current EVM parent vault's v2 virtual domain hook changes source/compiler metadata; current source is not byte-for-byte evidence for these historical binaries. Top-level Arbitrum/Ethereum staging records below are superseded for the four-chain proof by the separate v2 manifests.
+
+These historical v1 manifests record public deployments on 30 September 2026. They contain public addresses, transaction receipts, code hashes and source-verification status. Private keys, API keys, buffer signer files and local submission journals are excluded.
 
 | Network | Active components | Savings asset | Strategy |
 | --- | --- | --- | --- |

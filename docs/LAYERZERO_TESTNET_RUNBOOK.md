@@ -1,6 +1,6 @@
 # LayerZero testnet operation
 
-This runbook covers the implemented **Solana Devnet–Base Sepolia goal pair**. Additional EVM deployments are staging components; the current coordinator does not aggregate several EVM peers into one goal. Token reserves stay on their original chains.
+This historical v1 runbook covers the **Solana Devnet–Base Sepolia goal pair** at source commit `b64280b28ea771fa8c53beae8e8f061d7651e46a`. Its coordinator has one EVM peer. The separately deployed v2 coordinator now completes four-chain goals; use the [multichain v2 runbook](MULTICHAIN_TESTNET_RUNBOOK.md) and [live evidence](../contracts/deployments/multichain/live-goal.json) for that deployment. Token reserves stay on their original chains.
 
 ## Configuration before route sealing
 

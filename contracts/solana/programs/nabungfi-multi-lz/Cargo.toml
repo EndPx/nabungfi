@@ -1,0 +1,25 @@
+[package]
+name = "nabungfi-multi-lz"
+version = "0.2.0"
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "nabungfi_multi_lz"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+idl-build = ["anchor-lang/idl-build", "oapp/idl-build", "nabungfi-multi/idl-build"]
+
+[dependencies]
+anchor-lang = "=0.32.1"
+nabungfi-multi = { path = "../nabungfi-multi", features = ["cpi"] }
+oapp = { git = "https://github.com/LayerZero-Labs/LayerZero-v2", rev = "9c741e7f9790639537b1710a203bcdfd73b0b9ac", package = "oapp-latest" }

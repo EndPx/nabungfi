@@ -2,7 +2,9 @@
 
 This package implements non-upgradeable, single-owner, single-goal USDC vaults. Aave-enabled vaults own their funds and aTokens; explicit cash-only vaults disable earning and hold USDC directly. The prototype has no early payout, target edit, timeout escape, admin sweep, borrowing or arbitrary-call method.
 
-The 64-test local suite covers accounting, transport, multi-goal isolation, deployment guards and operator tooling. Conservation fuzzing runs 256 cases. The original Base mainnet fork uses actual USDC/Aave bytecode at block **51,893,120**, artificial balances and local time advance. Its local endpoint remains a labeled test harness. Separately, the sealed public Solana Devnet–Base Sepolia cash pair completed seven real LayerZero deliveries, 4+6-USDC deposits and partial/full claims. Arbitrum/Ethereum components remain staging. [Public lifecycle receipts](../deployments/layerzero-solana-base-live.json), [deployment receipts](../deployments/) and [transport proof boundaries](../../docs/LAYERZERO_INTEGRATION.md).
+The **71-test** local suite covers accounting, transport, multi-goal isolation, deployment guards, v2 codec/leaf/domain identity and exact security-stack pins. Conservation fuzzing runs 256 cases. Three v2 testnet forks exercise deployment/config scripts and real workers with local balances/authentication. Separately, one public v2 goal completed **4+2+2+2-USDC deposits, 21 real LayerZero deliveries, all-peer achievement and partial/full claims** across Solana, Base, Arbitrum and Ethereum testnets. Every vault ended at zero and each chain's owner regained 20 USDC. [Four-chain lifecycle receipts](../deployments/multichain/live-goal.json), [v2 deployment receipts](../deployments/multichain/) and [transport proof boundaries](../../docs/LAYERZERO_INTEGRATION.md).
+
+The original Base mainnet fork at **51,893,120** uses actual USDC/Aave bytecode, artificial balances and local time; its endpoint is a labeled harness. The historical v1 Solana–Base cash pair remains preserved with [seven-message receipts](../deployments/layerzero-solana-base-live.json) and [source commit b64280b](https://github.com/EndPx/nabungfi/tree/b64280b28ea771fa8c53beae8e8f061d7651e46a). V2 adds a parent virtual domain accessor, changing source/compilation metadata. Do not compare current v1-named compilation outputs to those historical binaries as if they must match.
 
 `test/MultiGoalIsolation.t.sol` checks separate car/laptop/house vaults for one owner: receipt accounting, interest/loss attribution, completion and claims, rejected cross-goal commands, independent rounds/counters, and a cash-funded goal completing while another goal is illiquid. These scenarios use local mock tokens, a mock pool and a mock transport; they do not verify production message authenticity or goal-pair registration. See the [contract-first plan](../../docs/CONTRACT_PLAN.md).
 
@@ -20,11 +22,12 @@ With dependencies in place, run from `contracts/evm` in a Linux/macOS or WSL she
 
 ```sh
 forge test --no-match-path 'test/fork/*' -vv
-RUN_BASE_FORK=true BASE_RPC_URL=https://base-rpc.publicnode.com forge test --match-path 'test/fork/*' -vv
+RUN_MULTICHAIN_FORKS=true forge test --match-path 'test/fork/MultichainDeploymentFork.t.sol' --threads 1 -vv
+RUN_BASE_FORK=true BASE_RPC_URL=https://base-rpc.publicnode.com forge test --match-path 'test/fork/AaveBaseFork.t.sol' -vv
 forge fmt --check
 ```
 
-On Windows, enter WSL and navigate to the checkout under `/mnt/` before running these commands. The first command excludes fork tests and needs no RPC; a plain `forge test` instead explicitly **skips** the two fork tests unless enabled. A run with `RUN_BASE_FORK=true` fails if the selected archive RPC cannot serve the pinned block; it must not be reported as mainnet-fork proof in that case. Public RPC availability is not guaranteed.
+On Windows, enter WSL and navigate to the checkout under `/mnt/` before running these commands. Units need no RPC. Fork families have separate opt-in flags; disabled tests are skipped rather than live proof. The three v2 forks use current testnet dependencies and local injected balances/authentication; older pinned Aave/configuration cases remain separate. A pinned fork fails if its RPC cannot serve the selected block. Public RPC availability is not guaranteed.
 
 `lib/`, `out/` and `cache/` are ignored; no dependency gitlink or secret is required.
 
@@ -40,6 +43,12 @@ Upstream dependency distributions retain their licenses. OpenZeppelin provides E
 
 ### LayerZero wiring and goal operations
 
+Active v2 tooling is `DeployMultichain.s.sol`, `ConfigureMultichain.s.sol`, `MultichainConfig.sol` and `OperateMultichain.s.sol`. Configuration derives the exact chain/domain/EID tuple from the RPC chain and pins canonical Circle USDC, reviewed Solana identities, library/DVN/Executor addresses and confirmations. `MULTI_<NETWORK>_ROUTER`, `MULTI_<NETWORK>_GOAL_VAULT` and `MULTI_<NETWORK>_EXPECTED_DEPLOYER_NONCE` are network-specific; common `MULTI_GOAL_*` and Solana goal fields bind one goal across peers. [V2 operator runbook](../../docs/MULTICHAIN_TESTNET_RUNBOOK.md).
+
+V2 EVM send/receive confirmations are Base **2/10**, Arbitrum **1/10**, Ethereum **2/10**. Each uses one required LayerZero Labs DVN and no optional DVNs. EVM routes must be configured/audited/sealed before factory goal creation; Solana initialization follows the actual vault receipts, and Solana sealing follows actual goal-dependent quotes/discovery. `OperateMultichain` exposes seal/create, registration, deposit/progress, ready/report and claim stages with immutable identity/nonce/state checks and bounded message fees. Financial retries additionally require semantic operation identity and original receipt reconciliation; a fresh wallet nonce alone is insufficient proof that a deposit or claim failed.
+
+The following tooling describes the historical v1 pair and remains for regression/reproduction:
+
 `script/ConfigureLayerZero.s.sol` reads public network variables from `.env`, checks the actual router/Endpoint identities, then sets explicit SendULN302, ReceiveULN302, Executor and required DVN configuration. Its `audit()` entrypoint checks custom configuration readbacks and prints route ownership/delegate state. The reviewed testnet stack requires the LayerZero Labs DVN, uses Base-origin confirmations **2** and Solana-origin confirmations **10**, and explicitly disables optional DVNs with the ULN NIL count. This single-operator testnet stack is not a production security quorum.
 
 `quote()` calls the actual Endpoint and worker contracts with the actual OApp sender/receiver and a 222-byte message. Its illustrative goal identities make it a fee/pathway check, not a delivery or registration test. Solana receive options are type 3, with compute units and lamports; `.env` controls both.
@@ -54,14 +63,14 @@ RUN_LZ_CONFIGURATION_FORK=true forge test --match-path 'test/fork/LayerZeroConfi
 
 The wiring fork pins Base Sepolia block **47,500,917**, applies all four configuration transactions locally, seals the forked router, creates a real vault, quotes real workers, and checks REGISTER/PREPARE/COMMIT handlers with injected authenticated callers. Injected callers and artificial USDC balances are test facilities; this does not prove public DVN verification or delivery.
 
-`script/OperateNabungFi.s.sol` provides individually invoked `seal()`, `create()`, `registration()`, `deposit()`, `progress()`, `ready()`, `report()` and `claim()` steps. Each validates the reviewed route, owner, goal identity/configuration, operation nonce and applicable contract state. Message stages quote the actual goal and enforce `MAX_MESSAGE_FEE_WEI`. After every broadcast, reconcile its receipt and onchain state before updating `EXPECTED_OPERATION_NONCE`; never blindly rerun after a timeout. `seal()` irreversibly renounces router ownership and makes the router its Endpoint delegate, so verify both chains and account discovery before invoking it. Do not deposit before authenticated pair registration completes on both chains.
+`script/OperateNabungFi.s.sol` provides individually invoked `seal()`, `create()`, `registration()`, `deposit()`, `progress()`, `ready()`, `report()` and `claim()` steps. Each validates the reviewed route, owner, goal identity/configuration, operation nonce and applicable contract state. Message stages quote the actual goal and enforce `MAX_MESSAGE_FEE_WEI`. After every broadcast, reconcile its receipt and onchain state before updating `EXPECTED_OPERATION_NONCE`; never blindly rerun after a timeout. EVM `seal()` irreversibly renounces ownership and changes its delegate after configuration/worker-quote review; actual goal-dependent Solana discovery occurs after unfunded EVM creation and before Solana sealing. Do not deposit before authenticated pair registration completes on both chains.
 
 ```text
 src/              Savings contracts, adapter, router, factory, wire codec
 test/             Unit and configuration rejection tests
 test/mocks/       Test-only USDC, Aave and messaging harnesses
-test/fork/        Pinned RPC-fork integration tests
-script/           Foundry deployment entrypoint and configuration helper
+test/fork/        Pinned historical and current testnet RPC-fork integration tests
+script/           Foundry deployment, explicit configuration and lifecycle tooling
 remappings.txt    Dependency import mappings
 foundry.toml      Build, RPC aliases and Etherscan V2 configuration
 .env.example      Public configuration and blank API-key placeholder
@@ -70,11 +79,20 @@ foundry.toml      Build, RPC aliases and Etherscan V2 configuration
 
 This follows the directory conventions of [ATFi smart-contract](https://github.com/ATFi-Event/smart-contract/tree/51c0391c02dec20ddeed83a011dc9c97b54dfc3d), reviewed at that pinned revision. NabungFi retains its original financial contracts, compiler version and dependency paths; no ATFi financial logic or private-key deployment convention is copied.
 
-Copy `.env.example` to `.env` only if the local file does not already exist. Foundry loads it from this package directory. Set `ETHERSCAN_API_KEY` locally; the example contains no secret. Network prefixes are `BASE_SEPOLIA`, `ARBITRUM_SEPOLIA`, and `ETHEREUM_SEPOLIA`. Each has its own RPC, EID, canonical token, strategy mode, deployed addresses and fork block. `TESTNET_CHAIN_ID` selects the deployment environment, while `SOLANA_DEVNET_*` binds the public core/transport/Store identities and explicit cash-only strategy commitments.
+Copy `.env.example` to `.env` only if the local file does not already exist. Foundry loads it from this package directory. Set `ETHERSCAN_API_KEY` locally; the example contains no secret. Network prefixes are `BASE_SEPOLIA`, `ARBITRUM_SEPOLIA`, and `ETHEREUM_SEPOLIA`. Each has its own RPC, EID, canonical token, strategy mode, addresses and fork settings. V2 uses separate `MULTI_*` router/goal/nonce fields and fresh Solana identities; RPC chain ID selects its domain. `TESTNET_CHAIN_ID` and the older Solana profile fields belong to v1 tooling.
 
-Active `*_USDC` configuration uses [Circle's official USDC testnet contracts](https://developers.circle.com/stablecoins/usdc-contract-addresses). Base Sepolia's `0x036C…CF7e` and Ethereum Sepolia's `0x1c7D…7238` differ from the older Aave test-pool tokens in the original deployments. Their active `*_CASH_ONLY=true` configuration sets both pool and receipt to zero, explicitly disabling earning. Arbitrum Sepolia's Circle USDC matches its Aave asset and uses `*_CASH_ONLY=false`. All three active component stacks use the same revised source. Older deployment and Aave fork references remain under `*_LEGACY_*` and [deployments/legacy](../deployments/legacy/); the older Base/Ethereum stacks must never be presented as canonical Circle-USDC deployments.
+Active `*_USDC` configuration uses [Circle's official USDC testnet contracts](https://developers.circle.com/stablecoins/usdc-contract-addresses). Base Sepolia's `0x036C…CF7e` and Ethereum Sepolia's `0x1c7D…7238` differ from older Aave test-pool tokens. Zero pool/receipt explicitly disable earning in those profiles. Arbitrum's Circle USDC matches its enabled Aave adapter, but the public v2 goal kept its 2 USDC idle. The four-chain run proves cash coordination, not earning. Legacy noncanonical assets remain labeled under `*_LEGACY_*` and [legacy manifests](../deployments/legacy/).
 
-## Foundry deployment tooling
+## Foundry deployment tooling and provenance
+
+For a new reviewed v2 dry run, check latest/pending nonce and native budget, update the network-specific `MULTI_*_EXPECTED_DEPLOYER_NONCE`, then use:
+
+```sh
+forge script script/DeployMultichain.s.sol:DeployMultichain --rpc-url base-sepolia -vv
+forge script script/ConfigureMultichain.s.sol:ConfigureMultichain --sig 'audit()' --rpc-url base-sepolia
+```
+
+Use `arbitrum-sepolia` or `ethereum-sepolia` for other networks. Deployment leaves components unsealed and does not create/fund a goal. Configuration, seal, creation and money operations remain distinct reviewed stages. Never rerun a pending/unknown transaction; reconcile its original receipt and state. `sealRoute` is irreversible in the EVM router. Historical v1 deployment instructions below are source/version-specific and do not upgrade a deployed route in place.
 
 The components already have public receipts. The recorded expected nonces have been consumed by those deployments, so an unchanged deployment configuration rejects a repeat. For a new reviewed dry-run plan, first check `cast nonce <deployer> --rpc-url <network>` and the pending nonce, then set that network's expected nonce in the local `.env`. The following is a **dry run**, with no network broadcast:
 
@@ -88,7 +106,7 @@ Use chain ID `421614` with `arbitrum-sepolia`, or `11155111` with `ethereum-sepo
 
 For an explicitly authorized **new** deployment after reviewing the dry-run plan and fee budget, sign through the existing Foundry keystore by adding `--account deployer-wallet --password '' --broadcast`. No `PRIVATE_KEY` environment variable is required. Check the latest and pending sender nonces before updating `<NETWORK>_EXPECTED_DEPLOYER_NONCE`; a stale nonce rejects the script. Foundry writes its transaction journal under `broadcast/`, which remains local and ignored. If a send is interrupted, reconcile its hash, receipt, sender nonce and deployed code before attempting any retry; do not rerun an unknown or pending deployment. Existing local transaction journals and public receipt manifests are retained after the tooling cleanup.
 
-Solana Devnet is currently cash-only: the four strategy commitment fields identify an inert mint, not a working Kamino reserve. The EVM protocol still uses application domains Solana `1` and Base `2`; Arbitrum/Ethereum copies remain staging until multi-peer support exists. None of these scripts configures DVNs, message libraries, fee workers, or irreversible sealing.
+V2 Solana Devnet is cash-only. Its participant leaf commits Solana core/transport/mint and EVM domain/EID/asset/router/vault/owner; no fake Kamino reserve is used as earning evidence. V1 retains its inert strategy commitment profile. `DeployNabungFi`/`DeployMultichain` deploy components only; separate Configure/Operate scripts explicitly handle libraries, workers and sealing.
 
 After a deployment, verify source using the original compiler settings and exact constructor arguments from its manifest. Foundry's Etherscan V2 aliases read the API key from the local environment; never put its value in a command or public document.
 
@@ -109,13 +127,13 @@ An authenticated abort permanently marks the current round `Aborted`, clears the
 
 `receiveCommand(sourceChain, sender, Command)` accepts calls only from the immutable messenger **contract**, for the immutable coordinator identity and application source domain. It checks the goal, configuration hash, destination domain and destination vault, exact next command sequence, completion round, phase and local reserve.
 
-Application domain **1 = Solana**, **2 = Base**. These are not EVM chain IDs or LayerZero endpoint IDs. Mainnet Base is chain ID 8453; the test fork asserts it. A production deployment manifest must bind the correct mainnet/testnet identities. The source coordinator is the 32-byte Solana goal/coordinator account identity, and the Base destination vault is the EVM address left-padded to 32 bytes.
+V2 application domains are **1 Solana, 2 Base, 3 Arbitrum, 4 Ethereum**, with EIDs **40168/40245/40231/40161** on these testnets. V1 retains domains 1/2. Domains are neither chain IDs nor EIDs. `destinationDomain()`/router `domain()` provide the actual v2 identity; the inherited legacy `BASE_DOMAIN` constant must not be treated as an Arbitrum/Ethereum identity. The coordinator is a 32-byte Solana goal account; destination vaults are left-padded EVM addresses.
 
 Command kinds match the Solana prototype: **0 invalid, 1 PREPARE, 2 COMMIT, 3 ABORT**. Sequence and round are uint64. Target is limited to uint64 raw USDC; local amounts use uint256 and the implemented wire encoder rejects values above uint64 before sending. PREPARE/ABORT amounts must be zero. COMMIT supplies the exact local prepared amount plus the coordinator-certified aggregate.
 
 Command sequences advance across rounds, not per round. The vault rejects duplicate and out-of-order commands without consuming its application sequence. The OApp router consumes authenticated stale command retries as no-ops; future commands still revert and must be retried after their predecessors. Lifecycle outbound `reportSequence` advances only for `ReadyReported` and `AbortAcknowledged`. Permissionless progress events use a **separate** `progressSequence`, preventing progress spam from skipping the next expected lifecycle report. Report fields contain goal/config, source domain/vault, amount where applicable, sequence, round where applicable, and an observation block.
 
-`NabungLzRouter` implements the official OApp boundary, and `NabungVaultFactory` plus the shared wire/configuration fixtures establish the registration encoding. The router seals its peer/delegate configuration before creating goals and accepts registration only from the authenticated Solana peer. READY and ABORT_ACK are read from a durable vault outbox. Explicit ULN302/DVN/Executor configuration, measured fee options and public delivery are recorded for the cash-mode test pair in the lifecycle manifest. The Base vault still depends on authenticated coordinator evidence for remote reserves. The legacy mock transport exists **only in tests**.
+`NabungMultiLzRouter` implements the active domain-specific OApp boundary; `NabungMultiVaultFactory` and NBFG v2 bind each actual goal leaf. The router seals before creation and accepts registration only from its authenticated Solana peer. READY/ABORT_ACK use durable outboxes. All three public routes delivered the v2 cash lifecycle with explicit ULN302/DVN/Executor configuration. Each EVM vault still trusts authenticated coordinator certification of remote reserves. Solana deposits wait for all registration acknowledgments; each EVM vault enforces its local pair registration and normal orchestration waits for the global barrier. V1 remains a separate historical pair. Mock transport exists **only in tests**.
 
 ## Aave fork proof and rounding
 
@@ -137,5 +155,5 @@ The second test advances only the fork's local timestamp by one day and observes
 - Review initialization authority, malicious peer behavior, token freezes, protocol upgrades, chain halts and keeper/transport liveness before real funds.
 - Select the actual idle reserve/exposure policy and monitoring thresholds. No operator can rewrite this vault's target or withdraw on the owner's behalf.
 - Test current deployed-market controls and receipt rounding at deployment time. No-term Aave supply remains subject to protocol liquidity and pause conditions; see [Pool integration](https://aave.com/docs/aave-v3/smart-contracts/pool) and [withdrawal conditions](https://aave.com/help/supplying/withdraw-tokens).
-- Handle deployment, indexing, outbound event attestation, retries, remote abort barriers and frontend wallet transactions. None is proven by the unit/fork suite.
+- Expand the operator-driven public proof into unattended keeper/indexer operation, multiple concurrent public goals, real abort/loss recovery and wallet/UI integration. The four-chain cash goal and local multi-goal tests do not complete those acceptance requirements.
 - Obtain independent security review. The local tests are meaningful evidence of the tested cases, not an audit or assurance against all loss scenarios.

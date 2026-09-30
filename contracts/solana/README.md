@@ -1,10 +1,20 @@
 # NabungFi Solana core
 
+## Current multichain deployment (v2)
+
+Separate `nabungfi-multi` and `nabungfi-multi-lz` programs now coordinate one to three immutable EVM participants per goal. One actual four-chain goal completed 4+2+2+2-USDC cash deposits, all-peer reserve readiness, achievement and partial/full claims. All 21 public LayerZero messages were delivered, including three post-claim NAV updates to zero. Solana retained phase Achieved, achieved total10USDC and cumulative claims4USDC; local cash is zero and the owner's initial20USDC restored. [Public v2 receipts](../deployments/multichain/live-goal.json), [program deployments](../deployments/multichain/solana-devnet.json), [v2 runbook](../../docs/MULTICHAIN_TESTNET_RUNBOOK.md).
+
+Use `multichain.env.example` and `script/operate-multichain-goal.mjs` for v2, with the actual verified EVM vault receipts. `programs/nabungfi-multi/README.md` describes the cash-only ABI. New local checks add 15 core and four transport native tests plus six fresh SBF/LiteSVM cases. Default workspace checks total59 tests including the retained v1 suites and test-library identity check. These local scenarios are distinct from the actual public receipts. The local app/shared multiple-goal flow, unattended keeper and real earning remain unfinished.
+
+## Retained v1 pair
+
+The following v1 documentation and identities are historical. Its deployment/lifecycle source is pinned at commit `b64280b28ea771fa8c53beae8e8f061d7651e46a`; the live v1 programs were not upgraded by v2.
+
 This directory contains an Anchor program with real SPL-token custody instructions and a two-vault completion coordinator. Its default profile contains a Kamino direct-supply/redeem CPI path built with the pinned official `klend-interface`. The separate cash-only Devnet core and transport are now deployed; [public receipts](../deployments/solana-devnet.json) record their identities, downloaded ELF hashes and upgrade authority. This is a development deployment, not a production-ready savings product.
 
 The core and LayerZero transport compile to SBF. Local runtime tests pass six default and seven Devnet scenarios using an Endpoint snapshot and a test-only outbound library. Separately, the public Devnet route is now sealed with explicit ULN/DVN/Executor configuration. A real 10 USDC goal completed registration, progress, preparation, readiness, commitment and claims across Solana Devnet and Base Sepolia. Seven public messages were delivered, including a post-claim absolute balance update. Solana's 4 USDC deposit was claimed in 1 + 3 USDC parts; Base's 6 USDC deposit was claimed in 1 + 5 USDC parts. Both vault balances returned to zero while achievement remained permanent. [Public lifecycle receipts](../deployments/layerzero-solana-base-live.json) distinguish these transactions from the local tests.
 
-This route uses Circle testnet USDC and the cash-only profile. It demonstrates real public messaging and cash custody; it does not demonstrate earned yield, Kamino execution, production security or simultaneous multi-EVM peer aggregation. See [LayerZero integration](../../docs/LAYERZERO_INTEGRATION.md) and the [testnet runbook](../../docs/LAYERZERO_TESTNET_RUNBOOK.md).
+This v1 route uses Circle testnet USDC and the cash-only profile. It demonstrates real public messaging and cash custody; it does not demonstrate earned yield, Kamino execution or production security. It has one EVM peer; multi-peer public evidence belongs to the separate v2 deployments above. See [LayerZero integration](../../docs/LAYERZERO_INTEGRATION.md) and the [v1 testnet runbook](../../docs/LAYERZERO_TESTNET_RUNBOOK.md).
 
 ## Operator tooling
 
@@ -156,7 +166,7 @@ The default profile's `TRANSPORT_PROGRAM` names the local development identity; 
 
 Core events remain records. The transport's explicit quote/send instructions derive the actual registration or PREPARE/COMMIT/ABORT packet from the Goal; they require caller-funded fees and the correct Endpoint/library accounts. The operator-driven Devnet–Base Sepolia cash pathway has been exercised through actual delivery and full claims; [public evidence](../deployments/layerzero-solana-base-live.json) is separate from the default-profile runtime fixtures. An unattended keeper has not been proven.
 
-The current Base contract and this coordinator agree on these semantic values:
+The historical v1 Base contract and coordinator agree on these semantic values:
 
 - Application domains: **1 Solana / 2 Base**. These are not chain IDs, LayerZero EIDs, or cluster selectors. A production route must bind cluster/environment as well as these application identities.
 - Command kind: **0 Invalid / 1 PREPARE / 2 COMMIT / 3 ABORT**.
@@ -180,4 +190,4 @@ Solana native instructions use Anchor/Borsh and Base native calls use ABI; cross
 - The official reserve layout and actual recorded account identities are checked against the dated public snapshot.
 - Clippy passes with warnings denied; formatting and the `idl-build` feature compile.
 
-Before production: a reviewed production security/finality configuration and deployment identity set, Kamino valuation and supply/redeem runtime proof, persistent keeper funding/retry operations, upgrade-authority policy, external review, economic limits and production-network acceptance remain required. The completed public testnet cash lifecycle does not establish those properties. The current coordinator has one Base peer per goal; several EVM peers require a broader registry and per-peer readiness. Nothing here guarantees liquidity or earnings.
+Before production: a reviewed production security/finality configuration and deployment identity set, Kamino valuation and supply/redeem runtime proof, persistent keeper funding/retry operations, upgrade-authority policy, external review, economic limits and production-network acceptance remain required. The completed public testnet cash lifecycle does not establish those properties. The historical v1 coordinator has one Base peer per goal; the separate v2 coordinator above implements the immutable participant registry and per-peer readiness for up to three EVM peers. Nothing here guarantees liquidity or earnings.

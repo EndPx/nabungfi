@@ -1,0 +1,259 @@
+{
+  "status": "sealed-four-chain-goal-fully-claimed",
+  "network": "solana-devnet",
+  "genesisHash": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
+  "payer": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+  "core": {
+    "program": "FWfjDER6zJbP227GymMqTwGveJ5fjw7nKJvwLEAbXsZn",
+    "programData": "ADfZcJcf4uPiUdthrZJxaKEEXprr2z1EDLJn7Ph9Y82n",
+    "authority": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+    "slot": 505952225,
+    "bytes": 313416,
+    "sha256": "db6dcd1e2323c4d32c88b79644c33367550ee42ef788546aec34e341d91628b5",
+    "signature": "cxJ74TyiY3FKFi5rtwh4ocgT2ERHfdm1r5NZGjCczGd6WWKAD4JkJF5xp4eaMYufPxz6CD52ySZvptrVW6pxcKW",
+    "confirmation": "finalized",
+    "downloadedElfMatches": true
+  },
+  "transport": {
+    "program": "G2R7kB4yiYKB8Z6sF8f34w79Lof4L5oqqMhumiTzrG3d",
+    "programData": "CcYCMNRvxcb2aawKnNGwRiVAgyBzvsYbBcgrCeKKfUM1",
+    "authority": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+    "slot": 505957652,
+    "bytes": 446776,
+    "sha256": "5ddee1f55de8e0e3f90e770caf86b4c6f5ac10a8c96227f6c1ec4c27edc2802f",
+    "signature": "aqiWBSmxbjNLLq5FvTwPP6BSZFoGVWeXnji55WQ4i4rB8RWGgvPtiD1SpF8HknbbqYGQJH7JJQtwzZqTcpbfLUJ",
+    "confirmation": "finalized",
+    "downloadedElfMatches": true
+  },
+  "oapp": {
+    "store": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+    "routeSealed": true,
+    "peerMask": 7,
+    "delegate": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+    "signature": "45RmnDqMRNX8kccKMxZQZpZTPBnSr37BfToYo4eWEyK4C68GMg5Qfi5uBavvnG1HsAo3F6M5Utx5rrmwEZ5jX6cN",
+    "slot": 505958780,
+    "sealReceipt": {
+      "signature": "53gCKre5s8WRpoha1v1Gbyv6M2mzHQ1UNtMig76SaV4AXRAyfHhhf8YANJHPE4kU2JSfWXSs2ndTMyyZwjZQTQfh",
+      "instructionHash": "1e9212509e305b29e2c66b066698ae7707d2297696413587be5c0531716bd75b",
+      "status": "finalized",
+      "blockhash": "27cVAf9tRoB2FvnpsuPHdgmDLyCcaJDcMapt8tBvpY4S",
+      "lastValidBlockHeight": 493218233,
+      "simulationUnits": 17089,
+      "submittedAt": "2026-09-30T16:46:55.826Z",
+      "slot": 505969856
+    }
+  },
+  "protocolVersion": 2,
+  "eid": 40168,
+  "security": {
+    "requiredDvn": "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb",
+    "executor": "AwrbHeCyniXaQhiJZkLhgWdUCteeWSGaSN1sTfLiY7xK",
+    "sendConfirmations": "10",
+    "receiveConfirmationsByDomain": {
+      "2": "2",
+      "3": "1",
+      "4": "2"
+    },
+    "requiredDvnCount": 1,
+    "optionalDvnCount": 0
+  },
+  "configurationReceipts": {
+    "v2:bootstrap-store": {
+      "signature": "45RmnDqMRNX8kccKMxZQZpZTPBnSr37BfToYo4eWEyK4C68GMg5Qfi5uBavvnG1HsAo3F6M5Utx5rrmwEZ5jX6cN",
+      "instructionHash": "fab8fe6104347d3c72e357dd9b2165b19b611a72786080279842e47c4c37f100",
+      "status": "finalized",
+      "blockhash": "DVxMhrHAYsHsSPCu7a5HK5hb7nt17Zr4omVLoyu9roVA",
+      "lastValidBlockHeight": 493207176,
+      "simulationUnits": 35796,
+      "submittedAt": "2026-09-30T16:03:42.837Z",
+      "slot": 505958780
+    },
+    "v2:initialize-peer-2": {
+      "signature": "3wjoNpqTDbZwA1AhzHQpLvE6h5QWhPEhaYenXifEhta8oUW6oqv2H5fVfCGKaAqWpJRRDzwxBGHh454XdtCQqQAq",
+      "instructionHash": "ed19b8dfbbc985d5ff00d11c8100a4a06c86e2d2baf0ce20d19fb8da06ae2b67",
+      "status": "finalized",
+      "blockhash": "HCePi4wKQePoRtehQ2j7apGJQwnRTo6mbkaBVHnbimts",
+      "lastValidBlockHeight": 493207183,
+      "simulationUnits": 8674,
+      "submittedAt": "2026-09-30T16:03:44.067Z",
+      "slot": 505958786
+    },
+    "v2:initialize-peer-3": {
+      "signature": "2ya3JRk3zraZ1z3jEohkkp1gbjtedzjXjpe7VjNg79LWoG8x8r7DJHwoHBJy2GXCnMKyAi9ypMtCVwK2Qg43JtXp",
+      "instructionHash": "01d90b0109fc722d750f91964648a384aa08d878f8b8312e8f792771f698cdf5",
+      "status": "finalized",
+      "blockhash": "3ZBZAKpCk6iJyiWxpXmhpUQJbPLEo4KuguYgAZso63z4",
+      "lastValidBlockHeight": 493207188,
+      "simulationUnits": 8675,
+      "submittedAt": "2026-09-30T16:03:45.281Z",
+      "slot": 505958791
+    },
+    "v2:initialize-peer-4": {
+      "signature": "2JRHM8FDhvUB4pHgNb5rciDHCN4xdhD9ikmLGcHaHL12b2RLRAEvEseXZ7fgRkmRwZ2Fd2LeRvKy3unGwGhmPBpA",
+      "instructionHash": "a0fadb5cc13b7fef15bad479aa0def44c3355e1f7b9eb8dcbea8074743a5eaa2",
+      "status": "finalized",
+      "blockhash": "6fi1aD3tkLmruDFVsTpKSnbeTMJkQFgeWMaAWoSpZJcK",
+      "lastValidBlockHeight": 493207192,
+      "simulationUnits": 8676,
+      "submittedAt": "2026-09-30T16:03:46.484Z",
+      "slot": 505958796
+    },
+    "v2:domain-2:initialize-nonce+domain-2:initialize-send-library+domain-2:initialize-receive-library+domain-2:initialize-uln-config": {
+      "signature": "62UZ9q28VSfEYZA2hKzEk6MKyeL4NPN9FtPCfviPavhY1zoz1tZYJGJ96MPUvrAnri5FXoamdCUvT2jX6geUPFGf",
+      "instructionHash": "5e977f342383b43385a27f79f57811d4610403548b65d9cb2ccad725e59afeb3",
+      "status": "finalized",
+      "blockhash": "AxVMkta7ASjygou9yNTcj6rMRDhvJKn8kpiS5XpmzbPA",
+      "lastValidBlockHeight": 493207213,
+      "simulationUnits": 87409,
+      "submittedAt": "2026-09-30T16:03:51.589Z",
+      "slot": 505958817
+    },
+    "v2:domain-2:set-send-library+domain-2:set-receive-library": {
+      "signature": "aEDBKXFx1DsERkAKLVrobnoRhsRZ7ZeCujiMTdtywRfwXyuQ8avfxFXfyNmKZuhps1gkJgK7qdYsfrmuxFhrogP",
+      "instructionHash": "d7ce9b831480e25354155dc36291afe0c169672f80e6677a446af0e7aa72cdf7",
+      "status": "finalized",
+      "blockhash": "6S1hKrxXvdnjvxHNpSLgqjuq1CvyeWKWBttzg4VM2t7L",
+      "lastValidBlockHeight": 493207219,
+      "simulationUnits": 37431,
+      "submittedAt": "2026-09-30T16:03:52.760Z",
+      "slot": 505958825
+    },
+    "v2:domain-2:set-executor": {
+      "signature": "3S6kjg9QxQRktFztuHM7tCthv2D7p5gXGz4u3G4pDYhsNtsiTe2CM3y6haTP81bx4Y2RG6LEHNtzoLpgxTfvuUcc",
+      "instructionHash": "4c5b803453c8cad9ac54a511f2a6a5e2e586b8eade9ec928a8adb1cce084881e",
+      "status": "finalized",
+      "blockhash": "CiXMMJDSBqQboS9CHtFwTP7K6jYmjfELS6PSUezXfN53",
+      "lastValidBlockHeight": 493207227,
+      "simulationUnits": 49983,
+      "submittedAt": "2026-09-30T16:03:54.576Z",
+      "slot": 505958831
+    },
+    "v2:domain-2:set-send-uln": {
+      "signature": "64J4JEU7TytA2XEsx729NfHFxYr87QUAJzCTr3zwqiZEpE1pDJbWZEqitsthaEHMC42dQYRFyogSmFkentcv6Zi9",
+      "instructionHash": "a7cd44747fb747d4ea1efaa3b9b46273d57d26ba05408d706b32032b856e0b5d",
+      "status": "finalized",
+      "blockhash": "BKq1UzuzM3bkn3sN3djRLgoptNMcoibjEhScPK4cJ4Tk",
+      "lastValidBlockHeight": 493207232,
+      "simulationUnits": 50994,
+      "submittedAt": "2026-09-30T16:03:55.744Z",
+      "slot": 505958836
+    },
+    "v2:domain-2:set-receive-uln": {
+      "signature": "4hg9LKcirrhERxDcnZPsGq9k6umsq8wmx8SWWX1p2hu2aZp4j1vWaRSTY9i76pgV39wfceguGpDKqYMUtzwKbEhx",
+      "instructionHash": "2fceb595a94421d22fb4cff4f50ab038d48acc859a5343a9194d3e15ac54f231",
+      "status": "finalized",
+      "blockhash": "7vZ3zj5wPw8Z3Xo1cEcPhGfm2fvJCc5SEnYbMZyCgBJE",
+      "lastValidBlockHeight": 493207237,
+      "simulationUnits": 51155,
+      "submittedAt": "2026-09-30T16:03:56.907Z",
+      "slot": 505958848
+    },
+    "v2:domain-3:initialize-nonce+domain-3:initialize-send-library+domain-3:initialize-receive-library+domain-3:initialize-uln-config": {
+      "signature": "3KCT5X7FRu3aMZYL4P65Utpq9yNSGwgrS9hkstnpNwPErSVDcRg4HdWjQ6Egzon38m7FEJtHYLAC9NDAhFMrAkGR",
+      "instructionHash": "81c17b7b5faa573aff5807848aaac289dde4bf4ae512bfbc8f80d3f018b67fa1",
+      "status": "finalized",
+      "blockhash": "GsSfyS62sLBxhMpcPDctNdabFNVgMTrN8QuuTXe97UxW",
+      "lastValidBlockHeight": 493207292,
+      "simulationUnits": 76909,
+      "submittedAt": "2026-09-30T16:04:09.726Z",
+      "slot": 505958896
+    },
+    "v2:domain-3:set-send-library+domain-3:set-receive-library": {
+      "signature": "2R8gNmiGXbxByd2vC44YoZ7hNCF3yXmeUN1P3QTHQQm4GevPDHt9W3y566fAnNVnBWEu7yWeKMB4od7c3uiCpouZ",
+      "instructionHash": "857f6388ab7700975a699d96f6582964dd778935e47846c8a8f567223578a0b1",
+      "status": "finalized",
+      "blockhash": "KgALkQuWJEt1RZAtAxvwdWcVxrZZTKe4mq1UGMMfjXm",
+      "lastValidBlockHeight": 493207297,
+      "simulationUnits": 37431,
+      "submittedAt": "2026-09-30T16:04:10.899Z",
+      "slot": 505958900
+    },
+    "v2:domain-3:set-executor": {
+      "signature": "2C4mhP84fLYNwNTA5VYaE4r3wmR7ho2ES7FH9mjUwMK6i1ShBN7f8LD7B1c4UMTYNS2FS5aH2B465wpYoW1xHsyc",
+      "instructionHash": "4118ec846f232296bd82bab89aaa9e5676a0b67802a3dd64f58778c9f2919162",
+      "status": "finalized",
+      "blockhash": "CGSAPNNbvPNhdRd5QWcMqwmq31jiVySbJ6ZLeQqAC9bJ",
+      "lastValidBlockHeight": 493207301,
+      "simulationUnits": 49983,
+      "submittedAt": "2026-09-30T16:04:12.071Z",
+      "slot": 505958905
+    },
+    "v2:domain-3:set-send-uln": {
+      "signature": "5Mo7jSQpWrXDHK46z9fC7PQ4aosH92WSbmy9vbuVqrpw3t6fxETEhFMY6PmH2aVRrTcud67v9nyQVF2WmuPDEG2k",
+      "instructionHash": "ec415700b7b4a3366bf30d51fa88af55803820a38c789424cbdc2cdec773cab4",
+      "status": "finalized",
+      "blockhash": "CYeH3PpsyS3dCVxqhWiotjR1QTNnBmUXtNnPV6wVxgx8",
+      "lastValidBlockHeight": 493207307,
+      "simulationUnits": 50994,
+      "submittedAt": "2026-09-30T16:04:13.246Z",
+      "slot": 505958910
+    },
+    "v2:domain-3:set-receive-uln": {
+      "signature": "95Zia7GTcoWMyHGkPYjQXnfWymHTu4oZ4QUwRSpai7zSXDUDgrn6AV7sx44vr9UH544k69AEeSwxvegye4qqSkb",
+      "instructionHash": "0f1ab160a7aa08daf092896d45aeb06a33b1c758e708d1e1cfb78d6f28cd092a",
+      "status": "finalized",
+      "blockhash": "CdQmJrv48K1UTZC6iGVgrv9gbmxica1oAjaqGtu2V8ap",
+      "lastValidBlockHeight": 493207311,
+      "simulationUnits": 51155,
+      "submittedAt": "2026-09-30T16:04:14.419Z",
+      "slot": 505958916
+    },
+    "v2:domain-4:initialize-nonce+domain-4:initialize-send-library+domain-4:initialize-receive-library+domain-4:initialize-uln-config": {
+      "signature": "5QfLGjHC1hgLW5zooBPmm8mxx4aiNbV9pWFmAXqWMMXkWErk7X7MYkUVK3ZvXrMouSCj1MMfD6b3Es4ggzHeZj5b",
+      "instructionHash": "370fb7102da1bdf2b8d78d4a97133c5e2b8ba79e296419c4620203519d818895",
+      "status": "finalized",
+      "blockhash": "9wrtTeuF5cGoP6TxbhyFnVNfno7PbzzrcrjAYhTYDE8P",
+      "lastValidBlockHeight": 493207359,
+      "simulationUnits": 75409,
+      "submittedAt": "2026-09-30T16:04:25.591Z",
+      "slot": 505958972
+    },
+    "v2:domain-4:set-send-library+domain-4:set-receive-library": {
+      "signature": "3iUbg5QRcGLTbPV9h7AphEuUMr68NHcKggu7kjbzMgaZERyP4kVRmpHvGewEcypLg6rpnyz19LfbLoAKTawoVPMZ",
+      "instructionHash": "995af2c597ce860d7d4b9a473674362755f8502d7a63b2d97d6a93d9b6e93e08",
+      "status": "finalized",
+      "blockhash": "m4MBBSxd2gkXZhfHMA1umvcnBqZEJAwB3KYGgD6dLh7",
+      "lastValidBlockHeight": 493207373,
+      "simulationUnits": 37431,
+      "submittedAt": "2026-09-30T16:04:28.834Z",
+      "slot": 505958976
+    },
+    "v2:domain-4:set-executor": {
+      "signature": "5geNy9KwAwQWdjSXQkWd9gGgLo6EnjFVGoHwfCATjrwFp9NUniWFKTXFeZ5jmfWrzHysy8K26C5NBAkzCDmefygG",
+      "instructionHash": "1aa9d9c312e04ccf938a25c44ae3e7969c7a20cf365e3623b8fd89ceefb03296",
+      "status": "finalized",
+      "blockhash": "2aU1o8X81sSEgBPaEhiTjiYkqmYNZzVs6NnWHPqNanFm",
+      "lastValidBlockHeight": 493207379,
+      "simulationUnits": 49983,
+      "submittedAt": "2026-09-30T16:04:30.006Z",
+      "slot": 505958982
+    },
+    "v2:domain-4:set-send-uln": {
+      "signature": "29hkN1TZ8uSDqG775YxXnKcjQrzZaLQSYFZzSniYoMGkKyPwedPX6srBeV4fe9wPgDhMLdtsWVKEihv48L3mYKLY",
+      "instructionHash": "56e292e074fd2db72b3ea7b2963e3ae791d1a09252647f5ee97c93bfc0b87888",
+      "status": "finalized",
+      "blockhash": "AjgCFaJi2fEnDYVFgpbEMEejjxAZitKfMsSgAVzjAG5N",
+      "lastValidBlockHeight": 493207383,
+      "simulationUnits": 50994,
+      "submittedAt": "2026-09-30T16:04:31.176Z",
+      "slot": 505958987
+    },
+    "v2:domain-4:set-receive-uln": {
+      "signature": "5a8aAVKoenjVCy7Aq36ZYwcaY6ftyoAbp6uwDdaWJgcMPYAraWpf9rFt1GrJ3PAk5WaL6BFybFUC6kBghnyw3SCP",
+      "instructionHash": "b918d4a93f87d4e1f062ea2f672ecf752223f7bb1f4409348305748e0fe01935",
+      "status": "finalized",
+      "blockhash": "ND4jYmgGLhLg5eteK1K5Z9Qa6Y7GVKTRqaEtBKwaZut",
+      "lastValidBlockHeight": 493207388,
+      "simulationUnits": 51155,
+      "submittedAt": "2026-09-30T16:04:32.348Z",
+      "slot": 505958992
+    }
+  },
+  "goal": {
+    "id": "0xfd1c102b6872360318e5a705b484ab51f15ca09d1ea8d5617af000a3be97dca6",
+    "account": "rqoDm4o8ovVgKnvBnCZ824RLKmZtDPLuHkHLCeQaQth",
+    "targetRaw": "10000000",
+    "status": "fully-claimed",
+    "evidence": "live-goal.json"
+  }
+}
