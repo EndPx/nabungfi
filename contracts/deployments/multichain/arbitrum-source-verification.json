@@ -1,0 +1,158 @@
+{
+  "status": "source-match-verified-on-sourcify-etherscan-still-queued",
+  "chainId": 421614,
+  "network": "arbitrum-sepolia",
+  "contracts": [
+    {
+      "kind": "router",
+      "chainId": 421614,
+      "address": "0xD524e3d9E7f0B419A862B4Ad854422d573B5D651",
+      "contractIdentifier": "src/NabungMultiLzRouter.sol:NabungMultiLzRouter",
+      "compilerVersion": "0.8.30+commit.73712a01",
+      "optimizerRuns": 200,
+      "evmVersion": "cancun",
+      "viaIR": false,
+      "sourcify": {
+        "status": "verified",
+        "creationMatch": "exact_match",
+        "runtimeMatch": "exact_match",
+        "matchId": "54393155",
+        "verifiedAt": "2026-09-30T15:56:30Z",
+        "originalJobId": "54faa3a1-0be8-412d-a54c-49ff428d0b97",
+        "browseUrl": "https://repo.sourcify.dev/421614/0xD524e3d9E7f0B419A862B4Ad854422d573B5D651",
+        "lookupUrl": "https://sourcify.dev/server/v2/contract/421614/0xD524e3d9E7f0B419A862B4Ad854422d573B5D651?fields=all",
+        "jobUrl": "https://sourcify.dev/server/v2/verify/54faa3a1-0be8-412d-a54c-49ff428d0b97"
+      },
+      "etherscan": {
+        "guid": "11cnjywb1eyp3ine53qsn6gxbmffztp2frvakpxz2h36sijvnx",
+        "result": "Pending in queue",
+        "sourcePresent": false,
+        "checkedAtUtc": "2026-09-30T19:30:38.9865074Z"
+      },
+      "deployment": {
+        "transactionHash": "0xc53bf54ae9daad33b0f6459b5c4f3b6ac0dd19722eda9501cbce6617ce97e2b1",
+        "blockNumber": "314337445",
+        "transactionIndex": "6",
+        "deployer": "0xc82f469Aa95a2f7792300c8d11230e9023A98600"
+      },
+      "runtimeBytes": 13059,
+      "runtimeKeccak256": "0x4dbed7514aeaa4244070fe8ab820fc2731ac6820e2deb30105476e8130c302f8",
+      "creationIncludingConstructorKeccak256": "0xfb3c05d1d2dddddaa36aca31b1b129b105f21dc98d8e1e0389991350623f220a",
+      "standardJsonSnapshotSha256": "deaa923d603347c4d317647f93b82e69c3d956344be41213fe79cecf7144d48e",
+      "independentChecks": {
+        "creationIncludingConstructorEqualsVerifiedDeployment": true,
+        "recompiledWithPinnedSolc": true,
+        "unboundCreationAndRuntimeMatch": true,
+        "immutableBoundRuntimeEqualsCurrentRpc": true
+      },
+      "checkedAtUtc": "2026-09-30T19:38:07.4440262Z"
+    },
+    {
+      "kind": "factory",
+      "chainId": 421614,
+      "address": "0x20A585751C48d4341c27CC0d91bD4ED6B621626f",
+      "contractIdentifier": "src/NabungMultiVaultFactory.sol:NabungMultiVaultFactory",
+      "compilerVersion": "0.8.30+commit.73712a01",
+      "optimizerRuns": 200,
+      "evmVersion": "cancun",
+      "viaIR": false,
+      "sourcify": {
+        "status": "verified",
+        "creationMatch": "exact_match",
+        "runtimeMatch": "exact_match",
+        "matchId": "54394759",
+        "verifiedAt": "2026-09-30T15:58:52Z",
+        "originalJobId": "a355c710-be16-40bc-9d87-3a6a682a7fab",
+        "browseUrl": "https://repo.sourcify.dev/421614/0x20A585751C48d4341c27CC0d91bD4ED6B621626f",
+        "lookupUrl": "https://sourcify.dev/server/v2/contract/421614/0x20A585751C48d4341c27CC0d91bD4ED6B621626f?fields=all",
+        "jobUrl": "https://sourcify.dev/server/v2/verify/a355c710-be16-40bc-9d87-3a6a682a7fab"
+      },
+      "etherscan": {
+        "guid": "wthefvjglxigcyqwabncuf5qrg3b5i3jstxwkbb1r44zgl5wfv",
+        "result": "Pending in queue",
+        "sourcePresent": false,
+        "checkedAtUtc": "2026-09-30T19:30:41.5893665Z"
+      },
+      "deployment": {
+        "transactionHash": "0xc53bf54ae9daad33b0f6459b5c4f3b6ac0dd19722eda9501cbce6617ce97e2b1",
+        "blockNumber": "314337445",
+        "transactionIndex": "6",
+        "deployer": "0xc82f469Aa95a2f7792300c8d11230e9023A98600"
+      },
+      "runtimeBytes": 15194,
+      "runtimeKeccak256": "0x1e3321bfe5d1f878afe868c3985cf29916ece1b01c8fde072a86d3edd99d721e",
+      "creationIncludingConstructorKeccak256": "0xf1e972560350d40b5ad5f32f4c9110a0cf5f1ee1504d28c33c48b4b346432cf9",
+      "standardJsonSnapshotSha256": "44000116e95f70833963a9368e7fdc7ef0f13fdad26bc00a8f1ce7c262e9b8b6",
+      "independentChecks": {
+        "creationIncludingConstructorEqualsVerifiedDeployment": true,
+        "recompiledWithPinnedSolc": true,
+        "unboundCreationAndRuntimeMatch": true,
+        "immutableBoundRuntimeEqualsCurrentRpc": true
+      },
+      "checkedAtUtc": "2026-09-30T19:38:07.4681762Z"
+    },
+    {
+      "kind": "vault",
+      "chainId": 421614,
+      "address": "0x0bd119e1FF26B98A8cF5bE374432bBD705D3EDd6",
+      "contractIdentifier": "src/NabungMultiGoalVault.sol:NabungMultiGoalVault",
+      "compilerVersion": "0.8.30+commit.73712a01",
+      "optimizerRuns": 200,
+      "evmVersion": "cancun",
+      "viaIR": false,
+      "sourcify": {
+        "status": "verified",
+        "creationMatch": "exact_match",
+        "runtimeMatch": "exact_match",
+        "matchId": "54422596",
+        "verifiedAt": "2026-09-30T16:44:16Z",
+        "originalJobId": "ec2fcddf-a8fc-4d08-945b-74c66dbb1c72",
+        "browseUrl": "https://repo.sourcify.dev/421614/0x0bd119e1FF26B98A8cF5bE374432bBD705D3EDd6",
+        "lookupUrl": "https://sourcify.dev/server/v2/contract/421614/0x0bd119e1FF26B98A8cF5bE374432bBD705D3EDd6?fields=all",
+        "jobUrl": "https://sourcify.dev/server/v2/verify/ec2fcddf-a8fc-4d08-945b-74c66dbb1c72"
+      },
+      "etherscan": {
+        "guid": "jsj3ahdhbrxxfzrshf2ierl1ef3gqkt8xqvwsytr3mnqkqd4du",
+        "result": "Pending in queue",
+        "sourcePresent": false,
+        "checkedAtUtc": "2026-09-30T19:30:43.1444309Z"
+      },
+      "deployment": {
+        "transactionHash": "0xec872a7a682ba0dc84550d0c5c74d528a473f5a43d3a2e0788b03ebbd70843fd",
+        "blockNumber": "314349842",
+        "transactionIndex": "4",
+        "deployer": "0xc82f469Aa95a2f7792300c8d11230e9023A98600"
+      },
+      "runtimeBytes": 10267,
+      "runtimeKeccak256": "0x41a840c4d03a001a006c393f6d75094c8a3bd093d3749a3a0698dd91d8cdf9e5",
+      "creationIncludingConstructorKeccak256": "0x9953546f466f4b3d71f7f7ba0fb35ed68f65ec7118afe12c1e680c6f258ea3a3",
+      "standardJsonSnapshotSha256": "a1a344cb5d62d1fc0736c2de984a02e8d9d1bc9174b96dfcb4519048746496c4",
+      "independentChecks": {
+        "creationIncludingConstructorEqualsVerifiedDeployment": true,
+        "recompiledWithPinnedSolc": true,
+        "unboundCreationAndRuntimeMatch": true,
+        "immutableBoundRuntimeEqualsCurrentRpc": true
+      },
+      "checkedAtUtc": "2026-09-30T19:38:07.4790876Z"
+    }
+  ],
+  "sourceProvenance": "These are original v2 deployments, not historical v1 binaries. V1 provenance stays pinned to b64280b28ea771fa8c53beae8e8f061d7651e46a.",
+  "investigation": {
+    "newOnchainTransactions": 0,
+    "originalEtherscanQueueCause": "Not observable from public status responses; no compiler mismatch is evidenced.",
+    "resubmissionsByThisInvestigation": 0,
+    "correctEtherscanChainEndpointConfirmed": true,
+    "observedExternalPropagationErrors": [
+      "Etherscan 3/sec rate limit for router and vault",
+      "Blockscout 429"
+    ],
+    "originalGuidStatus": "Pending in queue",
+    "preExistingFactoryPropagation": {
+      "origin": "Original Sourcify automatic external verification, not a new investigation submission",
+      "guid": "i88bdgntnasjbtvzp92uczbnmqc6a5bzkabuchqq9im287tb47",
+      "status": "Pending in queue",
+      "checkedAtUtc": "2026-09-30T19:30:44.7145741Z"
+    }
+  },
+  "proofBoundary": "Exact source/creation/runtime correspondence is verified independently. This is not a contract audit, liquidity guarantee, or proof of additional savings operations."
+}

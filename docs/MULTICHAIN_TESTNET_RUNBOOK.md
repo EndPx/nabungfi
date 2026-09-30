@@ -17,7 +17,7 @@ The [Solana manifest](../contracts/deployments/multichain/solana-devnet.json) re
 
 All routes use explicit ULN libraries, one required LayerZero Labs DVN, no optional DVNs and bounded Executor options. EVM send confirmations are Base2 / Arbitrum1 / Ethereum2; Solana-to-EVM uses 10 confirmations. Router ownership is renounced and Endpoint delegates are the router/Store after sealing. Solana program upgrade authority is retained. These are testnet security settings, not a production audit.
 
-Base and Ethereum router/factory/vault sources are verified. Arbitrum's three accepted verification GUIDs still report `Pending in queue` at the recorded check; preserve and query those original submissions rather than resubmitting them. Contract execution and the 21 delivered-message proof are independently confirmed.
+Base and Ethereum router/factory/vault sources are Etherscan-verified. Arbitrum's three original contracts have terminal Sourcify exact creation/runtime matches, independently recompiled against current RPC hashes; Etherscan still reports `Pending in queue` for its original GUIDs. [Provider-specific source proof](ARBITRUM_SOURCE_VERIFICATION.md). Preserve accepted GUIDs rather than resubmitting pending work. Contract execution and the 21 delivered-message proof are independently confirmed.
 
 ## Setup and verification before funds
 

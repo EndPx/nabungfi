@@ -183,6 +183,43 @@
       "configHash": "0xf32b82ca0b5216151be1861591a5ae944d02848dbcdfe6e1c07bb6829df6682d",
       "ownerUsdc": "20000000"
     },
-    "lifecycleEvidence": "live-goal.json"
+    "lifecycleEvidence": "live-goal.json",
+    "sourcifyVerification": {
+      "status": "verified",
+      "creationMatch": "exact_match",
+      "runtimeMatch": "exact_match",
+      "matchId": "54422596",
+      "verifiedAt": "2026-09-30T16:44:16Z",
+      "originalJobId": "ec2fcddf-a8fc-4d08-945b-74c66dbb1c72",
+      "browseUrl": "https://repo.sourcify.dev/421614/0x0bd119e1FF26B98A8cF5bE374432bBD705D3EDd6",
+      "lookupUrl": "https://sourcify.dev/server/v2/contract/421614/0x0bd119e1FF26B98A8cF5bE374432bBD705D3EDd6?fields=all",
+      "jobUrl": "https://sourcify.dev/server/v2/verify/ec2fcddf-a8fc-4d08-945b-74c66dbb1c72"
+    }
+  },
+  "sourceMatchVerification": {
+    "provider": "Sourcify",
+    "evidence": "arbitrum-source-verification.json",
+    "etherscanStatus": "Original accepted submissions remain Pending in queue",
+    "status": "exact-creation-and-runtime-match",
+    "contracts": [
+      {
+        "kind": "router",
+        "address": "0xD524e3d9E7f0B419A862B4Ad854422d573B5D651",
+        "runtimeKeccak256": "0x4dbed7514aeaa4244070fe8ab820fc2731ac6820e2deb30105476e8130c302f8",
+        "browseUrl": "https://repo.sourcify.dev/421614/0xD524e3d9E7f0B419A862B4Ad854422d573B5D651"
+      },
+      {
+        "kind": "factory",
+        "address": "0x20A585751C48d4341c27CC0d91bD4ED6B621626f",
+        "runtimeKeccak256": "0x1e3321bfe5d1f878afe868c3985cf29916ece1b01c8fde072a86d3edd99d721e",
+        "browseUrl": "https://repo.sourcify.dev/421614/0x20A585751C48d4341c27CC0d91bD4ED6B621626f"
+      },
+      {
+        "kind": "vault",
+        "address": "0x0bd119e1FF26B98A8cF5bE374432bBD705D3EDd6",
+        "runtimeKeccak256": "0x41a840c4d03a001a006c393f6d75094c8a3bd093d3749a3a0698dd91d8cdf9e5",
+        "browseUrl": "https://repo.sourcify.dev/421614/0x0bd119e1FF26B98A8cF5bE374432bBD705D3EDd6"
+      }
+    ]
   }
 }
