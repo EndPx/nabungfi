@@ -1,0 +1,123 @@
+{
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "eid": 40231,
+  "rpc": "https://sepolia-rollup.arbitrum.io/rpc",
+  "deployer": "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+  "nonce": 0,
+  "predictedRouter": "0xd2A8f6D7645F53aB23dC3EcB146a196026F964DA",
+  "endpoint": "0x6edce65403992e310a62460808c4b910d972f10f",
+  "asset": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+  "pool": "0xBfC91D59fdAA134A4ED45f7B584cAf96D7792Eff",
+  "receipt": "0x460b97BD498E1157530AEb3086301d5225b91216",
+  "solana": {
+    "program": "0x2ae188a7b7cc530e87ee0df25e73fb9056462df6ebd65334555a9ef98f8829e3",
+    "usdcMint": "0x3b442cb3912157f13a933d0134282d032b5ffecd01a2dbf1b7790608df002ea7",
+    "transportProgram": "0xd9beb19dc5388856fe3b69f65d61dcb5965b3ed5c21a54e54ab54dda717813c5",
+    "oappStore": "0x454257dcb2f8449ec59059f823c55d3cc76f8aa49e6d9777e9545bbbfb30d382",
+    "kaminoMarket": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "kaminoReserve": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "collateralMint": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "liquiditySupply": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5"
+  },
+  "gasEstimate": 6393653,
+  "gasLimit": 7352074,
+  "gasPriceWei": "60592000",
+  "maximumExecutionCostWei": "445476867808000",
+  "balanceBeforeWei": "32000000000000001",
+  "creationSha256": "f821595a1a1179d5f95b53cf7725c9d606669a2026e6f1a21da1c13dd9c72477",
+  "status": "confirmed-unsealed-zero-goals",
+  "transactionHash": "0x325ed8ea7d0ca1800c59d3ea401096b03f1585949ef11455c67ef2c9f4e22c25",
+  "transactionReceipt": {
+    "blockHash": "0xe081d33efbdf72f4aeebb9afc4514554d68df688017fc505ef4137aad2b9e727",
+    "blockNumber": "0x12badb2e",
+    "contractAddress": "0xd2a8f6d7645f53ab23dc3ecb146a196026f964da",
+    "cumulativeGasUsed": "0x65f39d",
+    "effectiveGasPrice": "0x39c8f80",
+    "from": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+    "gasUsed": "0x5f23ab",
+    "gasUsedForL1": "0xffaf",
+    "l1BlockNumber": "0xb44266",
+    "logs": [
+      {
+        "address": "0xd2a8f6d7645f53ab23dc3ecb146a196026f964da",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000c82f469aa95a2f7792300c8d11230e9023a98600"
+        ],
+        "data": "0x",
+        "blockNumber": "0x12badb2e",
+        "transactionHash": "0x325ed8ea7d0ca1800c59d3ea401096b03f1585949ef11455c67ef2c9f4e22c25",
+        "transactionIndex": "0x3",
+        "blockHash": "0xe081d33efbdf72f4aeebb9afc4514554d68df688017fc505ef4137aad2b9e727",
+        "blockTimestamp": "0x6abcc8a7",
+        "logIndex": "0x5",
+        "removed": false
+      },
+      {
+        "address": "0x6edce65403992e310a62460808c4b910d972f10f",
+        "topics": [
+          "0x6ee10e9ed4d6ce9742703a498707862f4b00f1396a87195eb93267b3d7983981"
+        ],
+        "data": "0x000000000000000000000000d2a8f6d7645f53ab23dc3ecb146a196026f964da000000000000000000000000c82f469aa95a2f7792300c8d11230e9023a98600",
+        "blockNumber": "0x12badb2e",
+        "transactionHash": "0x325ed8ea7d0ca1800c59d3ea401096b03f1585949ef11455c67ef2c9f4e22c25",
+        "transactionIndex": "0x3",
+        "blockHash": "0xe081d33efbdf72f4aeebb9afc4514554d68df688017fc505ef4137aad2b9e727",
+        "blockTimestamp": "0x6abcc8a7",
+        "logIndex": "0x6",
+        "removed": false
+      },
+      {
+        "address": "0xd2a8f6d7645f53ab23dc3ecb146a196026f964da",
+        "topics": [
+          "0x238399d427b947898edb290f5ff0f9109849b1c3ba196a42e35f00c50a54b98b"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000009ce8454257dcb2f8449ec59059f823c55d3cc76f8aa49e6d9777e9545bbbfb30d382",
+        "blockNumber": "0x12badb2e",
+        "transactionHash": "0x325ed8ea7d0ca1800c59d3ea401096b03f1585949ef11455c67ef2c9f4e22c25",
+        "transactionIndex": "0x3",
+        "blockHash": "0xe081d33efbdf72f4aeebb9afc4514554d68df688017fc505ef4137aad2b9e727",
+        "blockTimestamp": "0x6abcc8a7",
+        "logIndex": "0x7",
+        "removed": false
+      }
+    ],
+    "logsBloom": "0x00000000100000000000000000000000000000000000000000800000000000000000000000000000200000000000000000040002000000000800000000000000000000000000000000000000000000000001000000000000000000000000000000000000020000000200000000000800000000000000000000000400400000400000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000400000000000000000400000000000000000000000000000000040000000020000000000000000000000000000000000000000000000000000000000000040000",
+    "status": "0x1",
+    "timeboosted": false,
+    "to": null,
+    "transactionHash": "0x325ed8ea7d0ca1800c59d3ea401096b03f1585949ef11455c67ef2c9f4e22c25",
+    "transactionIndex": "0x3",
+    "type": "0x0"
+  },
+  "router": "0xd2a8f6d7645f53ab23dc3ecb146a196026f964da",
+  "factory": "0xa61d542a8d1a479b61c58062de9791c485c85308",
+  "executionCostWei": "377794210192000",
+  "balanceAfterWei": "31622205789808001",
+  "l1AdditionalFeeWei": "0",
+  "totalReceiptCostWei": "377794210192000",
+  "deployedCodeSha256": {
+    "router": "990616e83f951c45b0735a76e62d63ccf7469e1a8dc3b84e45e241e916e9a97a",
+    "factory": "ae80113d75d0cd1e1ecd71a279c473149209b852622992d5bfd9d3598ce9a034"
+  },
+  "limits": [
+    "No goal created or funded; router is unsealed.",
+    "No public LayerZero pathway configured or message delivered.",
+    "Solana profile is cash-only; Kamino earning is disabled.",
+    "Wire v1 uses Solana/Base domains only; additional EVM copies are staging, not integrated multi-peer deployments."
+  ],
+  "sourceVerification": {
+    "router": {
+      "status": "submitted",
+      "explorerUrl": "https://sepolia.arbiscan.io/address/0xd2a8f6d7645f53ab23dc3ecb146a196026f964da#code",
+      "result": "Pending in queue"
+    },
+    "factory": {
+      "status": "submitted",
+      "explorerUrl": "https://sepolia.arbiscan.io/address/0xa61d542a8d1a479b61c58062de9791c485c85308#code",
+      "result": "Pending in queue"
+    }
+  }
+}

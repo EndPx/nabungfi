@@ -264,4 +264,6 @@ pub enum NabungError {
     InvalidPacket,
     #[msg("Authenticated registration of the goal pair is not complete")]
     GoalNotRegistered,
+    #[msg("Yield strategy is disabled in the cash-only Devnet profile")]
+    StrategyDisabled,
 }

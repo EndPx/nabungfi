@@ -1,10 +1,73 @@
 # NabungFi Solana core
 
-This directory contains an Anchor program with real SPL-token custody instructions and a two-vault completion coordinator. It also contains a Kamino direct-supply/redeem CPI path built with the official pinned `klend-interface`. It is a **local development milestone**, not a deployed or production-ready savings product.
+This directory contains an Anchor program with real SPL-token custody instructions and a two-vault completion coordinator. Its default profile contains a Kamino direct-supply/redeem CPI path built with the pinned official `klend-interface`. The separate cash-only Devnet core and transport are now deployed; [public receipts](../deployments/solana-devnet.json) record their identities, downloaded ELF hashes and upgrade authority. This is a development deployment, not a production-ready savings product.
 
-The core and LayerZero transport compile to SBF. Native tests and six LiteSVM transaction scenarios exercise the actual Endpoint bytecode snapshot, plus a test-only message library for outbound fee/packet behavior. Packet verification accounts and balances are seeded locally; no public deployment, DVN quorum, Kamino supply/redeem execution, actual yield or network crosschain delivery is claimed. See [LayerZero integration and reproduction](../../docs/LAYERZERO_INTEGRATION.md).
+The core and LayerZero transport compile to SBF. Fresh local runtime tests pass six default and seven Devnet scenarios using an actual Endpoint snapshot, plus a test-only message library for outbound fee/packet behavior. The public Devnet transport Store is registered with the actual Endpoint and bound to the Base candidate; it remains unsealed. No DVN quorum, Kamino execution, earned live yield or public crosschain delivery is claimed. See [LayerZero integration and reproduction](../../docs/LAYERZERO_INTEGRATION.md).
 
 ## Run the checks
+
+### Cash-only Devnet profile
+
+Build both programs with `--features devnet` into a distinct `target/deploy-devnet`
+directory. The default build retains the local identities and pinned mainnet
+Kamino configuration used by the golden fixtures; it must not be deployed as a
+Devnet artifact. The Devnet build uses owned deployment identities:
+
+| Field | Devnet value |
+|---|---|
+| Core program | `3tPb29y74ycYSHa6Pz1tsUTsnaD6Xh9HPEzFKtWnwXM4` |
+| Transport program | `Fez821Y7EAC8rLNqG1WeVmVAcSZPKtd3QuQxFuAiCc5A` |
+| Transport Store PDA | `5fMoiRiAghVMDtKYfJno7FFy8WF1hbwDV1iuKhHxtJ49` |
+| USDC mint | `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` |
+| Inert collateral mint | `2qBnsAsYjJ1cBaWQ28kChUo4dtMkYynetMY8FUTe4p3E` |
+
+The collateral mint must have zero supply and both mint/freeze authorities
+revoked; `initialize` validates those conditions. It is a separate classic SPL
+mint, so sending USDC to the cash vault cannot create strategy shares. The
+configuration's market, reserve, collateral and liquidity-supply fields all
+commit to this inert mint address. Those four fields do **not** identify Kamino
+accounts in this profile. `supply_kamino` and `redeem_kamino` explicitly fail with
+`StrategyDisabled`; no simulated yield is added. Their Devnet account context is
+only caller and goal, so unavailable reserve accounts cannot obscure that error.
+These two instruction account layouts intentionally differ from the default
+profile. `Anchor.toml` selects program addresses, not Cargo features or an ABI;
+clients must use the matching profile's IDL/account list. The argument layouts
+and the remaining cash/coordination instruction accounts are unchanged.
+Cash custody, owner restrictions, registration, reserve-based completion,
+cross-slot checks and claims preserve the same lifecycle rules.
+
+The transport `devnet` feature forwards to the core. The core authenticates the
+owned transport ID, and the EVM router's Solana peer must be the **Store PDA**, not
+the transport program ID. Anchor's Devnet program map agrees with these IDs.
+Build tooling may create new random keypair files automatically; deploy only
+with the original owned keypairs whose public addresses match this table.
+Keypairs and compiled binaries stay ignored by Git.
+
+```powershell
+cargo test --workspace --locked --features devnet
+cargo clippy --workspace --all-targets --locked --features devnet -- -D warnings
+cargo check --workspace --locked --features "devnet,idl-build"
+```
+
+For the LiteSVM suite, set `NABUNGFI_TEST_PROFILE=devnet` and point
+`NABUNGFI_SBF_DIR` to the distinct Devnet artifact directory. It runs the six
+existing scenarios plus a compiled-runtime strategy-disable test. The same
+test-only message-library binary is required in that directory. This remains
+local bytecode execution, not a public DVN or Executor delivery result.
+
+On 2026-09-30, the current source passed all checks without ignored tests:
+
+| Profile | Native core | Native transport | Fresh SBF/LiteSVM |
+|---|---:|---:|---:|
+| Default | 35 | 4 | 6 |
+| Cash-only Devnet | 38 | 4 | 7 |
+
+The test-only message library contributes one additional native ID check in each
+workspace run. Clippy with warnings denied, IDL-feature compilation, and
+formatting also passed. Core and transport were built separately for **both**
+profiles before the corresponding runtime suite ran; the default runtime
+results do not rely on an older cached ELF. None of these checks executes a
+public DVN quorum or Kamino supply/redeem.
 
 From this directory with Rust installed:
 

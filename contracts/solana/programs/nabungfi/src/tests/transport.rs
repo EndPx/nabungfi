@@ -65,19 +65,48 @@ fn wire_and_configuration_match_the_shared_solidity_golden_fixture() {
     assert_eq!(packet.aggregate, 10_200_000_000);
     assert_eq!(packet.encode().unwrap(), raw);
     let (g, key) = wire_goal();
-    assert_eq!(
-        configuration_hash(
-            key,
-            g.owner,
-            &InitializeArgs {
-                goal_id: g.goal_id,
-                target: g.target,
-                remote_owner: g.remote_owner,
-                remote_vault: g.remote_vault,
-            }
-        ),
-        g.config_hash
+    let actual = configuration_hash(
+        key,
+        g.owner,
+        &InitializeArgs {
+            goal_id: g.goal_id,
+            target: g.target,
+            remote_owner: g.remote_owner,
+            remote_vault: g.remote_vault,
+        },
     );
+    // The historical golden packet is always checked, even in the network
+    // profile. Its configuration commits to the default identities only.
+    let original = hashv(&[
+        b"NABUNGFI_SOLANA_CONFIG_V1",
+        &bytes(&f["config"]["program"]),
+        key.as_ref(),
+        g.owner.as_ref(),
+        &g.goal_id,
+        &g.target.to_le_bytes(),
+        &g.remote_owner,
+        &g.remote_vault,
+        &BASE_DOMAIN.to_le_bytes(),
+        &bytes(&f["config"]["usdcMint"]),
+        &bytes(&f["config"]["kaminoMarket"]),
+        &bytes(&f["config"]["kaminoReserve"]),
+        &bytes(&f["config"]["collateralMint"]),
+        &bytes(&f["config"]["liquiditySupply"]),
+        &bytes(&f["config"]["transportProgram"]),
+    ])
+    .to_bytes();
+    assert_eq!(original, g.config_hash);
+    #[cfg(not(feature = "devnet"))]
+    assert_eq!(actual, g.config_hash);
+    #[cfg(feature = "devnet")]
+    {
+        assert_ne!(actual, g.config_hash);
+        // Independently calculated with Node crypto and @solana/kit encoders.
+        assert_eq!(
+            actual.to_vec(),
+            hex("0x072e0f0444b3ce609893ce2655debd6da5b3da50d1cb17f3c81b7eb14503b0a9")
+        );
+    }
 }
 
 #[test]

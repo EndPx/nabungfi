@@ -222,7 +222,7 @@ contract NabungGoalVault is AaveSupplyAdapter, ReentrancyGuard {
     /// @dev The reserved amount is actual USDC, including any explicitly attributed top-ups.
     function markReady() external nonReentrant {
         if (phase != Phase.Preparing) revert WrongPhase();
-        if (aToken.balanceOf(address(this)) != 0) revert PositionNotRedeemed();
+        if (strategyReceiptBalance() != 0) revert PositionNotRedeemed();
         preparedAssets = asset.balanceOf(address(this));
         phase = Phase.Ready;
         ++reportSequence;

@@ -13,5 +13,9 @@ nabungfi_lz = "6Ckm2BrnXxsSjyG5b17kQQRjoECVrts92RKXVGT8XeqS"
 cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
+[programs.devnet]
+nabungfi = "3tPb29y74ycYSHa6Pz1tsUTsnaD6Xh9HPEzFKtWnwXM4"
+nabungfi_lz = "Fez821Y7EAC8rLNqG1WeVmVAcSZPKtd3QuQxFuAiCc5A"
+
 [scripts]
 test = "cargo test --workspace --locked"

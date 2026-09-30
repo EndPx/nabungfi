@@ -1,0 +1,6 @@
+forge-std/=lib/forge-std-archive/forge-std-1.16.2/src/
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/
+@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/
+@layerzerolabs/oapp-evm/=node_modules/@layerzerolabs/oapp-evm/
+@layerzerolabs/lz-evm-protocol-v2/=node_modules/@layerzerolabs/lz-evm-protocol-v2/
+@layerzerolabs/lz-evm-messagelib-v2/=node_modules/@layerzerolabs/lz-evm-messagelib-v2/

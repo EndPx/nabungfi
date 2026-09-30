@@ -1,6 +1,8 @@
 use super::*;
 use anchor_lang::{AccountSerialize, InstructionData};
 
+#[cfg(feature = "devnet")]
+mod devnet;
 mod multi_goal;
 mod transport;
 
@@ -387,15 +389,27 @@ fn pinned_official_kamino_layout_matches_the_dated_public_reserve_snapshot() {
     let bytes = Aligned(*include_bytes!("../testdata/reserve-2026-09-28.bin"));
     let reserve =
         klend_interface::from_account_data::<klend_interface::state::Reserve>(&bytes.0).unwrap();
-    assert_eq!(reserve.lending_market, KAMINO_MARKET);
-    assert_eq!(reserve.liquidity.mint_pubkey, USDC_MINT);
+    assert_eq!(
+        reserve.lending_market,
+        pubkey!("7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF")
+    );
+    assert_eq!(
+        reserve.liquidity.mint_pubkey,
+        pubkey!("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
+    );
     assert_eq!(reserve.mint_decimals(), 6);
     assert_eq!(reserve.liquidity.token_program, token::ID);
     assert_eq!(reserve.available_liquidity(), 8_267_246_684_723);
     assert_eq!(reserve.config.block_ctoken_usage, 0);
     assert_eq!(reserve.config.permissioned_ops, 0);
-    assert_eq!(reserve.collateral.mint_pubkey, KAMINO_COLLATERAL_MINT);
-    assert_eq!(reserve.liquidity.supply_vault, KAMINO_LIQUIDITY_SUPPLY);
+    assert_eq!(
+        reserve.collateral.mint_pubkey,
+        pubkey!("B8V6WVjPxW1UGwVDfxH2d2r8SyT4cqn7dQRK6XneVa7D")
+    );
+    assert_eq!(
+        reserve.liquidity.supply_vault,
+        pubkey!("Bgq7trRgVMeq33yt235zM2onQ4bRDBsY5EWiTetF4qw6")
+    );
     // Regression: these helpers do not describe this historical reserve.
     assert_ne!(
         reserve.collateral.mint_pubkey,

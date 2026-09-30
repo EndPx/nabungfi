@@ -1,0 +1,128 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "eid": 40245,
+  "rpc": "https://sepolia.base.org",
+  "deployer": "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+  "nonce": 27,
+  "predictedRouter": "0x40EB6C1F5Cc623dd904b9F4F0ea95601020583CF",
+  "endpoint": "0x6edce65403992e310a62460808c4b910d972f10f",
+  "asset": "0xba50Cd2A20f6DA35D788639E581bca8d0B5d4D5f",
+  "pool": "0x8bAB6d1b75f19e9eD9fCe8b9BD338844fF79aE27",
+  "receipt": "0x10F1A9D11CDf50041f3f8cB7191CBE2f31750ACC",
+  "solana": {
+    "program": "0x2ae188a7b7cc530e87ee0df25e73fb9056462df6ebd65334555a9ef98f8829e3",
+    "usdcMint": "0x3b442cb3912157f13a933d0134282d032b5ffecd01a2dbf1b7790608df002ea7",
+    "transportProgram": "0xd9beb19dc5388856fe3b69f65d61dcb5965b3ed5c21a54e54ab54dda717813c5",
+    "oappStore": "0x454257dcb2f8449ec59059f823c55d3cc76f8aa49e6d9777e9545bbbfb30d382",
+    "kaminoMarket": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "kaminoReserve": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "collateralMint": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "liquiditySupply": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5"
+  },
+  "gasEstimate": 6219728,
+  "gasLimit": 7152688,
+  "gasPriceWei": "12000000",
+  "maximumExecutionCostWei": "85832256000000",
+  "balanceBeforeWei": "8933670152583328",
+  "creationSha256": "96abf3169b44231ab00c28a2943420068adbeabeda11dc617338f5a5aa737432",
+  "status": "confirmed-unsealed-zero-goals",
+  "transactionHash": "0x85236e34b5ed2fbff2fc0dfb4b5549f43020afc72ab8becc5000b87f8cce1991",
+  "transactionReceipt": {
+    "type": "0x0",
+    "status": "0x1",
+    "cumulativeGasUsed": "0x862545",
+    "logs": [
+      {
+        "address": "0x40eb6c1f5cc623dd904b9f4f0ea95601020583cf",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000c82f469aa95a2f7792300c8d11230e9023a98600"
+        ],
+        "data": "0x",
+        "blockHash": "0x33b4b5da72229adb7c3aba21fb865df383da673e071bf5c480e1255d949a0c3d",
+        "blockNumber": "0x2d4b4d3",
+        "blockTimestamp": "0x6abcc886",
+        "transactionHash": "0x85236e34b5ed2fbff2fc0dfb4b5549f43020afc72ab8becc5000b87f8cce1991",
+        "transactionIndex": "0xd",
+        "logIndex": "0x39",
+        "removed": false
+      },
+      {
+        "address": "0x6edce65403992e310a62460808c4b910d972f10f",
+        "topics": [
+          "0x6ee10e9ed4d6ce9742703a498707862f4b00f1396a87195eb93267b3d7983981"
+        ],
+        "data": "0x00000000000000000000000040eb6c1f5cc623dd904b9f4f0ea95601020583cf000000000000000000000000c82f469aa95a2f7792300c8d11230e9023a98600",
+        "blockHash": "0x33b4b5da72229adb7c3aba21fb865df383da673e071bf5c480e1255d949a0c3d",
+        "blockNumber": "0x2d4b4d3",
+        "blockTimestamp": "0x6abcc886",
+        "transactionHash": "0x85236e34b5ed2fbff2fc0dfb4b5549f43020afc72ab8becc5000b87f8cce1991",
+        "transactionIndex": "0xd",
+        "logIndex": "0x3a",
+        "removed": false
+      },
+      {
+        "address": "0x40eb6c1f5cc623dd904b9f4f0ea95601020583cf",
+        "topics": [
+          "0x238399d427b947898edb290f5ff0f9109849b1c3ba196a42e35f00c50a54b98b"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000009ce8454257dcb2f8449ec59059f823c55d3cc76f8aa49e6d9777e9545bbbfb30d382",
+        "blockHash": "0x33b4b5da72229adb7c3aba21fb865df383da673e071bf5c480e1255d949a0c3d",
+        "blockNumber": "0x2d4b4d3",
+        "blockTimestamp": "0x6abcc886",
+        "transactionHash": "0x85236e34b5ed2fbff2fc0dfb4b5549f43020afc72ab8becc5000b87f8cce1991",
+        "transactionIndex": "0xd",
+        "logIndex": "0x3b",
+        "removed": false
+      }
+    ],
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000200000000000020000040002000000000800000000000000000000000000000000000000000000000001000000000000000000000000000000000000020000000200000000000800000000000000000000000400400000400000000000000020000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000002000000000400000000000000000000000000000000000000000000000000040000000020000000000000000000000000000000000000000000000000020000000000000000",
+    "transactionHash": "0x85236e34b5ed2fbff2fc0dfb4b5549f43020afc72ab8becc5000b87f8cce1991",
+    "transactionIndex": "0xd",
+    "blockHash": "0x33b4b5da72229adb7c3aba21fb865df383da673e071bf5c480e1255d949a0c3d",
+    "blockNumber": "0x2d4b4d3",
+    "gasUsed": "0x5e23fc",
+    "effectiveGasPrice": "0xb71b00",
+    "blobGasUsed": "0x5b330e",
+    "from": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+    "to": null,
+    "contractAddress": "0x40eb6c1f5cc623dd904b9f4f0ea95601020583cf",
+    "l1GasPrice": "0x42240def",
+    "l1GasUsed": "0x3459a",
+    "l1Fee": "0xbf353bc585",
+    "l1BaseFeeScalar": "0x44d",
+    "l1BlobBaseFee": "0x3c5016a",
+    "l1BlobBaseFeeScalar": "0xa118b",
+    "daFootprintGasScalar": "0x1be"
+  },
+  "router": "0x40eb6c1f5cc623dd904b9f4f0ea95601020583cf",
+  "factory": "0xc74574498234400ebb0eddd98e75855ea439a0bc",
+  "executionCostWei": "74035152000000",
+  "balanceAfterWei": "8858813768720155",
+  "l1AdditionalFeeWei": "821231863173",
+  "totalReceiptCostWei": "74856383863173",
+  "deployedCodeSha256": {
+    "router": "c34ce79f2df02e9cd37d23a5575c3eae9c7ef3c141e3e227177fe8899a540355",
+    "factory": "af0123c6dae867188bfa1fc412c80fa58241296c182d8ee907bcc7c0d48b8433"
+  },
+  "limits": [
+    "No goal created or funded; router is unsealed.",
+    "No public LayerZero pathway configured or message delivered.",
+    "Solana profile is cash-only; Kamino earning is disabled.",
+    "Wire v1 uses Solana/Base domains only; additional EVM copies are staging, not integrated multi-peer deployments."
+  ],
+  "sourceVerification": {
+    "router": {
+      "status": "verified",
+      "explorerUrl": "https://sepolia.basescan.org/address/0x40eb6c1f5cc623dd904b9f4f0ea95601020583cf#code",
+      "result": "Pass - Verified"
+    },
+    "factory": {
+      "status": "verified",
+      "explorerUrl": "https://sepolia.basescan.org/address/0xc74574498234400ebb0eddd98e75855ea439a0bc#code",
+      "result": "Pass - Verified"
+    }
+  }
+}

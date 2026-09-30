@@ -12,22 +12,23 @@ const { LiteSVM, FailedTransactionMetadata, Clock } = require("litesvm");
 const kit = require("@solana/kit");
 const { keccak_256 } = require("@noble/hashes/sha3.js");
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
-const artifacts = process.env.NABUNGFI_SBF_DIR ?? resolve(root, "contracts/solana/target/deploy");
+const devnet = process.env.NABUNGFI_TEST_PROFILE === "devnet";
+const artifacts = process.env.NABUNGFI_SBF_DIR ?? resolve(root, devnet ? "contracts/solana/target/deploy-devnet" : "contracts/solana/target/deploy");
 const endpointElf = process.env.NABUNGFI_ENDPOINT_ELF ?? resolve(root, ".local/svm-fixtures/layerzero-endpoint.so");
 const expectedEndpointHash = "caa868d80b000c488e60e99828e366e773dde877ccc92b67f81df03b608639d4";
 const endpointBytes = readFileSync(endpointElf);
 assert.equal(createHash("sha256").update(endpointBytes).digest("hex"), expectedEndpointHash,
   "Endpoint fixture changed: review bytecode provenance before accepting another snapshot");
 
-const CORE = kit.address("Fg6PaFpoGXkYsidMpWxqSWY6W2BeZ7FEfcYkgMQHGKqF");
-const TRANSPORT = kit.address("6Ckm2BrnXxsSjyG5b17kQQRjoECVrts92RKXVGT8XeqS");
+const CORE = kit.address(devnet ? "3tPb29y74ycYSHa6Pz1tsUTsnaD6Xh9HPEzFKtWnwXM4" : "Fg6PaFpoGXkYsidMpWxqSWY6W2BeZ7FEfcYkgMQHGKqF");
+const TRANSPORT = kit.address(devnet ? "Fez821Y7EAC8rLNqG1WeVmVAcSZPKtd3QuQxFuAiCc5A" : "6Ckm2BrnXxsSjyG5b17kQQRjoECVrts92RKXVGT8XeqS");
 const ENDPOINT = kit.address("76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6");
 const TOKEN = kit.address("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 const SYSTEM = kit.address("11111111111111111111111111111111");
-const USDC = kit.address("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-const CTOKEN = kit.address("B8V6WVjPxW1UGwVDfxH2d2r8SyT4cqn7dQRK6XneVa7D");
+const USDC = kit.address(devnet ? "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU" : "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+const CTOKEN = kit.address(devnet ? "2qBnsAsYjJ1cBaWQ28kChUo4dtMkYynetMY8FUTe4p3E" : "B8V6WVjPxW1UGwVDfxH2d2r8SyT4cqn7dQRK6XneVa7D");
 const TEST_LIBRARY = kit.address("4HvzfJA1PjENpgoofQxNyogKQeBqsEX54w8r8quvbgwG");
-const BASE_EID = 30184;
+const BASE_EID = devnet ? 40245 : 30184;
 const TARGET = 10_000_000_000n;
 const BASE_OWNER = Buffer.concat([Buffer.alloc(12), Buffer.alloc(20, 0xbb)]);
 const BASE_VAULT = Buffer.concat([Buffer.alloc(12), Buffer.alloc(20, 0xaa)]);
@@ -48,8 +49,8 @@ function storeAccount(svm, address, programAddress, data) {
     lamports: kit.lamports(svm.minimumBalanceForRentExemption(BigInt(data.length))) });
 }
 
-function mintData() {
-  return Buffer.concat([Buffer.alloc(36), u64(1_000_000_000_000n), u8(6), u8(1), Buffer.alloc(36)]);
+function mintData(supply = 1_000_000_000_000n) {
+  return Buffer.concat([Buffer.alloc(36), u64(supply), u8(6), u8(1), Buffer.alloc(36)]);
 }
 
 function tokenData(mint, owner, amount) {
@@ -109,7 +110,7 @@ async function environment({ bootstrap = false } = {}) {
     storeAccount(svm, types, TRANSPORT, Buffer.concat([discriminator("account", "LzReceiveTypesAccounts"), addressBytes(store), u8(typesBump)]));
   }
   storeAccount(svm, USDC, TOKEN, mintData());
-  storeAccount(svm, CTOKEN, TOKEN, mintData());
+  storeAccount(svm, CTOKEN, TOKEN, mintData(devnet ? 0n : 1_000_000_000_000n));
   const [goal] = await pda(CORE, Buffer.from("goal"), addressBytes(payer.address), GOAL_ID);
   const [cash] = await pda(CORE, Buffer.from("usdc"), addressBytes(goal));
   const [shares] = await pda(CORE, Buffer.from("shares"), addressBytes(goal));
@@ -124,6 +125,19 @@ async function environment({ bootstrap = false } = {}) {
 
 const goalState = (env) => decodeGoal(env.svm.getAccount(env.goal).data);
 const tokenBalance = (env, account) => Buffer.from(env.svm.getAccount(account).data).readBigUInt64LE(64);
+
+if (devnet) test("Devnet SBF disables both strategy calls without token or goal mutation", async () => {
+  const env = await environment();
+  const before = Buffer.from(env.svm.getAccount(env.goal).data);
+  for (const name of ["supply_kamino", "redeem_kamino"]) {
+    const result = await send(env, instruction(CORE, name,
+      [meta(env.payer.address, false, true), meta(env.goal)], u64(0), u64(0)), false);
+    assert(result.meta().logs().some((line) => line.includes("StrategyDisabled")));
+    assert.deepEqual(Buffer.from(env.svm.getAccount(env.goal).data), before);
+    assert.equal(tokenBalance(env, env.cash), 0n);
+    assert.equal(tokenBalance(env, env.shares), 0n);
+  }
+});
 
 function encodePacket(env, { kind = 8, round = 0n, sequence = 0n, amount = TARGET, aggregate = 0n, wrongGoal = false } = {}) {
   const goal = goalState(env);

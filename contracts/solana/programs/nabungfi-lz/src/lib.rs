@@ -19,7 +19,10 @@ use oapp::{
 };
 
 // Local development identity; it matches nabungfi::TRANSPORT_PROGRAM. No key/deployment is supplied.
+#[cfg(not(feature = "devnet"))]
 declare_id!("6Ckm2BrnXxsSjyG5b17kQQRjoECVrts92RKXVGT8XeqS");
+#[cfg(feature = "devnet")]
+declare_id!("Fez821Y7EAC8rLNqG1WeVmVAcSZPKtd3QuQxFuAiCc5A");
 pub const STORE_SEED: &[u8] = b"Store";
 pub const PEER_SEED: &[u8] = b"Peer";
 

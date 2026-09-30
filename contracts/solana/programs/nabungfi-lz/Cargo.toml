@@ -10,6 +10,7 @@ name = "nabungfi_lz"
 
 [features]
 default = []
+devnet = ["nabungfi/devnet"]
 cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []

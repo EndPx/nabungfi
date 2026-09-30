@@ -5,8 +5,9 @@ The public repository contains the shared package, onchain source and tests, tec
 | Included | Purpose |
 | --- | --- |
 | `shared/` | Common TypeScript model, response types and tests |
-| `contracts/evm/` | Base vault, Aave adapter, tests and dependency pins |
+| `contracts/evm/` | USDC vault, optional Aave adapter, Foundry script/tests/mocks, public environment template and dependency pins |
 | `contracts/solana/` | Anchor program, tests, public account fixture and Cargo lockfile |
+| `contracts/deployments/` | Public testnet receipts, component addresses, source verification and superseded records; no keys or signed transaction blobs |
 | `docs/API_CONTRACT.md` | Reference API contract for shared-model consumers |
 | `docs/MULTI_GOAL_REQUIREMENTS.md` | Required behavior and isolation for simultaneous savings goals |
 | `docs/CONTRACT_PLAN.md` | Contract-first milestones and local isolation evidence |

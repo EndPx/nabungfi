@@ -1,6 +1,6 @@
 # LayerZero integration: implementation and evidence
 
-Rechecked 30 September 2026. The code integrates LayerZero V2 OApp sending/receiving for the Solana–Base goal pair. It is locally verified, not a deployed or audited financial product. Native funds and strategy receipts remain on their original chains.
+Rechecked 30 September 2026. The code integrates LayerZero V2 OApp sending/receiving for the Solana–Base goal pair. Public testnet component deployment has begun; [receipt manifests](../contracts/deployments/) record per-network execution and source-verification status. The product is not audited or operational across multiple EVM peers. Native funds and strategy receipts remain on their original chains.
 
 ## Components
 
@@ -50,11 +50,11 @@ Callers fund messaging fees. Solana send/quote instructions require the correct 
 
 | Check | Result |
 | --- | --- |
-| Base local suite | 45 passing tests, including 9 OApp/codec/factory tests, 6 multi-goal tests and the existing 256-case conservation fuzz test |
-| Pinned Base Aave fork | 2 passing tests at block 51,893,120; artificial balances and local time advance |
-| Solana native | 35 core tests + 4 transport tests passing; the test-only message library also passes its program-ID check |
+| EVM local suite | 60 passing tests, including 12 deployment/configuration tests, 3 cash-mode regressions, 9 OApp/codec/factory tests and 6 multi-goal cases; conservation fuzzing runs 256 cases |
+| Pinned EVM forks | 17 passing cases: 15 across three testnets and 2 retained Base mainnet cases; artificial balances, local time and injected application authentication are explicitly labeled |
+| Solana native | Default 35 core + 4 transport; Devnet 38 core + 4 transport; the test-only library passes its program-ID check in both |
 | Solana SBF | Both core and transport compiled with Agave 4.3.0 / platform-tools 1.57 |
-| LiteSVM | 6 passing SBF transaction scenarios using an actual LayerZero Endpoint bytecode snapshot; send/quote use a test-only fixed-fee library |
+| LiteSVM | Fresh artifacts pass 6 default and 7 Devnet scenarios using the actual Endpoint snapshot; send/quote use a test-only fixed-fee library |
 | Rust checks | Clippy with warnings denied, formatting and IDL-feature compilation pass |
 
 The runtime cases exercise bootstrap authority and Endpoint registration/delegate sealing, bad payload hash/peer/goal rejection, replay, SPL-token deposit/claim, progress isolation, achievement with surplus, and out-of-order abort recovery with transaction rollback. The send-side scenario checks that the Core Goal supplies the registration, PREPARE and COMMIT bytes, that quote matches the fixed fee, the payer funds it, and underpayment rolls back the Endpoint nonce.
@@ -89,6 +89,6 @@ The SVM test enforces the fixture hash. A future Endpoint upgrade requires an ex
 
 ## Remaining release work
 
-Actual deployment identities and environment/token configuration, explicit security-stack verification before sealing, funded two-way testnet messages and fee/compute measurements, a keeper/retry operator flow, current Kamino valuation and supply/redeem CPI evidence, upgrade-authority policy, and independent review remain required. Current program IDs are local development identities. No public deployment or real-fund transaction was performed.
+Public testnet deployment profiles now distinguish owned Devnet program identities from the default local identities. EVM active components use canonical Circle USDC; Base/Ethereum and Solana Devnet are cash-only, while Arbitrum is Aave-enabled. Receipt manifests record actual deployments; their existence does not establish library/DVN/Executor configuration or delivered messages. Explicit security-stack verification before sealing, two-way delivery and fee/compute measurements, keeper/retry operations, actual Kamino execution, upgrade-authority policy, and independent release review remain required. No mainnet transaction or live financial yield is claimed.
 
 The implemented coordinator/transport has one registered EVM peer (Base). Ethereum, Arbitrum and Robinhood Chain are additional product/track candidates; supporting several EVM peers in the same goal requires a registered peer set, per-peer sequences/readiness and reserve aggregation. The current domain `2` must not be reused to combine several chains silently.

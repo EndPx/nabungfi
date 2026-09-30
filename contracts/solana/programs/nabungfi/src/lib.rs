@@ -1,9 +1,12 @@
 #![allow(unexpected_cfgs)]
 
-use anchor_lang::{prelude::*, solana_program::program::invoke_signed};
+use anchor_lang::prelude::*;
+#[cfg(not(feature = "devnet"))]
+use anchor_lang::solana_program::program::invoke_signed;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, TransferChecked};
 use solana_sha256_hasher::hashv;
 
+#[cfg(not(feature = "devnet"))]
 pub mod kamino;
 pub mod state;
 pub mod transport_state;
@@ -11,18 +14,41 @@ pub mod wire;
 use state::*;
 
 // Local development identity only; no deployment has been made with this ID.
+#[cfg(not(feature = "devnet"))]
 declare_id!("Fg6PaFpoGXkYsidMpWxqSWY6W2BeZ7FEfcYkgMQHGKqF");
+#[cfg(feature = "devnet")]
+declare_id!("3tPb29y74ycYSHa6Pz1tsUTsnaD6Xh9HPEzFKtWnwXM4");
 
+#[cfg(not(feature = "devnet"))]
 pub const USDC_MINT: Pubkey = pubkey!("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+#[cfg(feature = "devnet")]
+pub const USDC_MINT: Pubkey = pubkey!("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
+#[cfg(not(feature = "devnet"))]
 pub const KAMINO_MARKET: Pubkey = pubkey!("7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF");
+#[cfg(not(feature = "devnet"))]
 pub const KAMINO_RESERVE: Pubkey = pubkey!("D6q6wuQSrifJKZYpR1M8R4YawnLDtDsMmWM1NbBmgJ59");
 // These are recorded in this legacy reserve. The current SDK's derived-PDA
 // convenience helpers produce different addresses and must not be used here.
+#[cfg(not(feature = "devnet"))]
 pub const KAMINO_COLLATERAL_MINT: Pubkey = pubkey!("B8V6WVjPxW1UGwVDfxH2d2r8SyT4cqn7dQRK6XneVa7D");
+#[cfg(not(feature = "devnet"))]
 pub const KAMINO_LIQUIDITY_SUPPLY: Pubkey = pubkey!("Bgq7trRgVMeq33yt235zM2onQ4bRDBsY5EWiTetF4qw6");
+// Cash-only Devnet profile: an unmintable, zero-supply SPL mint is an inert
+// commitment for all strategy fields. These addresses are NOT Kamino accounts.
+#[cfg(feature = "devnet")]
+pub const KAMINO_COLLATERAL_MINT: Pubkey = pubkey!("2qBnsAsYjJ1cBaWQ28kChUo4dtMkYynetMY8FUTe4p3E");
+#[cfg(feature = "devnet")]
+pub const KAMINO_MARKET: Pubkey = KAMINO_COLLATERAL_MINT;
+#[cfg(feature = "devnet")]
+pub const KAMINO_RESERVE: Pubkey = KAMINO_COLLATERAL_MINT;
+#[cfg(feature = "devnet")]
+pub const KAMINO_LIQUIDITY_SUPPLY: Pubkey = KAMINO_COLLATERAL_MINT;
 // Local development identity of programs/nabungfi-lz; no public deployment is claimed.
 // Replace both program identities/configuration before a reviewed network deployment.
+#[cfg(not(feature = "devnet"))]
 pub const TRANSPORT_PROGRAM: Pubkey = Pubkey::new_from_array([77; 32]);
+#[cfg(feature = "devnet")]
+pub const TRANSPORT_PROGRAM: Pubkey = pubkey!("Fez821Y7EAC8rLNqG1WeVmVAcSZPKtd3QuQxFuAiCc5A");
 
 #[program]
 pub mod nabungfi {
@@ -38,6 +64,8 @@ pub mod nabungfi {
             NabungError::InvalidConfig
         );
         require!(ctx.accounts.usdc_mint.decimals == 6, NabungError::WrongMint);
+        #[cfg(feature = "devnet")]
+        validate_inert_collateral(&ctx.accounts.collateral_mint)?;
         let owner = ctx.accounts.owner.key();
         let key = ctx.accounts.goal.key();
         let config_hash = configuration_hash(key, owner, &args);
@@ -208,95 +236,120 @@ pub mod nabungfi {
     /// No automatic yield allocation policy is implied: the owner explicitly
     /// signs the amount and minimum cToken output while the goal is locked.
     pub fn supply_kamino(ctx: Context<KaminoPosition>, amount: u64, min_shares: u64) -> Result<()> {
-        require!(ctx.accounts.goal.linked, NabungError::GoalNotRegistered);
-        require_keys_eq!(
-            ctx.accounts.caller.key(),
-            ctx.accounts.goal.owner,
-            NabungError::InvalidConfig
-        );
-        require!(
-            ctx.accounts.goal.phase == Phase::Locked,
-            NabungError::WrongPhase
-        );
-        require!(amount > 0 && min_shares > 0, NabungError::ZeroAmount);
-        require!(
-            amount <= ctx.accounts.usdc_vault.amount,
-            NabungError::InsufficientFunds
-        );
-        kamino::validate(ctx.accounts, true)?;
-        let before_usdc = ctx.accounts.usdc_vault.amount;
-        let before_shares = ctx.accounts.shares.amount;
-        let ix = kamino::deposit_instruction(ctx.accounts, amount);
-        kamino::invoke(ctx.accounts, ix)?;
-        ctx.accounts.usdc_vault.reload()?;
-        ctx.accounts.shares.reload()?;
-        require!(
-            before_usdc.checked_sub(ctx.accounts.usdc_vault.amount) == Some(amount),
-            NabungError::UnexpectedTokenMovement
-        );
-        let received = ctx
-            .accounts
-            .shares
-            .amount
-            .checked_sub(before_shares)
-            .ok_or(NabungError::UnexpectedTokenMovement)?;
-        require!(received >= min_shares, NabungError::MinimumNotReceived);
-        emit!(StrategyMovement {
-            goal: ctx.accounts.goal.key(),
-            supply: true,
-            usdc: amount,
-            shares: received
-        });
-        Ok(())
+        #[cfg(feature = "devnet")]
+        {
+            let _ = (ctx, amount, min_shares);
+            err!(NabungError::StrategyDisabled)
+        }
+        #[cfg(not(feature = "devnet"))]
+        {
+            require!(ctx.accounts.goal.linked, NabungError::GoalNotRegistered);
+            require_keys_eq!(
+                ctx.accounts.caller.key(),
+                ctx.accounts.goal.owner,
+                NabungError::InvalidConfig
+            );
+            require!(
+                ctx.accounts.goal.phase == Phase::Locked,
+                NabungError::WrongPhase
+            );
+            require!(amount > 0 && min_shares > 0, NabungError::ZeroAmount);
+            require!(
+                amount <= ctx.accounts.usdc_vault.amount,
+                NabungError::InsufficientFunds
+            );
+            kamino::validate(ctx.accounts, true)?;
+            let before_usdc = ctx.accounts.usdc_vault.amount;
+            let before_shares = ctx.accounts.shares.amount;
+            let ix = kamino::deposit_instruction(ctx.accounts, amount);
+            kamino::invoke(ctx.accounts, ix)?;
+            ctx.accounts.usdc_vault.reload()?;
+            ctx.accounts.shares.reload()?;
+            require!(
+                before_usdc.checked_sub(ctx.accounts.usdc_vault.amount) == Some(amount),
+                NabungError::UnexpectedTokenMovement
+            );
+            let received = ctx
+                .accounts
+                .shares
+                .amount
+                .checked_sub(before_shares)
+                .ok_or(NabungError::UnexpectedTokenMovement)?;
+            require!(received >= min_shares, NabungError::MinimumNotReceived);
+            emit!(StrategyMovement {
+                goal: ctx.accounts.goal.key(),
+                supply: true,
+                usdc: amount,
+                shares: received
+            });
+            Ok(())
+        }
     }
 
     /// The owner may recall funds while locked. During preparation, anyone can
     /// help redeem; all proceeds return to this goal's locked USDC account.
     pub fn redeem_kamino(ctx: Context<KaminoPosition>, shares: u64, min_usdc: u64) -> Result<()> {
-        let goal = &ctx.accounts.goal;
-        require!(
-            goal.phase == Phase::Locked || goal.phase == Phase::Preparing,
-            NabungError::WrongPhase
-        );
-        require!(!goal.local_ready, NabungError::AlreadyReady);
-        if goal.phase == Phase::Locked {
-            require_keys_eq!(
-                ctx.accounts.caller.key(),
-                goal.owner,
-                NabungError::InvalidConfig
-            );
+        #[cfg(feature = "devnet")]
+        {
+            let _ = (ctx, shares, min_usdc);
+            err!(NabungError::StrategyDisabled)
         }
-        require!(shares > 0 && min_usdc > 0, NabungError::ZeroAmount);
-        require!(
-            shares <= ctx.accounts.shares.amount,
-            NabungError::InsufficientFunds
-        );
-        kamino::validate(ctx.accounts, false)?;
-        let before_usdc = ctx.accounts.usdc_vault.amount;
-        let before_shares = ctx.accounts.shares.amount;
-        let ix = kamino::redeem_instruction(ctx.accounts, shares);
-        kamino::invoke(ctx.accounts, ix)?;
-        ctx.accounts.usdc_vault.reload()?;
-        ctx.accounts.shares.reload()?;
-        require!(
-            before_shares.checked_sub(ctx.accounts.shares.amount) == Some(shares),
-            NabungError::UnexpectedTokenMovement
-        );
-        let received = ctx
-            .accounts
-            .usdc_vault
-            .amount
-            .checked_sub(before_usdc)
-            .ok_or(NabungError::UnexpectedTokenMovement)?;
-        require!(received >= min_usdc, NabungError::MinimumNotReceived);
-        emit!(StrategyMovement {
-            goal: ctx.accounts.goal.key(),
-            supply: false,
-            usdc: received,
-            shares
-        });
-        Ok(())
+        #[cfg(not(feature = "devnet"))]
+        {
+            let goal = &ctx.accounts.goal;
+            require!(
+                goal.phase == Phase::Locked || goal.phase == Phase::Preparing,
+                NabungError::WrongPhase
+            );
+            require!(!goal.local_ready, NabungError::AlreadyReady);
+            if goal.phase == Phase::Locked {
+                require_keys_eq!(
+                    ctx.accounts.caller.key(),
+                    goal.owner,
+                    NabungError::InvalidConfig
+                );
+            }
+            require!(shares > 0 && min_usdc > 0, NabungError::ZeroAmount);
+            require!(
+                shares <= ctx.accounts.shares.amount,
+                NabungError::InsufficientFunds
+            );
+            kamino::validate(ctx.accounts, false)?;
+            let before_usdc = ctx.accounts.usdc_vault.amount;
+            let before_shares = ctx.accounts.shares.amount;
+            let ix = kamino::redeem_instruction(ctx.accounts, shares);
+            kamino::invoke(ctx.accounts, ix)?;
+            ctx.accounts.usdc_vault.reload()?;
+            ctx.accounts.shares.reload()?;
+            require!(
+                before_shares.checked_sub(ctx.accounts.shares.amount) == Some(shares),
+                NabungError::UnexpectedTokenMovement
+            );
+            let received = ctx
+                .accounts
+                .usdc_vault
+                .amount
+                .checked_sub(before_usdc)
+                .ok_or(NabungError::UnexpectedTokenMovement)?;
+            require!(received >= min_usdc, NabungError::MinimumNotReceived);
+            emit!(StrategyMovement {
+                goal: ctx.accounts.goal.key(),
+                supply: false,
+                usdc: received,
+                shares
+            });
+            Ok(())
+        }
     }
+}
+
+#[cfg(feature = "devnet")]
+fn validate_inert_collateral(mint: &Mint) -> Result<()> {
+    require!(
+        mint.supply == 0 && mint.mint_authority.is_none() && mint.freeze_authority.is_none(),
+        NabungError::WrongMint
+    );
+    Ok(())
 }
 
 fn valid_evm_address(address: [u8; 32]) -> bool {
@@ -439,6 +492,7 @@ pub struct Claim<'info> {
 }
 
 #[derive(Accounts)]
+#[cfg(not(feature = "devnet"))]
 pub struct KaminoPosition<'info> {
     pub caller: Signer<'info>,
     #[account(seeds = [b"goal", goal.owner.as_ref(), &goal.goal_id], bump = goal.bump)]
@@ -472,6 +526,16 @@ pub struct KaminoPosition<'info> {
     #[account(address = anchor_lang::solana_program::sysvar::instructions::ID)]
     pub instructions_sysvar: UncheckedAccount<'info>,
     pub token_program: Program<'info, Token>,
+}
+
+/// Devnet strategy entrypoints reject explicitly without requiring unavailable
+/// Kamino reserve accounts. The goal still has the same owner/PDA checks.
+#[cfg(feature = "devnet")]
+#[derive(Accounts)]
+pub struct KaminoPosition<'info> {
+    pub caller: Signer<'info>,
+    #[account(seeds = [b"goal", goal.owner.as_ref(), &goal.goal_id], bump = goal.bump)]
+    pub goal: Box<Account<'info, Goal>>,
 }
 
 #[event]

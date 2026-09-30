@@ -1,8 +1,8 @@
-# NabungFi Base goal vault prototype
+# NabungFi EVM contracts
 
-This package implements a non-upgradeable, single-owner, single-goal USDC vault with an actual Aave V3 supply/withdraw integration. Funds and aTokens remain owned by the vault. The prototype has no early payout, target edit, timeout escape, admin sweep, borrowing or arbitrary-call method.
+This package implements non-upgradeable, single-owner, single-goal USDC vaults. Aave-enabled vaults own their funds and aTokens; explicit cash-only vaults disable earning and hold USDC directly. The prototype has no early payout, target edit, timeout escape, admin sweep, borrowing or arbitrary-call method.
 
-**Rechecked on 30 September 2026:** 45 local tests and two Base mainnet fork tests pass, including 256 conservation fuzz runs, six same-owner multi-goal cases and nine LayerZero OApp/codec/factory cases. The forks use actual USDC/Aave bytecode at block **51,893,120**, artificial balances and local time advance. The EVM endpoint is a labeled test harness. No public deployment or real-fund transaction is claimed. [Transport implementation and proof boundaries](../../docs/LAYERZERO_INTEGRATION.md).
+The local suite covers accounting, transport, multi-goal isolation, deployment guards and the Foundry deployment entrypoint. Conservation fuzzing runs 256 cases. The original Base mainnet fork regression uses actual USDC/Aave bytecode at block **51,893,120**, artificial balances and local time advance. The local EVM endpoint is a labeled test harness. Router/factory components are also deployed on three public testnets, unsealed with zero goals; deployment does not prove messaging or a savings lifecycle. [Deployment receipts](../deployments/) and [transport proof boundaries](../../docs/LAYERZERO_INTEGRATION.md).
 
 `test/MultiGoalIsolation.t.sol` checks separate car/laptop/house vaults for one owner: receipt accounting, interest/loss attribution, completion and claims, rejected cross-goal commands, independent rounds/counters, and a cash-funded goal completing while another goal is illiquid. These scenarios use local mock tokens, a mock pool and a mock transport; they do not verify production message authenticity or goal-pair registration. See the [contract-first plan](../../docs/CONTRACT_PLAN.md).
 
@@ -10,7 +10,7 @@ This package implements a non-upgradeable, single-owner, single-goal USDC vault 
 
 Requirements: Foundry on Linux/macOS, or WSL Ubuntu on Windows. Verification used Foundry **1.8.3** and Solidity **0.8.30**.
 
-Run `pnpm install --frozen-lockfile` from the repository root for the pinned LayerZero and OpenZeppelin packages. Install the test-only [forge-std v1.16.2 ZIP](https://codeload.github.com/foundry-rs/forge-std/zip/refs/tags/v1.16.2), verify its SHA-256 below, and extract it so this path matches `foundry.toml`:
+Run `pnpm install --frozen-lockfile` from the repository root for the pinned LayerZero and OpenZeppelin packages. Install the test-only [forge-std v1.16.2 ZIP](https://codeload.github.com/foundry-rs/forge-std/zip/refs/tags/v1.16.2), verify its SHA-256 below, and extract it so this path matches `remappings.txt`:
 
 ```text
 contracts/evm/lib/forge-std-archive/forge-std-1.16.2/src/
@@ -35,6 +35,44 @@ On Windows, enter WSL and navigate to the checkout under `/mnt/` before running 
 | LayerZero OApp / protocol libraries | npm `0.4.1` / `3.0.168` | Integrity pinned in root `pnpm-lock.yaml` |
 
 Upstream dependency distributions retain their licenses. OpenZeppelin provides ERC20 interfaces, SafeERC20 and ReentrancyGuard; the official LayerZero OApp supplies endpoint/peer checks and send/quote integration. forge-std is test-only.
+
+## Layout and environment
+
+```text
+src/              Savings contracts, adapter, router, factory, wire codec
+test/             Unit and configuration rejection tests
+test/mocks/       Test-only USDC, Aave and messaging harnesses
+test/fork/        Pinned RPC-fork integration tests
+script/           Foundry deployment entrypoint and configuration helper
+remappings.txt    Dependency import mappings
+foundry.toml      Build, RPC aliases and Etherscan V2 configuration
+.env.example      Public configuration and blank API-key placeholder
+.env              Local configuration and API key; ignored by Git
+```
+
+This follows the directory conventions of [ATFi smart-contract](https://github.com/ATFi-Event/smart-contract/tree/51c0391c02dec20ddeed83a011dc9c97b54dfc3d), reviewed at that pinned revision. NabungFi retains its original financial contracts, compiler version and dependency paths; no ATFi financial logic or private-key deployment convention is copied.
+
+Copy `.env.example` to `.env` only if the local file does not already exist. Foundry loads it from this package directory. Set `ETHERSCAN_API_KEY` locally; the example contains no secret. Network prefixes are `BASE_SEPOLIA`, `ARBITRUM_SEPOLIA`, and `ETHEREUM_SEPOLIA`. Each has its own RPC, EID, canonical token, strategy mode, deployed addresses and fork block. `TESTNET_CHAIN_ID` selects the deployment environment, while `SOLANA_DEVNET_*` binds the public core/transport/Store identities and explicit cash-only strategy commitments.
+
+Active `*_USDC` configuration uses [Circle's official USDC testnet contracts](https://developers.circle.com/stablecoins/usdc-contract-addresses). Base Sepolia's `0x036C…CF7e` and Ethereum Sepolia's `0x1c7D…7238` differ from the older Aave test-pool tokens in the original deployments. Their active `*_CASH_ONLY=true` configuration sets both pool and receipt to zero, explicitly disabling earning. Arbitrum Sepolia's Circle USDC matches its Aave asset and uses `*_CASH_ONLY=false`. All three active component stacks use the same revised source. Older deployment and Aave fork references remain under `*_LEGACY_*` and [deployments/legacy](../deployments/legacy/); the older Base/Ethereum stacks must never be presented as canonical Circle-USDC deployments.
+
+## Foundry deployment tooling
+
+The components already have public receipts. The recorded expected nonces have been consumed by those deployments, so an unchanged deployment configuration rejects a repeat. For a new reviewed dry-run plan, first check `cast nonce <deployer> --rpc-url <network>` and the pending nonce, then set that network's expected nonce in the local `.env`. The following is a **dry run**, with no network broadcast:
+
+```sh
+TESTNET_CHAIN_ID=84532 forge script script/DeployNabungFi.s.sol:DeployNabungFi \
+  --rpc-url base-sepolia \
+  --sender 0xc82f469Aa95a2f7792300c8d11230e9023A98600 -vv
+```
+
+Use chain ID `421614` with `arbitrum-sepolia`, or `11155111` with `ethereum-sepolia`. Configuration validates the actual chain, Endpoint EID and code, official Circle USDC identity and decimals, strategy mode, aToken underlying/pool when enabled, exact reviewed Devnet profile, and expected sender nonce. The script deploys a router and its internal factory, leaves the route unsealed, and never creates or funds a goal.
+
+For an explicitly authorized **new** deployment after reviewing the dry-run plan and fee budget, sign through the existing Foundry keystore by adding `--account deployer-wallet --password '' --broadcast`. No `PRIVATE_KEY` environment variable is required. Check the latest and pending sender nonces before updating `<NETWORK>_EXPECTED_DEPLOYER_NONCE`; a stale nonce rejects the script. Foundry writes its transaction journal under `broadcast/`, which remains local and ignored. If a send is interrupted, reconcile its hash, receipt, sender nonce and deployed code before attempting any retry; do not rerun an unknown or pending deployment. Existing local transaction journals and public receipt manifests are retained after the tooling cleanup.
+
+Solana Devnet is currently cash-only: the four strategy commitment fields identify an inert mint, not a working Kamino reserve. The EVM protocol still uses application domains Solana `1` and Base `2`; Arbitrum/Ethereum copies remain staging until multi-peer support exists. None of these scripts configures DVNs, message libraries, fee workers, or irreversible sealing.
+
+After a deployment, verify source using the original compiler settings and exact constructor arguments from its manifest. Foundry's Etherscan V2 aliases read the API key from the local environment; never put its value in a command or public document.
 
 ## Local lifecycle and accounting
 

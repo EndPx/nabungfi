@@ -1,0 +1,120 @@
+{
+  "network": "ethereum-sepolia",
+  "chainId": 11155111,
+  "eid": 40161,
+  "rpc": "https://ethereum-sepolia-rpc.publicnode.com",
+  "deployer": "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+  "nonce": 0,
+  "predictedRouter": "0xd2A8f6D7645F53aB23dC3EcB146a196026F964DA",
+  "endpoint": "0x6edce65403992e310a62460808c4b910d972f10f",
+  "asset": "0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8",
+  "pool": "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+  "receipt": "0x16dA4541aD1807f4443d92D26044C1147406EB80",
+  "solana": {
+    "program": "0x2ae188a7b7cc530e87ee0df25e73fb9056462df6ebd65334555a9ef98f8829e3",
+    "usdcMint": "0x3b442cb3912157f13a933d0134282d032b5ffecd01a2dbf1b7790608df002ea7",
+    "transportProgram": "0xd9beb19dc5388856fe3b69f65d61dcb5965b3ed5c21a54e54ab54dda717813c5",
+    "oappStore": "0x454257dcb2f8449ec59059f823c55d3cc76f8aa49e6d9777e9545bbbfb30d382",
+    "kaminoMarket": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "kaminoReserve": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "collateralMint": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5",
+    "liquiditySupply": "0x1b33c4559a2affe7d69e3aa38e66394675c1b3ea388c057e202cfb7946bf0ee5"
+  },
+  "gasEstimate": 6219728,
+  "gasLimit": 7152688,
+  "gasPriceWei": "2069362918",
+  "maximumExecutionCostWei": "14801507311223584",
+  "balanceBeforeWei": "50000000000000000",
+  "creationSha256": "1b4d535d0248d0e7f191b4057a146005b7887bca2a832eb3eac98217a0e1f864",
+  "status": "confirmed-unsealed-zero-goals",
+  "transactionHash": "0xb927453bca7f5025bf7d607ff32f1063a145d07190f0b64b87eb683439b5fb20",
+  "transactionReceipt": {
+    "type": "0x0",
+    "status": "0x1",
+    "cumulativeGasUsed": "0xa3b2a5",
+    "logs": [
+      {
+        "address": "0xd2a8f6d7645f53ab23dc3ecb146a196026f964da",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000c82f469aa95a2f7792300c8d11230e9023a98600"
+        ],
+        "data": "0x",
+        "blockHash": "0x7edb0c9d3f7e4bb9f619e3e5ddc0340c90e00e8fe8379285e161938e856913be",
+        "blockNumber": "0xb4426a",
+        "blockTimestamp": "0x6abcc8dc",
+        "transactionHash": "0xb927453bca7f5025bf7d607ff32f1063a145d07190f0b64b87eb683439b5fb20",
+        "transactionIndex": "0x1b",
+        "logIndex": "0x31",
+        "removed": false
+      },
+      {
+        "address": "0x6edce65403992e310a62460808c4b910d972f10f",
+        "topics": [
+          "0x6ee10e9ed4d6ce9742703a498707862f4b00f1396a87195eb93267b3d7983981"
+        ],
+        "data": "0x000000000000000000000000d2a8f6d7645f53ab23dc3ecb146a196026f964da000000000000000000000000c82f469aa95a2f7792300c8d11230e9023a98600",
+        "blockHash": "0x7edb0c9d3f7e4bb9f619e3e5ddc0340c90e00e8fe8379285e161938e856913be",
+        "blockNumber": "0xb4426a",
+        "blockTimestamp": "0x6abcc8dc",
+        "transactionHash": "0xb927453bca7f5025bf7d607ff32f1063a145d07190f0b64b87eb683439b5fb20",
+        "transactionIndex": "0x1b",
+        "logIndex": "0x32",
+        "removed": false
+      },
+      {
+        "address": "0xd2a8f6d7645f53ab23dc3ecb146a196026f964da",
+        "topics": [
+          "0x238399d427b947898edb290f5ff0f9109849b1c3ba196a42e35f00c50a54b98b"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000009ce8454257dcb2f8449ec59059f823c55d3cc76f8aa49e6d9777e9545bbbfb30d382",
+        "blockHash": "0x7edb0c9d3f7e4bb9f619e3e5ddc0340c90e00e8fe8379285e161938e856913be",
+        "blockNumber": "0xb4426a",
+        "blockTimestamp": "0x6abcc8dc",
+        "transactionHash": "0xb927453bca7f5025bf7d607ff32f1063a145d07190f0b64b87eb683439b5fb20",
+        "transactionIndex": "0x1b",
+        "logIndex": "0x33",
+        "removed": false
+      }
+    ],
+    "logsBloom": "0x00000000100000000000000000000000000000000000000000800000000000000000000000000000200000000000000000040002000000000800000000000000000000000000000000000000000000000001000000000000000000000000000000000000020000000200000000000800000000000000000000000400400000400000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000400000000000000000400000000000000000000000000000000040000000020000000000000000000000000000000000000000000000000000000000000040000",
+    "transactionHash": "0xb927453bca7f5025bf7d607ff32f1063a145d07190f0b64b87eb683439b5fb20",
+    "transactionIndex": "0x1b",
+    "blockHash": "0x7edb0c9d3f7e4bb9f619e3e5ddc0340c90e00e8fe8379285e161938e856913be",
+    "blockNumber": "0xb4426a",
+    "gasUsed": "0x5e23fc",
+    "effectiveGasPrice": "0x7b57f8e6",
+    "from": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+    "to": null,
+    "contractAddress": "0xd2a8f6d7645f53ab23dc3ecb146a196026f964da"
+  },
+  "router": "0xd2a8f6d7645f53ab23dc3ecb146a196026f964da",
+  "factory": "0xa61d542a8d1a479b61c58062de9791c485c85308",
+  "executionCostWei": "12767133181441128",
+  "balanceAfterWei": "37232866818558872",
+  "l1AdditionalFeeWei": "0",
+  "totalReceiptCostWei": "12767133181441128",
+  "deployedCodeSha256": {
+    "router": "990616e83f951c45b0735a76e62d63ccf7469e1a8dc3b84e45e241e916e9a97a",
+    "factory": "282938776a484100a8dfb003184c7c3e9470d549d4649578ef32f71c5b041f11"
+  },
+  "limits": [
+    "No goal created or funded; router is unsealed.",
+    "No public LayerZero pathway configured or message delivered.",
+    "Solana profile is cash-only; Kamino earning is disabled.",
+    "Wire v1 uses Solana/Base domains only; additional EVM copies are staging, not integrated multi-peer deployments."
+  ],
+  "sourceVerification": {
+    "router": {
+      "status": "verified",
+      "explorerUrl": "https://sepolia.etherscan.io/address/0xd2a8f6d7645f53ab23dc3ecb146a196026f964da#code",
+      "result": "Pass - Verified"
+    },
+    "factory": {
+      "status": "verified",
+      "explorerUrl": "https://sepolia.etherscan.io/address/0xa61d542a8d1a479b61c58062de9791c485c85308#code",
+      "result": "Pass - Verified"
+    }
+  }
+}

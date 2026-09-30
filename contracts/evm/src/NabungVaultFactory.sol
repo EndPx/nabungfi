@@ -35,7 +35,8 @@ contract NabungVaultFactory {
     error InvalidGoal();
 
     constructor(address asset_, address pool_, address receipt_, SolanaDeployment memory solana_) {
-        if (asset_.code.length == 0 || pool_.code.length == 0 || receipt_.code.length == 0) {
+        bool cashOnly = pool_ == address(0) && receipt_ == address(0);
+        if (asset_.code.length == 0 || (!cashOnly && (pool_.code.length == 0 || receipt_.code.length == 0))) {
             revert InvalidGoal();
         }
         router = msg.sender;
