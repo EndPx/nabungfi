@@ -2,7 +2,7 @@
 
 The separate protocol v2 deployment completed one real goal across **Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia** on 30 September 2026 UTC (1 October in Jakarta). Target: 10 USDC. Deposits and realized reserves: 4 + 2 + 2 + 2 USDC. All funds were claimed in partial and remaining claims. Twenty-one public LayerZero messages were delivered, including all three post-claim balance updates to zero. [Receipts and final states](../contracts/deployments/multichain/live-goal.json).
 
-This is an operator-driven cash proof. It does not demonstrate yield, an unattended keeper, connected-wallet UI or three concurrent public goals. The local isolation suites cover independent goals. CRE is not used; Robinhood remains deferred.
+This document preserves the original operator-driven cash proof. The newer [concurrent-goal runbook](CONCURRENT_GOALS_RUNBOOK.md) and [100-message evidence](../contracts/deployments/multichain/concurrent-goals-live.json) demonstrate a local daemon coordinating three same-owner goals and explicit Root claims. Neither run demonstrates earning, connected-wallet UI or an always-on hosted service. CRE is absent; Robinhood is deferred.
 
 ## Identities and trust
 

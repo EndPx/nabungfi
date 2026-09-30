@@ -1,6 +1,6 @@
 # LayerZero integration: implementation and evidence
 
-Rechecked 1 October 2026. One v2 goal completed registration, 4+2+2+2-USDC deposits, all-peer reserve-based achievement and partial/full claims across Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. **All 21 LayerZero messages reached DELIVERED**, including each EVM peer's post-claim zero-balance report. [Public lifecycle evidence](../contracts/deployments/multichain/live-goal.json), [component manifests](../contracts/deployments/multichain/) and [operator runbook](MULTICHAIN_TESTNET_RUNBOOK.md) identify transactions and terminal state. Funds stayed on their original chains. This is an operator-driven testnet cash proof, not an audit, unattended service or earning demonstration.
+Rechecked 1 October 2026. Three concurrently funded same-owner goals completed across Solana/Base/Arbitrum/Ethereum testnets: car 8 / laptop 4 / house 12 USDC. A local WSL daemon journaled118 coordination intents and **100 actual LayerZero messages DELIVERED**; Root separately signed12 claims. All 12 vaults ended zero with permanent achieved totals and owner20 USDC per chain. [Concurrent evidence](../contracts/deployments/multichain/concurrent-goals-live.json), [chronology/runbook](CONCURRENT_GOALS_RUNBOOK.md). The earlier operator-driven 10-USDC/21-message [v2 proof](../contracts/deployments/multichain/live-goal.json) remains separate. Cash only; no hosted-service, earning or audit claim follows.
 
 ## Active v2 components
 
@@ -41,7 +41,7 @@ The Solana dependency is upstream `solana/anchor-latest`, not the old Anchor 0.2
 7. Authenticate peer EID/OApp and complete goal/leaf/owner/vault identity before Endpoint `clear` and the atomic core CPI. Achievement requires local readiness, its cross-slot boundary, **every** participant READY for that round, and checked reserve sum at least equal to target. Missing or illiquid peers block completion. A zero-reserve participant still must register and become READY.
 8. Deliver COMMIT to every peer with its exact local reserve and the global achieved sum. Each destination enables only its owner's claims. Partial/full claims never erase achievement. Post-claim progress may decrease without relocking funds.
 
-Callers pay messaging fees. Solana quote/send requires the correct Endpoint/library/worker accounts; EVM sends use quoted native fees and execution options. DVNs verify and Executors deliver packets; the application operator or future keeper decides when to request/send them. Emitting events alone is insufficient delivery.
+Callers pay messaging fees. Solana quote/send requires the correct Endpoint/library/worker accounts; EVM sends use quoted native fees and execution options. DVNs verify and Executors deliver packets; the current application keeper or operator decides when to request/send them. Emitting events alone is insufficient delivery.
 
 The reviewed testnet security stack has one required LayerZero Labs DVN, no optional DVNs and explicit ULN302/Executor configuration. EVM send/receive confirmations are Base **2/10**, Arbitrum **1/10**, Ethereum **2/10**; Solana counterparts match the corresponding direction. This single-operator test stack is not a production quorum. Actual configuration and options are recorded in component/lifecycle manifests.
 
@@ -64,6 +64,7 @@ The reviewed testnet security stack has one required LayerZero Labs DVN, no opti
 | Native Rust | **59 checks passed** in the latest selected verification profile |
 | V2 SBF/LiteSVM | **Six scenarios passed** with fresh binaries and the actual Endpoint fixture; packet verification accounts are precommitted locally |
 | Public v2 cash journey | **21 messages DELIVERED**, actual 4+2+2+2-USDC custody, all-peer achievement and partial/full claims |
+| Public concurrent cash/keeper journey | **100 messages DELIVERED**,118 journaled coordination intents, three simultaneous same-owner goals, sibling financial isolation and12 separate Root claims |
 
 Earlier v1 gates included 64 EVM units, 17 retained pinned fork cases plus a configuration fork, native 35+4 default or 38+4 Devnet checks, and six default/seven Devnet SVM scenarios. They remain dated prior results rather than extra new v2 public executions. The [historical v1 manifest](../contracts/deployments/layerzero-solana-base-live.json) records its separate seven-message 4+6-USDC cash proof.
 
@@ -99,6 +100,6 @@ node --test contracts/solana/tests/multichain.svm.test.mjs
 
 ## Remaining product and release work
 
-All four cash balances were claimed, with permanent achievement retained; post-claim EVM snapshots returned to zero. Base/Ethereum/Solana use cash-only profiles. Arbitrum has a compatible Aave adapter but its demonstrated 2 USDC stayed idle. **No earning was demonstrated.**
+The original goal and all three concurrent goals were fully claimed with permanent achievement. Base/Ethereum/Solana are cash-only; Arbitrum's compatible adapter remained idle in these runs. **No earning was demonstrated.**
 
-The shared model, API and UI still simulate one goal and are not connected to these deployed flows. Multiple concurrent public goals, wallet integration, an unattended keeper/indexer, refreshed Kamino valuation/CPI, a demonstrated v2 earning path, investment policy and production security review remain work. Robinhood and Chainlink CRE are not included. No mainnet operations or assurance against all loss scenarios are claimed.
+The shared model/API/UI still simulate one goal and need wallet/collection integration. Local daemon coordination of concurrent public cash goals is proven, including preservation of original intent hashes after restart; pending exact-wire recovery is locally tested and must not be represented as a live undelivered packet surviving shutdown. The recorded local worker is terminal-zero idle; always-on hosting/indexing, refreshed Kamino NAV/CPI, demonstrated earning, investment policy and production security remain work. Robinhood/CRE are absent; no mainnet or general loss assurance is claimed.

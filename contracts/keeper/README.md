@@ -6,6 +6,8 @@ The worker sends registration and registration acknowledgements, absolute USDC b
 
 **Deposits, claims, investment, strategy redemption, goal creation, deployment and route sealing are outside the worker.** EVM strategy receipts must be zero before it automatically prepares or marks ready. This is a cash route; the worker does not demonstrate yield.
 
+The [public concurrent run](../deployments/multichain/concurrent-goals-live.json) exercised three same-owner goals across all four chains: car 8 / laptop 4 / house 12 USDC, 118 journaled worker intents and100 delivered LayerZero messages. Root signed the separate12 claims. All 12 vaults/NAV ended zero with permanent achievement and owner20 USDC per chain. Laptop claims preserved locked sibling financial state. The worker runs locally in WSL and is terminal-zero idle at the recorded endpoint; it is not a hosted always-on service. [Concurrent runbook](../../docs/CONCURRENT_GOALS_RUNBOOK.md).
+
 ## Configure and inspect
 
 Use Node 24 and the workspace's pinned dependencies. The worker imports the existing Solana package; it adds no SDK dependency. Run the signer on Linux/WSL with an existing Foundry encrypted account. Keep the configuration, keypair, password file, journals and original transaction files in ignored local storage.
@@ -44,8 +46,10 @@ A crash after a native budget reservation or private wire has been saved but bef
 
 Fee quotes are capped per message; each chain has a native reserve floor, daily spend cap, gas price and gas limit cap. Budget reservations conservatively include native message value and twice the capped legacy transaction gas cost for L2 overhead; rejected quotes/simulations do not broadcast. RPC reads have bounded timeouts and limited read-only backoff. Raw signed transactions, key material, keystore errors and credential URLs are suppressed from logs.
 
+The public journal's `fee`/`spend` fields are conservative reserved native spend, not actual paid transaction fees. Actual paid costs require public receipts and chain-specific fee accounting; do not sum reservation values and label them realized fees.
+
 Daily spend and action caps are counted by the UTC day on which a reservation is made. A transaction reserved on an earlier day may still execute after midnight. Pending reservations remain in the journal and keep their original bytes and amount; this version does not move them into the next day's budget. Keep the native reserve floor high enough for unresolved transactions and cleanup.
 
 ## Validation boundary
 
-The scheduler/recovery tests cover isolated targets, stale NAV, decreasing balances, zero participants, incomplete READY sets, slot boundaries, abort predecessor/report delivery, ambiguous receipts, private-wire integrity, crash recovery, budget reservation, global lock contention and per-goal isolation. These tests verify worker policy and recovery; a public multi-goal daemon run and genuine LayerZero destination receipts are separately recorded in deployment evidence.
+Scheduler/recovery tests cover isolated targets, stale/decreasing NAV, zero participants, incomplete READY, slots, abort predecessors, ambiguous receipts, wire integrity, budgets and locks. The separate public run proves actual concurrent cash coordination and original-intent preservation across restart. It does not prove live undelivered-across-restart recovery:24 old hashes were preserved while new work expanded the later journal. Pending exact-wire/crash recovery stays a local test boundary. Shared-model/API/UI multi-goal migration, real earning and hosted supervision remain unfinished.

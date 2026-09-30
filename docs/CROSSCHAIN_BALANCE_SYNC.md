@@ -2,6 +2,8 @@
 
 Updated 1 October 2026. V2 stores absolute progress and realized readiness independently for every registered EVM participant. One actual goal completed 4+2+2+2-USDC custody, all-peer achievement and claims across Solana, Base, Arbitrum and Ethereum testnets. All 21 messages were delivered, including post-claim EVM progress to zero. [Public evidence](../contracts/deployments/multichain/live-goal.json), [integration record](LAYERZERO_INTEGRATION.md), [v2 runbook](MULTICHAIN_TESTNET_RUNBOOK.md).
 
+The newer [concurrent-goal evidence](../contracts/deployments/multichain/concurrent-goals-live.json) adds three same-owner cash goals and100 delivered messages coordinated by a local daemon. Laptop completion/claims left car/house financial state exactly unchanged. The earlier baseline and late during-claim snapshot keep their original timestamps; progress observation/sequence differences are disclosed separately and never presented as financial changes. All 12 final balances/NAV are zero with permanent achievement8/4/12 USDC. [Concurrent runbook](CONCURRENT_GOALS_RUNBOOK.md).
+
 ## Responsibility and location
 
 Each vault owns and values its own position. The Solana Goal contains an immutable registered participant set and each participant's progress, lifecycle sequence, readiness and reserve. The source OApp reads that exact goal vault; a caller cannot supply an arbitrary NAV. Local Solana cash is read from its goal-scoped SPL-token account. Funds and strategy receipts stay on their original chains.
@@ -57,7 +59,7 @@ Local native/SVM tests cover replacement/decreases, obsolete sequences, wrong-go
 
 ## Application keeper and LayerZero workers
 
-Application orchestration requests reports, pays bounded fees and reconciles/retries original signatures and semantic intents. LayerZero DVNs verify packets and Executors deliver verified packets. These responsibilities are distinct. The public demonstration used an operator; an unattended keeper/indexer is not implemented as a verified service.
+The local keeper requests reports, pays bounded fees and reconciles original signatures and semantic intents; LayerZero DVNs verify and Executors deliver. The concurrent public run proves autonomous coordination within these boundaries, while Root explicitly signs deposits/claims. It is not a hosted always-on service/indexer. Live restart preserves original hashes; pending exact-wire recovery remains tested locally, without claiming an undelivered packet persisted across live shutdown.
 
 Trigger useful reports after deposits or strategy actions and before preparation. Earning does not automatically emit an application transaction. Do not send a packet per accrued cent or animation frame. A caller-funded refresh can coexist with a keeper, but neither can create strategy liquidity that is unavailable.
 
@@ -75,8 +77,8 @@ After achievement, COMMIT carries the exact reserve for each destination and the
 | --- | --- | --- |
 | EVM valuation/reporting | Actual cash snapshots delivered from all three peers; adapter reads owned Aave balances | Demonstrated v2 earning/allocation/redemption and liquidity recovery |
 | Solana progress | Authenticated independent peer snapshots, including actual post-claim zeroes | Refreshed strategy NAV and complete freshness projection |
-| Completion/claims | One public four-chain cash goal fully claimed with permanent achievement | Multiple simultaneous public goals, live abort/retry/loss scenarios and independent audit |
-| Operations | Explicit routes and operator journals with semantic reconciliation guards | Persistent unattended keeper/indexer, monitoring and fee replenishment |
+| Completion/claims | Original goal plus three concurrently funded cash goals fully claimed; laptop claims preserve locked siblings | Live abort/loss/strategy recovery and independent audit |
+| Operations |118 local-daemon coordination intents / 100 delivered messages, finite budgets and original-intent restart proof | Hosted supervision/indexer, monitoring and resource replenishment |
 | Application | Existing private local prototype/shared model uses one simulated goal | Wallet integration, owner-scoped collection, migration and accurate per-goal display |
 
 Robinhood and Chainlink CRE are not part of this implementation. No live earning or mainnet assurance follows from the cash proof. Historical v1 evidence remains separate and source-pinned at commit b64280b; current domain-hook compilation metadata must not be equated with its deployed binaries.

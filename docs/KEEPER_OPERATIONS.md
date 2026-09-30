@@ -2,6 +2,8 @@
 
 The public Node worker in [contracts/keeper](../contracts/keeper/README.md) coordinates existing protocol-v2 cash goals on Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. Each configured goal has its own immutable identity, target, participant hashes and journal. A portfolio total never authorizes an individual goal's completion.
 
+The [public concurrent proof](../contracts/deployments/multichain/concurrent-goals-live.json) records car 8 / laptop 4 / house 12 USDC, 118 journaled coordination intents and100 delivered messages. The remaining 18 intents are local preparation/readiness/achievement operations rather than extra LayerZero packets. Root separately signed deposits and12 claims; every vault ended zero and owner balances20 USDC per chain. The recorded local WSL daemon remains active and terminal-zero idle, not a hosted service or uptime guarantee. [Reproduction and chronology](CONCURRENT_GOALS_RUNBOOK.md).
+
 ## Authority and financial boundaries
 
 The worker pays message and transaction fees, authenticates registration, publishes absolute balance reports, and services preparation, readiness, achievement and COMMIT delivery. Automatic preparation requires an explicit per-goal owner policy and fresh reports. Every registered participant must be ready in the same round; actual realized reserves must meet the goal's target.
@@ -41,4 +43,6 @@ A stale lock, expired unresolved signature, consumed nonce without the original 
 
 Daily budgets use the UTC reservation day. Per-message caps, per-network gas caps, native reserve floors and per-cycle/day action limits also apply. Balance reports are change-driven with bounded refresh; fully claimed, achieved peers with zero current balances stop refreshing. Native resources must cover both ongoing coordination and eventual owner claims.
 
-The scheduler and recovery regressions are local evidence. Public automatic completion, restart and concurrent-goal isolation require separate genuine source/destination receipts and actual state snapshots; a green test or running process alone does not establish those outcomes.
+Journal fields `fee`/`spend` and budget reservations represent conservative reserved native spend, including gas allowances, not actual paid fees. Compute actual costs from public transaction receipts and chain-specific fee accounting. These native budgets are distinct from savings-USDC conservation.
+
+The live restart preserves24 original intent hashes; the later journal includes29 intents because new work followed. The earlier pending-progress observation was delivered before daemon shutdown, so this is not proof of an undelivered packet surviving live restart. Exact-wire pending recovery/crash cases remain local tests. Concurrent financial isolation is proven separately with real snapshots/claims: an earlier pre-claim baseline is used honestly after the immediate capture failed, and a late capture is labeled during-claims. A running PID alone proves neither successful coordination nor continuous hosting.

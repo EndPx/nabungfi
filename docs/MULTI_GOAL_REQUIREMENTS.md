@@ -1,6 +1,6 @@
 # Multiple savings goals per user
 
-Status: user-confirmed product requirement, 28 September 2026. Update, 1 October: v2 contracts coordinate one publicly completed four-chain cash goal, while multiple-goal application migration remains pending. This is the canonical requirement for multiple simultaneous goals; it is separate from adding several chains to one goal.
+Status: user-confirmed requirement, 28 September 2026. Updated 1 October: three same-owner public cash goals (car 8 / laptop 4 / house 12 USDC) completed across four chains with keeper coordination and isolated claims. [Actual evidence](../contracts/deployments/multichain/concurrent-goals-live.json). Shared-model/API/UI migration remains pending; contract support must not be equated to application support.
 
 ## Product behavior
 
@@ -23,12 +23,12 @@ Each goal has its own identity, target, attributed deposits and net earnings, ch
 
 | Component | Current evidence | Required work |
 | --- | --- | --- |
-| Solana | Owner/goal-ID PDAs isolate goals. V2 has a fixed participant set and per-peer state; native/SVM tests cover multiple goals and account substitution. One four-chain goal has public cash completion/claims. | Prove several simultaneously funded public goals, strategy CPI and independent recovery. |
-| EVM | Domain-bound factories create separate vaults on Base, Arbitrum and Ethereum. All three participated in one public v2 goal and completed cash claims. | Verify several simultaneously funded public goals and real strategy operation. |
+| Solana | Three concurrently funded same-owner goal PDAs completed public cash claims; laptop claims preserved car/house financial state. | Strategy CPI, loss/illiquidity recovery and broader acceptance cases. |
+| EVM | Nine separate vaults on Base/Arbitrum/Ethereum completed goal-specific cash claims with independent target/round/claim state. | Demonstrated earning and broader adversarial/strategy scenarios. |
 | Shared model | `Model.goal` contains one goal. Creating a goal requires the old one to be empty/closed and replaces it. | Introduce an owner-scoped goal collection and goal-targeted transitions. Preserve existing amounts, IDs, request records and history through a versioned migration. |
 | API and persistence | State responses expose one `goal`; no authenticated user portfolio is implemented. | Add goal discovery/detail and creation of additional goals, owner authorization, goal-scoped history and retry reconciliation. |
 | UI | One current goal and one roadster model. | Show a goals overview, add goal while others are active, select a goal and maintain separate detail/build/claim flows. Add appropriate models as assets become available. |
-| Keeper/indexer | Operator-driven four-chain public delivery is proven for one cash goal; no persistent unattended worker is proven. | Schedule/reconcile work per goal/peer, fund fees, and handle stalled operations independently. |
+| Keeper/indexer | Local WSL daemon coordinated three goals:118 journaled intents / 100 delivered messages; live restart preserved original hashes and terminal zeroes became idle. | Hosted supervision, monitoring/indexer, and public pending-recovery/failed-peer scenarios. |
 
 The planned collection (`goalsById` or an equivalent persistence schema) is offchain organization. `selectedGoalId` is presentation state and must never silently retarget a submitted financial operation. These names describe the next design, not existing API fields.
 
@@ -42,4 +42,4 @@ The planned collection (`goalsById` or an equivalent persistence schema) is offc
 - Reject cross-goal account substitution and replayed/misrouted reports even when both goals have the same owner.
 - Migrate the existing single-goal demo state without losing balances, request identities or activity history.
 
-These are end-to-end acceptance requirements, not a completed application checklist. The [contract-first plan](CONTRACT_PLAN.md) distinguishes local multi-goal isolation from the [public single-goal four-chain cash proof](../contracts/deployments/multichain/live-goal.json). That proof establishes authenticated delivery and cash claims for one goal, but not several concurrent public goals, earning, application support or state migration.
+The public contract cash/isolation journey is now recorded for three concurrent goals: [evidence](../contracts/deployments/multichain/concurrent-goals-live.json), [chronology and reproduction](CONCURRENT_GOALS_RUNBOOK.md). Laptop claims left sibling financial/round/reserve/identity state unchanged; observer metadata differences are separately disclosed. This does not complete strategy earning, application goal switching, request migration or hosted-service acceptance. Earlier single-goal and local isolation evidence remains preserved in the [contract-first plan](CONTRACT_PLAN.md).
