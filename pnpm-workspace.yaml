@@ -3,5 +3,6 @@ packages:
   - shared
   - contracts/evm
   - contracts/solana
+  - contracts/keeper
 onlyBuiltDependencies:
   - esbuild

@@ -1,0 +1,188 @@
+{
+  "status": "all-three-actual-concurrent-vaults-source-verified",
+  "provider": "Sourcify",
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "submissionCountByThisUnit": 0,
+  "onchainWritesByThisUnit": 0,
+  "compilerStandardInputSource": "https://sourcify.dev/server/v2/contract/421614/0x0bd119e1ff26b98a8cf5be374432bbd705d3edd6?fields=all",
+  "pinnedOriginalStandardJsonSnapshotSha256": "a1a344cb5d62d1fc0736c2de984a02e8d9d1bc9174b96dfcb4519048746496c4",
+  "contracts": [
+    {
+      "name": "car",
+      "chainId": 421614,
+      "domain": 3,
+      "eid": 40231,
+      "vault": "0x681b9812daa8d7837593bf6cc6566028c44fc80e",
+      "goalId": "0xeb6966b4dc218ef93ba93d28bd56e1609ac76f1a2c7bbd18cb7119122fa8c378",
+      "coordinator": "0x12652a3ec24c668627edd092bfa00c8a4ada0f279ee71156cddf017b78868d36",
+      "owner": "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+      "targetRaw": "8000000",
+      "configHash": "0x82cc971d31d354cddc2ae79293210054a8dcf6925e131c78d815c832f5262298",
+      "creationTransaction": "0x39fea21b3184ca8471a0016eb66fe777f5d6468f7d74d67174d2100223be49f8",
+      "creationBlock": "0x12bd6897",
+      "matchId": "54441269",
+      "creationMatch": "exact_match",
+      "runtimeMatch": "exact_match",
+      "verifiedAt": "2026-09-30T20:12:11Z",
+      "compiler": {
+        "language": "Solidity",
+        "compiler": "solc",
+        "compilerVersion": "0.8.30+commit.73712a01",
+        "compilerSettings": {
+          "viaIR": false,
+          "metadata": {
+            "appendCBOR": true,
+            "bytecodeHash": "ipfs",
+            "useLiteralContent": false
+          },
+          "libraries": {},
+          "optimizer": {
+            "runs": 200,
+            "enabled": true
+          },
+          "evmVersion": "cancun",
+          "remappings": [
+            "forge-std/=lib/forge-std-archive/forge-std-1.16.2/src/",
+            "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/",
+            "@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/",
+            "@layerzerolabs/oapp-evm/=node_modules/@layerzerolabs/oapp-evm/",
+            "@layerzerolabs/lz-evm-protocol-v2/=node_modules/@layerzerolabs/lz-evm-protocol-v2/",
+            "@layerzerolabs/lz-evm-messagelib-v2/=node_modules/@layerzerolabs/lz-evm-messagelib-v2/",
+            "forge-std-archive/=lib/forge-std-archive/forge-std-1.16.2/src/",
+            "oz-archive/=lib/oz-archive/"
+          ]
+        },
+        "name": "NabungMultiGoalVault",
+        "fullyQualifiedName": "src/NabungMultiGoalVault.sol:NabungMultiGoalVault"
+      },
+      "runtimeBytes": 10267,
+      "creationIncludingConstructorBytes": 12383,
+      "rpcRuntimeMatch": true,
+      "pinnedOriginalCompilerMatch": true,
+      "sourceUrl": "https://repo.sourcify.dev/421614/0x681b9812daa8d7837593bf6cc6566028c44fc80e",
+      "lookupUrl": "https://sourcify.dev/server/v2/contract/421614/0x681b9812daa8d7837593bf6cc6566028c44fc80e?fields=all",
+      "checkedAtUtc": "2026-09-30T20:25:02.9449246Z",
+      "runtimeKeccak256": "0x75dc3d6ff7bb342009bada853e565749c290fc0c1db13af998a63fb01d860319",
+      "creationIncludingConstructorKeccak256": "0x2b35eae89d99d72e6898bed56602dbda0b83fbecf5a8b2d9a9f598ff50295dd2"
+    },
+    {
+      "name": "laptop",
+      "chainId": 421614,
+      "domain": 3,
+      "eid": 40231,
+      "vault": "0xc5df104b7c27fe79d63e030c43436649c47c00d4",
+      "goalId": "0x373dfb5badb9b6ba5e046b9904942085ec5a74bf5415a24920c4e782dfbfc4aa",
+      "coordinator": "0xfa332734b91d5d579725aeb883375972e5a36f4d94789947f60070dd51c9b7b6",
+      "owner": "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+      "targetRaw": "4000000",
+      "configHash": "0xc8c3e50df6c6c574347bb3232a27d6c76820fca2cf500128224acbc2874c6934",
+      "creationTransaction": "0x13c924ef36b0264a2d25d55a5423e302530572b0c13083043e28aa24d9b1f86b",
+      "creationBlock": "0x12bd69e5",
+      "matchId": "54441303",
+      "creationMatch": "exact_match",
+      "runtimeMatch": "exact_match",
+      "verifiedAt": "2026-09-30T20:13:33Z",
+      "compiler": {
+        "language": "Solidity",
+        "compiler": "solc",
+        "compilerVersion": "0.8.30+commit.73712a01",
+        "compilerSettings": {
+          "viaIR": false,
+          "metadata": {
+            "appendCBOR": true,
+            "bytecodeHash": "ipfs",
+            "useLiteralContent": false
+          },
+          "libraries": {},
+          "optimizer": {
+            "runs": 200,
+            "enabled": true
+          },
+          "evmVersion": "cancun",
+          "remappings": [
+            "forge-std/=lib/forge-std-archive/forge-std-1.16.2/src/",
+            "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/",
+            "@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/",
+            "@layerzerolabs/oapp-evm/=node_modules/@layerzerolabs/oapp-evm/",
+            "@layerzerolabs/lz-evm-protocol-v2/=node_modules/@layerzerolabs/lz-evm-protocol-v2/",
+            "@layerzerolabs/lz-evm-messagelib-v2/=node_modules/@layerzerolabs/lz-evm-messagelib-v2/",
+            "forge-std-archive/=lib/forge-std-archive/forge-std-1.16.2/src/",
+            "oz-archive/=lib/oz-archive/"
+          ]
+        },
+        "name": "NabungMultiGoalVault",
+        "fullyQualifiedName": "src/NabungMultiGoalVault.sol:NabungMultiGoalVault"
+      },
+      "runtimeBytes": 10267,
+      "creationIncludingConstructorBytes": 12383,
+      "rpcRuntimeMatch": true,
+      "pinnedOriginalCompilerMatch": true,
+      "sourceUrl": "https://repo.sourcify.dev/421614/0xc5df104b7c27fe79d63e030c43436649c47c00d4",
+      "lookupUrl": "https://sourcify.dev/server/v2/contract/421614/0xc5df104b7c27fe79d63e030c43436649c47c00d4?fields=all",
+      "checkedAtUtc": "2026-09-30T20:25:03.690646Z",
+      "runtimeKeccak256": "0x8e24986c632fdcdde301e16884117f8343f5c8051c55f380d1a2af09d8acbbff",
+      "creationIncludingConstructorKeccak256": "0xba0402165131a663d0c51056139b5520a4944bdea1632b73b7546a5cc7560fea"
+    },
+    {
+      "name": "house",
+      "chainId": 421614,
+      "domain": 3,
+      "eid": 40231,
+      "vault": "0x1e250674d72f1c5d4fec4d28cbc5427d1a564572",
+      "goalId": "0x05046ad83dcd1b8f08c80d44fcbb8124aff7a9c13499c00866439dcbe1bece76",
+      "coordinator": "0x6a88fb22242fe65a33a1a8c261b798e90896e97c5daef9234b99f34f4264479f",
+      "owner": "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+      "targetRaw": "12000000",
+      "configHash": "0x9174cd91d2de84ce0b983d788fc139c17878c9de402d5fa62e6848b959217a2c",
+      "creationTransaction": "0xc4ee55a60c77d0135f76544c5a89909e9bcded2398ea2c474094f64731ae8358",
+      "creationBlock": "0x12bd6b22",
+      "matchId": "54441352",
+      "creationMatch": "exact_match",
+      "runtimeMatch": "exact_match",
+      "verifiedAt": "2026-09-30T20:14:55Z",
+      "compiler": {
+        "language": "Solidity",
+        "compiler": "solc",
+        "compilerVersion": "0.8.30+commit.73712a01",
+        "compilerSettings": {
+          "viaIR": false,
+          "metadata": {
+            "appendCBOR": true,
+            "bytecodeHash": "ipfs",
+            "useLiteralContent": false
+          },
+          "libraries": {},
+          "optimizer": {
+            "runs": 200,
+            "enabled": true
+          },
+          "evmVersion": "cancun",
+          "remappings": [
+            "forge-std/=lib/forge-std-archive/forge-std-1.16.2/src/",
+            "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/",
+            "@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/",
+            "@layerzerolabs/oapp-evm/=node_modules/@layerzerolabs/oapp-evm/",
+            "@layerzerolabs/lz-evm-protocol-v2/=node_modules/@layerzerolabs/lz-evm-protocol-v2/",
+            "@layerzerolabs/lz-evm-messagelib-v2/=node_modules/@layerzerolabs/lz-evm-messagelib-v2/",
+            "forge-std-archive/=lib/forge-std-archive/forge-std-1.16.2/src/",
+            "oz-archive/=lib/oz-archive/"
+          ]
+        },
+        "name": "NabungMultiGoalVault",
+        "fullyQualifiedName": "src/NabungMultiGoalVault.sol:NabungMultiGoalVault"
+      },
+      "runtimeBytes": 10267,
+      "creationIncludingConstructorBytes": 12383,
+      "rpcRuntimeMatch": true,
+      "pinnedOriginalCompilerMatch": true,
+      "sourceUrl": "https://repo.sourcify.dev/421614/0x1e250674d72f1c5d4fec4d28cbc5427d1a564572",
+      "lookupUrl": "https://sourcify.dev/server/v2/contract/421614/0x1e250674d72f1c5d4fec4d28cbc5427d1a564572?fields=all",
+      "checkedAtUtc": "2026-09-30T20:25:04.4419982Z",
+      "runtimeKeccak256": "0x058bf0363fe47150060262ac5adb1918af491c6e40b4b8abee09f145c21e007a",
+      "creationIncludingConstructorKeccak256": "0x96952e31b0fc0315cf1c050ee6a7345124f52a924092fdbabaa2878f8f782fee"
+    }
+  ],
+  "originalEtherscanSubmissions": "Unchanged; this unit neither submitted nor resubmitted Etherscan verification",
+  "proofBoundary": "Actual successful factory creation and exact source/creation/runtime correspondence only. These entries do not prove funding, registration delivery, achievement, claims or concurrent financial isolation."
+}

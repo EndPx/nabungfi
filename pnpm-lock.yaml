@@ -109,6 +109,8 @@ importers:
         specifier: 5.7.0
         version: 5.7.0(@openzeppelin/contracts@5.7.0)
 
+  contracts/keeper: {}
+
   contracts/solana:
     devDependencies:
       '@layerzerolabs/lz-solana-sdk-v2':
