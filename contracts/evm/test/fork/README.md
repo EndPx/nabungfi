@@ -9,7 +9,7 @@ RUN_BASE_FORK=true forge test --match-path 'test/fork/AaveBaseFork.t.sol' -vv
 
 The first command requires explicit `*_FORK_BLOCK` pins and RPC, Circle USDC, legacy Aave pool/asset/aToken, Endpoint, and legacy router/factory variables. Missing configuration fails the opted-in suite. Without opt-in, tests are reported as **skipped**, not successful network execution.
 
-Current verification: **15 testnet fork cases and 2 retained Base mainnet fork cases passed**, with zero failures or skips when both opt-ins are enabled.
+The retained suite passed **15 testnet fork cases and 2 Base mainnet fork cases** with zero failures or skips when both opt-ins were enabled. The additional `LayerZeroConfigurationFork.t.sol` scenario pins Base Sepolia **47,500,917**, before public wiring, and locally runs explicit configuration, seal/create, actual worker quotes and cash lifecycle handlers. It injects authenticated callers and artificial USDC; its result is not public delivery evidence.
 
 | Network | Snapshot block | Circle USDC cash custody | Aave strategy tested |
 | --- | ---: | --- | --- |
@@ -36,4 +36,4 @@ Ethereum Sepolia's legacy market has a 2,000,000,000 USDC supply cap and receipt
 
 The two older Base mainnet tests retain block 51,893,120 and its measured rounding/accrual expectations.
 
-All forks are read-only RPC snapshots. Initial token balances use `deal`, accrual uses `warp`, and command delivery is local. No wallet is signed, no transaction is broadcast, no public interest is earned, and the independent forks do not prove an integrated multi-peer goal or public LayerZero delivery.
+All forks are read-only RPC snapshots. Initial token balances use `deal`, accrual uses `warp`, and command delivery is local. No wallet is signed, no transaction is broadcast and no public interest is earned by these checks. The [separate public cash lifecycle](../../../deployments/layerzero-solana-base-live.json) records actual LayerZero delivery and claims; neither evidence class proves a multi-EVM aggregate or live yield.

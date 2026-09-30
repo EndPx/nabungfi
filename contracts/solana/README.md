@@ -2,7 +2,29 @@
 
 This directory contains an Anchor program with real SPL-token custody instructions and a two-vault completion coordinator. Its default profile contains a Kamino direct-supply/redeem CPI path built with the pinned official `klend-interface`. The separate cash-only Devnet core and transport are now deployed; [public receipts](../deployments/solana-devnet.json) record their identities, downloaded ELF hashes and upgrade authority. This is a development deployment, not a production-ready savings product.
 
-The core and LayerZero transport compile to SBF. Fresh local runtime tests pass six default and seven Devnet scenarios using an actual Endpoint snapshot, plus a test-only message library for outbound fee/packet behavior. The public Devnet transport Store is registered with the actual Endpoint and bound to the Base candidate; it remains unsealed. No DVN quorum, Kamino execution, earned live yield or public crosschain delivery is claimed. See [LayerZero integration and reproduction](../../docs/LAYERZERO_INTEGRATION.md).
+The core and LayerZero transport compile to SBF. Local runtime tests pass six default and seven Devnet scenarios using an Endpoint snapshot and a test-only outbound library. Separately, the public Devnet route is now sealed with explicit ULN/DVN/Executor configuration. A real 10 USDC goal completed registration, progress, preparation, readiness, commitment and claims across Solana Devnet and Base Sepolia. Seven public messages were delivered, including a post-claim absolute balance update. Solana's 4 USDC deposit was claimed in 1 + 3 USDC parts; Base's 6 USDC deposit was claimed in 1 + 5 USDC parts. Both vault balances returned to zero while achievement remained permanent. [Public lifecycle receipts](../deployments/layerzero-solana-base-live.json) distinguish these transactions from the local tests.
+
+This route uses Circle testnet USDC and the cash-only profile. It demonstrates real public messaging and cash custody; it does not demonstrate earned yield, Kamino execution, production security or simultaneous multi-EVM peer aggregation. See [LayerZero integration](../../docs/LAYERZERO_INTEGRATION.md) and the [testnet runbook](../../docs/LAYERZERO_TESTNET_RUNBOOK.md).
+
+## Operator tooling
+
+The operator scripts use the official `@layerzerolabs/lz-solana-sdk-v2` version `3.0.168`, its UMI branch, and pinned direct dependencies in `package.json`. Install the workspace with the frozen lockfile. Copy `.env.example` to `.env`, supply a local signer path, and populate the goal fields from an actual confirmed Base vault creation. The runtime reads `.env`; private keys, actual environment files and receipt journals stay outside Git.
+
+Run from the repository root:
+
+```bash
+pnpm install --frozen-lockfile
+node contracts/solana/script/layerzero-config.mjs --env contracts/solana/.env
+node contracts/solana/script/operate-goal.mjs state --env contracts/solana/.env
+node contracts/solana/script/operate-goal.mjs deposit --amount 4000000 --env contracts/solana/.env
+pnpm --filter @nabungfi/solana-runtime test:tooling
+```
+
+`layerzero-config.mjs` only plans and simulates the unsealed route. Its `--phase` values select initialization, library configuration, or an individual security configuration. `wire-layerzero.mjs --broadcast` submits the reviewed reversible configuration in packet-sized phases, records the signature before sending and verifies the resulting state. It never seals the route; sealing follows the actual goal quote and receive-discovery checks in the runbook. A sealed route cannot be configured again through these scripts.
+
+`operate-goal.mjs` defaults to simulation. Amounts are raw six-decimal USDC units. Its actions are `initialize`, `register`, `deposit`, `prepare`, `local-ready`, `achieve`, `send-command`, `claim` and `state`. State checks and the contracts enforce the order: registration must be received before deposits; readiness must come from real reserved balances; achievement must precede claims. The initialized Solana goal must match the actual Base factory vault configuration hash. This CLI targets the currently deployed Solana Devnet/Base Sepolia pair.
+
+To submit a reviewed intent, add `--broadcast --operation-id <unique-intent-id>` and set `NABUNGFI_TRANSACTION_JOURNAL` to a private local path. Reuse an intent ID only to reconcile that same operation. The journal compares instruction fingerprints, checks the original signature, and refuses automatic replacement of unresolved or expired submissions. The live fee is quoted through the deployed transport/ULN, bounded by `NABUNGFI_MAX_MESSAGE_FEE_LAMPORTS`, and sent with a 500,000 compute-unit limit. The default CLI was checked against the completed goal: state reads succeeded, and a further simulated claim correctly failed with `InsufficientFunds` without broadcasting.
 
 ## Run the checks
 
@@ -130,9 +152,9 @@ There is no automatic allocation percentage, keeper-investment authorization, or
 
 ## Crosschain trust boundary
 
-`TRANSPORT_PROGRAM` now names the local development identity of `programs/nabungfi-lz`. The receiver authenticates the peer and packet, calls the official Endpoint `clear`, then signs `[b"nabung-receiver", goalPda]` for the core CPI. `receive_registered` binds the goal pair before funding; `receive_progress` records absolute Base snapshots without unlocking funds. Replace/review deployment IDs and configure a real pathway before network use. A normal keeper key cannot impersonate the transport PDA.
+The default profile's `TRANSPORT_PROGRAM` names the local development identity; the `devnet` feature binds the actual deployed transport `Fez821Y7EAC8rLNqG1WeVmVAcSZPKtd3QuQxFuAiCc5A`. The receiver authenticates the peer and packet, calls the official Endpoint `clear`, then signs `[b"nabung-receiver", goalPda]` for the core CPI. `receive_registered` binds the goal pair before funding; `receive_progress` records absolute Base snapshots without unlocking funds. The reviewed Devnet deployment IDs and sealed route are recorded in the manifests. A normal keeper key cannot impersonate the transport PDA.
 
-Core events remain records. The transport's explicit quote/send instructions derive the actual registration or PREPARE/COMMIT/ABORT packet from the Goal; they require caller-funded fees and the correct Endpoint/library accounts. The network pathway and its operator flow have not been deployed or exercised.
+Core events remain records. The transport's explicit quote/send instructions derive the actual registration or PREPARE/COMMIT/ABORT packet from the Goal; they require caller-funded fees and the correct Endpoint/library accounts. The operator-driven Devnet–Base Sepolia cash pathway has been exercised through actual delivery and full claims; [public evidence](../deployments/layerzero-solana-base-live.json) is separate from the default-profile runtime fixtures. An unattended keeper has not been proven.
 
 The current Base contract and this coordinator agree on these semantic values:
 
@@ -158,4 +180,4 @@ Solana native instructions use Anchor/Borsh and Base native calls use ABI; cross
 - The official reserve layout and actual recorded account identities are checked against the dated public snapshot.
 - Clippy passes with warnings denied; formatting and the `idl-build` feature compile.
 
-Before production: actual pathway/finality and deployment identities, Kamino valuation and supply/redeem runtime proof, keeper funding/retry operations, upgrade-authority policy, external review, economic limits and real-network acceptance remain required. The current coordinator has one Base peer per goal; several EVM peers require a broader registry and per-peer readiness. Nothing here guarantees liquidity or earnings.
+Before production: a reviewed production security/finality configuration and deployment identity set, Kamino valuation and supply/redeem runtime proof, persistent keeper funding/retry operations, upgrade-authority policy, external review, economic limits and production-network acceptance remain required. The completed public testnet cash lifecycle does not establish those properties. The current coordinator has one Base peer per goal; several EVM peers require a broader registry and per-peer readiness. Nothing here guarantees liquidity or earnings.

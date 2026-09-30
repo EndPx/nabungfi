@@ -1,0 +1,362 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-30T13:08:07.302Z",
+  "status": "public-cash-goal-lifecycle-completed",
+  "supportedGoalPeerSet": [
+    "solana-devnet",
+    "base-sepolia"
+  ],
+  "profile": "canonical-circle-usdc-cash-only",
+  "goal": {
+    "id": "0x7342efe41d6d93a7a295c4f7209f108edb4be1173d538d70a1bed6d3d87ccf4d",
+    "targetRaw": "10000000",
+    "decimals": 6,
+    "solanaOwner": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+    "baseOwner": "0xc82f469Aa95a2f7792300c8d11230e9023A98600",
+    "solanaAccount": "8TnjsARfpCNkxC3uZX7vdRpzoCf1AynPNbvGbY9CQkMj",
+    "baseVault": "0x02D8cfAAa82D86edD42C3ce8Ad7Eb5659B4dbE2d",
+    "configurationHash": "0xdbb4817437eb81c32b1a45420eb78df585fc9d56dfe24ee8fc55683620dcea07",
+    "baseCreationTransaction": "0x205b27074500da9720f97f8e5b5cf6b32e054c6b7992c6fa3e8fcb0e4fb57b04",
+    "solanaInitializationTransaction": "2wM58CQBoCG1j8vp6YccZkQ15QaN9YjNY38XoKoHSAzqgj7u4QdfPU5zZXwsNR5aNN9GNkPmbkFuKtWH27a7QtnE",
+    "achievedTransaction": "2T6ntzZA3CEbX7dv3uStwivUJmoP1E7i9C9JFT9s8yw8jcuYArBd34SAQQjK963TpCMmB6eK2nCtYwAaeK8EYyr8",
+    "achievedTotalRaw": "10000000"
+  },
+  "configuration": {
+    "solana": {
+      "eid": 40168,
+      "endpoint": "76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6",
+      "store": "5fMoiRiAghVMDtKYfJno7FFy8WF1hbwDV1iuKhHxtJ49",
+      "peer": "0x9b897086dbdf754ed88ce3610e2a40c3df1ab40b",
+      "ulnProgram": "7a4WjyR8VZ7yZz5XJAKm39BUGn5iT9CKcv2pmG9tdXVH",
+      "requiredDvn": "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb",
+      "executor": "AwrbHeCyniXaQhiJZkLhgWdUCteeWSGaSN1sTfLiY7xK",
+      "sendConfirmations": 10,
+      "receiveConfirmations": 2,
+      "optionalDvns": [],
+      "maxMessageSize": 10000,
+      "routeSealed": true,
+      "endpointDelegate": "5fMoiRiAghVMDtKYfJno7FFy8WF1hbwDV1iuKhHxtJ49",
+      "transactions": [
+        {
+          "operation": "initialize-nonce+initialize-send-library+initialize-receive-library+initialize-uln-config",
+          "signature": "2Nxn4hPdf2xvJiFM5jR4mZ31KF7XVPmyYcySnC34w5Ln4hpjf3ohtmZC4okFmhZ3p1k9AsNUyxCj2tRczHK91i19",
+          "status": "finalized",
+          "slot": 505899352
+        },
+        {
+          "operation": "set-send-library+set-receive-library",
+          "signature": "4bK74oUrzySbNxenvmAEFUbh7mv4nFzLmWBUAEoZVgNBaQZpC6ziuWQaeeSnMks15mce4Xbd5hjMoRtZmmJFKW3m",
+          "status": "finalized",
+          "slot": 505899360
+        },
+        {
+          "operation": "set-executor",
+          "signature": "61jPX8MYvMryZ1WTkyL4TshFtuwFVcZfDFCe8iAqXrYHwNd5MEDf5UNzGXmcTW5dzQU8grzeK3ZvFPdNf3VDE8QD",
+          "status": "finalized",
+          "slot": 505899364
+        },
+        {
+          "operation": "set-send-uln",
+          "signature": "5iozZm4wmTrU9G2S2sLHBAaE68TddCoXqhFMHwSZX6fZRUqskpCvBuqhTY6T3jPRC9VYHn6vUVeidcHro6thsP7e",
+          "status": "finalized",
+          "slot": 505899369
+        },
+        {
+          "operation": "set-receive-uln",
+          "signature": "296jVkQrYfFmLzqXPiQWwxjFwG6of3j7qzN3jkav21BjT3Fg5H1oxs8NYkQDbByY3HcH196CaV7ijgE2EKJbkkLt",
+          "status": "finalized",
+          "slot": 505899374
+        }
+      ],
+      "sealTransaction": "cD7HnVWCdntxnFmrNwgYDVZLQtKy24QqjWhbRhxyYVMfhTDSDy9xiAC8SgmZjAALSiMLnzyQddhZVzxczE4qZTQ"
+    },
+    "base": {
+      "chainId": 84532,
+      "eid": 40245,
+      "endpoint": "0x6edce65403992e310a62460808c4b910d972f10f",
+      "router": "0x9b897086dbdf754ed88ce3610e2a40c3df1ab40b",
+      "peer": "5fMoiRiAghVMDtKYfJno7FFy8WF1hbwDV1iuKhHxtJ49",
+      "sendLibrary": "0xc1868e054425d378095a003ecba3823a5d0135c9",
+      "receiveLibrary": "0x12523de19dc41c91f7d2093e0cfbb76b17012c8d",
+      "requiredDvn": "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6",
+      "executor": "0x8a3d588d9f6ac041476b094f97ff94ec30169d3d",
+      "sendConfirmations": 2,
+      "receiveConfirmations": 10,
+      "optionalDvns": [],
+      "maxMessageSize": 10000,
+      "routeSealed": true,
+      "owner": "0x0000000000000000000000000000000000000000",
+      "endpointDelegate": "0x9b897086dbdf754ed88ce3610e2a40c3df1ab40b",
+      "transactions": [
+        {
+          "hash": "0x7343fb1b0f4e46a0fe45196a725186718de09dbfc97b18d70eeda4949a2b1f01",
+          "status": "0x1",
+          "block": "0x2d4cf1e",
+          "gasUsed": "0xe182",
+          "effectiveGasPrice": "0x5b8d80"
+        },
+        {
+          "hash": "0x85b8d0fd209760a5b93274fe935d1c306a9ef90869323380d7ed51e97532f90e",
+          "status": "0x1",
+          "block": "0x2d4cf1f",
+          "gasUsed": "0xfba1",
+          "effectiveGasPrice": "0x5b8d80"
+        },
+        {
+          "hash": "0x77807d05efc99b58b37e98769ad0616c3159d922bf216c4dcc197557461fde1e",
+          "status": "0x1",
+          "block": "0x2d4cf20",
+          "gasUsed": "0x23049",
+          "effectiveGasPrice": "0x5b8d80"
+        },
+        {
+          "hash": "0xf5f812eeaa843af691a1f4d7390bc1f42add9d7e7cf11167d17e4182c592f0d6",
+          "status": "0x1",
+          "block": "0x2d4cf21",
+          "gasUsed": "0x1c331",
+          "effectiveGasPrice": "0x5b8d80"
+        }
+      ],
+      "sealTransaction": "0x4b6492c82e5d09b3ad444c6f92f33145c9487a23c5ab8f76d5a297cf3b70d364"
+    }
+  },
+  "messages": [
+    {
+      "kind": "REGISTER",
+      "guid": "0xdbf79eabc2a2148391a438a1783330d7dccad4c4a6aa69ba834a95902cd69423",
+      "sourceEid": 40168,
+      "destinationEid": 40245,
+      "pathwayNonce": 1,
+      "sourceTransaction": "4sm4R4otaVXgaxA2QiV2r9nzVf4T82j3jMF3bcieHdUzPKA73crp9teRxbsva7oETPTkWKd9LwDUQQ9yvcJAPgxo",
+      "destinationTransaction": "0x587c8e3df7891282e3b1e71b0d2cf8c86cac4bbf96538ed97e49c83a42ac6e65",
+      "status": "DELIVERED",
+      "sourceStatus": "SUCCEEDED",
+      "dvnStatus": "SUCCEEDED",
+      "destinationStatus": "SUCCEEDED",
+      "configurationError": false,
+      "scanUrl": "https://testnet.layerzeroscan.com/tx/4sm4R4otaVXgaxA2QiV2r9nzVf4T82j3jMF3bcieHdUzPKA73crp9teRxbsva7oETPTkWKd9LwDUQQ9yvcJAPgxo"
+    },
+    {
+      "kind": "REGISTERED",
+      "guid": "0xe1d3f443ccd7f2bbe63b83ea4c249a70d19530e47db96a4586dfdaacf15bd8b8",
+      "sourceEid": 40245,
+      "destinationEid": 40168,
+      "pathwayNonce": 1,
+      "sourceTransaction": "0xcc517d3d9531f87162ccceddc56e4e03a7391824b875ad091e74001cbdf86c21",
+      "destinationTransaction": "4w1vswC1J4Q7BWgA769WT5MreGNTTgtkt4HRrfGSCkiowR4Du5Cn4DJVWzvZTFy793ra4tDkvZAxiSMNjHUtRrds",
+      "status": "DELIVERED",
+      "sourceStatus": "SUCCEEDED",
+      "dvnStatus": "SUCCEEDED",
+      "destinationStatus": "SUCCEEDED",
+      "configurationError": false,
+      "scanUrl": "https://testnet.layerzeroscan.com/tx/0xcc517d3d9531f87162ccceddc56e4e03a7391824b875ad091e74001cbdf86c21"
+    },
+    {
+      "kind": "PROGRESS",
+      "guid": "0x9f7cb2783f654e56682ace738397ff1f82635e9205fa7eb0900dc530891f75e7",
+      "sourceEid": 40245,
+      "destinationEid": 40168,
+      "pathwayNonce": 2,
+      "sourceTransaction": "0x8336347a47c2331a8467dbb7371dd930fe55f312dd74f7a96545e2173dc60e94",
+      "destinationTransaction": "5LGAkfYXg9QTdL88h5sfhwRQP7PqhLn8DjogQY3YL8ytosihAn5VTm1jqrUqtXgZvoDT8CEuAnCm3HC2mRh3DxQS",
+      "status": "DELIVERED",
+      "sourceStatus": "SUCCEEDED",
+      "dvnStatus": "SUCCEEDED",
+      "destinationStatus": "SUCCEEDED",
+      "configurationError": false,
+      "scanUrl": "https://testnet.layerzeroscan.com/tx/0x8336347a47c2331a8467dbb7371dd930fe55f312dd74f7a96545e2173dc60e94"
+    },
+    {
+      "kind": "PREPARE",
+      "guid": "0x25c84e2419a8892431326da3c2687f80cb9ee86490ebe6fe903963035adafce9",
+      "sourceEid": 40168,
+      "destinationEid": 40245,
+      "pathwayNonce": 2,
+      "sourceTransaction": "3Gignz8APLkgePANjMEG3rcMXMiN9Bn67XAwtwr22DQkxE9eqne61vbYeoa5tiqtE2aqxa1xLyomNfqjm59Uwf7v",
+      "destinationTransaction": "0x3aca04506d1cca0e665e0425306896c9ee2518a713a3ed331494b727b51fc055",
+      "status": "DELIVERED",
+      "sourceStatus": "SUCCEEDED",
+      "dvnStatus": "SUCCEEDED",
+      "destinationStatus": "SUCCEEDED",
+      "configurationError": false,
+      "scanUrl": "https://testnet.layerzeroscan.com/tx/3Gignz8APLkgePANjMEG3rcMXMiN9Bn67XAwtwr22DQkxE9eqne61vbYeoa5tiqtE2aqxa1xLyomNfqjm59Uwf7v"
+    },
+    {
+      "kind": "READY",
+      "guid": "0x970580d45f276f41f8563c7c1619a25f5f6477a980debb197c9298ce94dac5e5",
+      "sourceEid": 40245,
+      "destinationEid": 40168,
+      "pathwayNonce": 3,
+      "sourceTransaction": "0xbc57c13530219e4f870c520f8891b1831780f233fb545e44863f73013c520c28",
+      "destinationTransaction": "4JBt79sGKT3JnDxyMqXLTJHEUtQy5s663JjimSgvgEDGwCMiTEbNdMaq7N2d1ZmVoWpRUiojEqyrH3gFY27haYaG",
+      "status": "DELIVERED",
+      "sourceStatus": "SUCCEEDED",
+      "dvnStatus": "SUCCEEDED",
+      "destinationStatus": "SUCCEEDED",
+      "configurationError": false,
+      "scanUrl": "https://testnet.layerzeroscan.com/tx/0xbc57c13530219e4f870c520f8891b1831780f233fb545e44863f73013c520c28"
+    },
+    {
+      "kind": "COMMIT",
+      "guid": "0x72067d2ba1660fb2e18e71c09fae62774f3d7456149bcf4103eafcd66c305b11",
+      "sourceEid": 40168,
+      "destinationEid": 40245,
+      "pathwayNonce": 3,
+      "sourceTransaction": "5i1QeGY6AogKMpEe9WB3rCSJYZJaHLQADsmjsyBTrLjZU96ep79KJ1yNA4Jm6GzfsFEdC8zm1Dx2FDBhhEiWySvP",
+      "destinationTransaction": "0x47d0f23a64947b085c306961c33ec5caa40d3cfd783d6577d2589a7c82a9e08e",
+      "status": "DELIVERED",
+      "sourceStatus": "SUCCEEDED",
+      "dvnStatus": "SUCCEEDED",
+      "destinationStatus": "SUCCEEDED",
+      "configurationError": false,
+      "scanUrl": "https://testnet.layerzeroscan.com/tx/5i1QeGY6AogKMpEe9WB3rCSJYZJaHLQADsmjsyBTrLjZU96ep79KJ1yNA4Jm6GzfsFEdC8zm1Dx2FDBhhEiWySvP"
+    },
+    {
+      "kind": "PROGRESS_AFTER_CLAIMS",
+      "guid": "0xa0de29f5f0714c92a92e99f695cd55cc928f0834b2251d523f57beff1531949f",
+      "sourceEid": 40245,
+      "destinationEid": 40168,
+      "pathwayNonce": 4,
+      "sourceTransaction": "0xb9a8a5081ee3aedee2435d3b171192b429a8152f7422e388844edf89ac0b299f",
+      "destinationTransaction": "5EzayetmbYVrjwgWBnb2zZtFGXspNj6XuMdtGdpc54PZGhAFH3yE9G1Ly7G1DeaQaWkmrRfBFpcWunSLE9SfVqFv",
+      "status": "DELIVERED",
+      "sourceStatus": "SUCCEEDED",
+      "dvnStatus": "SUCCEEDED",
+      "destinationStatus": "SUCCEEDED",
+      "configurationError": false,
+      "scanUrl": "https://testnet.layerzeroscan.com/tx/0xb9a8a5081ee3aedee2435d3b171192b429a8152f7422e388844edf89ac0b299f"
+    }
+  ],
+  "deposits": {
+    "solana": {
+      "amountRaw": "4000000",
+      "signature": "4VCUx8NSbMihexoqEVBrtNE6zSXrnL4i3nVTVZpMJ878EPGrBThqBsnc8RJwTAeWMUaRXMabJd34nBG9aCHE3Vb6"
+    },
+    "base": {
+      "amountRaw": "6000000",
+      "transactionHash": "0xc0f1e80ae5134e82cf58ace4f1bc6d74dd879ac8507d11158921b4ef9dbaab91",
+      "approvalTransactionHash": "0xba963ad620b9b88ab4d752b40f24f45380062b177a4ac1052c45c2d8e6359bc4"
+    }
+  },
+  "claims": {
+    "solana": [
+      {
+        "amountRaw": "1000000",
+        "signature": "2AWR4oipkfuchuNL8DyuGTNrj4wwvb682GJ4ZGYPRxmfNptrZUJP9xGDDWyqUb9kmKYeunanV79ABusXXxNbGkae"
+      },
+      {
+        "amountRaw": "3000000",
+        "signature": "3nzSK6Rxi8AvcuRo7ihwcMCJM7MkEhUjKZvjMsitmKzLZTkuZZkaV85dwC3sHRPvSZWG5ugKywBVEeocUFksQuqy"
+      }
+    ],
+    "base": [
+      {
+        "amountRaw": "1000000",
+        "transactionHash": "0xf31e65095c0a51b846c656ff29da5fe1194dbcdf94d7544b931fde6e442ec4dd"
+      },
+      {
+        "amountRaw": "5000000",
+        "transactionHash": "0x94b91ba1c13c157361ce78ad5301e2c230b3c63fdf57533ff80a99fabebe4080"
+      }
+    ]
+  },
+  "finalState": {
+    "solana": {
+      "observedAtUtc": "2026-09-30T13:00:30.4472360Z",
+      "cashBalance": 0,
+      "slot": 505911851,
+      "ownerUsdc": 20000000,
+      "remoteNetAssets": 0,
+      "phase": 3,
+      "remoteProgressSequence": 2,
+      "achievedTotal": 10000000,
+      "claimed": 4000000,
+      "phaseName": "Achieved"
+    },
+    "base": {
+      "block": "0x2d4d56a",
+      "phase": "3",
+      "claimedAssets": "6000000",
+      "totalAssets": "0",
+      "claimableAssets": "0",
+      "preparedAssets": "6000000",
+      "currentRound": "1",
+      "commandSequence": "2",
+      "progressSequence": "2",
+      "ownerUsdc": "20000000",
+      "phaseName": "Achieved"
+    }
+  },
+  "negativeChecks": {
+    "baseEarlyClaim": {
+      "method": "owner eth_call claim(1000000) before achievement",
+      "error": "WrongPhase",
+      "selector": "0xe2586bcc",
+      "broadcast": false
+    },
+    "solanaEarlyClaim": {
+      "method": "signed RPC simulation claim(1000000) after progress=6m and local deposit=4m, before reserves",
+      "error": "StillLocked",
+      "code": 6015,
+      "broadcast": false
+    },
+    "postClaimProgress": {
+      "baseAssetsRaw": "0",
+      "solanaRemoteAssetsRaw": "0",
+      "solanaProgressSequence": "2",
+      "achievementRetained": true
+    }
+  },
+  "fees": {
+    "solanaToBase": {
+      "nativeFeeLamports": "394403",
+      "receiveGas": 500000,
+      "sourceComputeLimit": 500000
+    },
+    "baseToSolana": {
+      "nativeFeeWei": "241991470022222",
+      "receiveCompute": 200000,
+      "receiveLamports": "2500000"
+    },
+    "note": "Observed testnet quotes for this execution; future quotes must be read again."
+  },
+  "sourceVerification": {
+    "network": "base-sepolia",
+    "chainId": 84532,
+    "address": "0x02d8cfaaa82d86edd42c3ce8ad7eb5659b4dbe2d",
+    "source": "contracts/evm/src/NabungGoalVault.sol:NabungGoalVault",
+    "creationTransaction": "0x205b27074500da9720f97f8e5b5cf6b32e054c6b7992c6fa3e8fcb0e4fb57b04",
+    "verification": {
+      "provider": "Etherscan V2 / BaseScan",
+      "status": "Pass - Verified",
+      "guid": "ejsaabexnamqavixg3d4tmjfjhy6adqhabwihazgc5jms8jut6",
+      "sourceReadbackPresent": true,
+      "contractName": "NabungGoalVault",
+      "compilerVersion": "v0.8.30+commit.73712a01",
+      "optimizerRuns": 200,
+      "evmVersion": "cancun",
+      "explorer": "https://sepolia.basescan.org/address/0x02d8cfaaa82d86edd42c3ce8ad7eb5659b4dbe2d#code",
+      "checkedAtUtc": "2026-09-30T12:36:13.4569198Z"
+    },
+    "constructor": {
+      "owner": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+      "goalId": "0x7342efe41d6d93a7a295c4f7209f108edb4be1173d538d70a1bed6d3d87ccf4d",
+      "configHash": "0xdbb4817437eb81c32b1a45420eb78df585fc9d56dfe24ee8fc55683620dcea07",
+      "targetRaw": "10000000",
+      "messenger": "0x9b897086dbdf754ed88ce3610e2a40c3df1ab40b",
+      "sourceCoordinator": "0x6edea077d6285eb7ea67092dc1a824441212d99ce463c15a2de0c6a19fe0d7c6",
+      "minimumIdleRaw": "0",
+      "asset": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+      "pool": "0x0000000000000000000000000000000000000000",
+      "receipt": "0x0000000000000000000000000000000000000000"
+    },
+    "proofBoundary": "Explorer verification matches public source and constructor arguments. It is not an audit or independent proof of cross-chain completion. This goal uses cash-only USDC custody, with earning disabled."
+  },
+  "boundaries": [
+    "Actual public DVN verification and destination execution; no injected live packets or test message library.",
+    "Cash-only proof: no interest, Kamino execution or live DeFi liquidity claim.",
+    "One registered Base peer per goal; Arbitrum and Ethereum remain staging for a multi-peer extension.",
+    "Operator drove the lifecycle; no persistent unattended keeper proven.",
+    "Single required Labs DVN test stack; Solana upgrade authority retained; source verification and peer review are not audits."
+  ]
+}

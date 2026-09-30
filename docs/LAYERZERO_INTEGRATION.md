@@ -1,6 +1,6 @@
 # LayerZero integration: implementation and evidence
 
-Rechecked 30 September 2026. The code integrates LayerZero V2 OApp sending/receiving for the Solana–Base goal pair. Public testnet component deployment has begun; [receipt manifests](../contracts/deployments/) record per-network execution and source-verification status. The product is not audited or operational across multiple EVM peers. Native funds and strategy receipts remain on their original chains.
+Rechecked 30 September 2026. The actual Solana Devnet–Base Sepolia cash-mode pair completed registration, deposits, reserve-based achievement and full claims using LayerZero V2. [Public lifecycle evidence](../contracts/deployments/layerzero-solana-base-live.json) records seven delivered messages and terminal balances; [component manifests](../contracts/deployments/) preserve deployment/source-verification receipts. The product is not audited or operational across multiple EVM peers. Funds remain on their original chains.
 
 ## Components
 
@@ -22,13 +22,14 @@ Rechecked 30 September 2026. The code integrates LayerZero V2 OApp sending/recei
 | Solana OApp | `oapp-latest` at LayerZero-v2 commit `9c741e7f9790639537b1710a203bcdfd73b0b9ac` |
 | Anchor | 0.32.1 |
 | Runtime tests | LiteSVM 1.5.0, Solana Kit 8.0.0 |
+| Public Solana operator tooling | LayerZero Solana SDK 3.0.168, UMI 0.9.2, web3.js 1.95.8 |
 
 The Solana dependency is the upstream `solana/anchor-latest` implementation, not the older Anchor 0.29 library. The endpoint-interface crate supplies CPI bindings; its placeholder Rust handlers are not deployed or used as the Endpoint implementation in the runtime tests.
 
 ## Pair creation and messaging
 
 1. Configure the real route, explicit verification libraries/DVNs/confirmations, and execution budgets. Initialize the Solana Store using the transport program's upgrade authority; register it with the Endpoint. Bootstrap is not permissionless first-caller ownership.
-2. Seal both routes. Base changes the endpoint delegate to the router and renounces OApp ownership. Solana changes its endpoint delegate to the Store PDA; no instruction exposes later peer/configuration changes. Solana upgrade authority is still a separate deployment control that must be reviewed.
+2. Follow the [staged seal runbook](LAYERZERO_TESTNET_RUNBOOK.md): review and seal Base first using real worker quotes and a local fork. Keep the new pair unfunded while Solana's actual goal enables its RPC app quote/discovery preflight. Seal Solana only after those checks pass. Base changes its delegate to the router and renounces ownership; Solana changes its delegate to the Store PDA. Neither exposes later configuration forwarding. Solana upgrade authority remains a separate deployment control.
 3. The Base owner calls `createGoal`, supplying the intended Solana owner/PDA, goal ID, target and idle floor. The factory returns the actual vault and canonical configuration commitment.
 4. The Solana owner initializes the corresponding Goal using that vault and Base owner. Its independently computed configuration hash must match.
 5. A caller quotes and sends Solana registration with application sequence zero. The Base receiver validates owner/goal/configuration/target and records the pair. A caller sends the Base registration acknowledgment; Solana sets `linked` only after authenticated delivery. Ordinary deposits stay disabled before registration on each side.
@@ -36,7 +37,7 @@ The Solana dependency is the upstream `solana/anchor-latest` implementation, not
 7. The Solana receiver validates the peer and complete packet identity, then calls the real Endpoint `clear` before invoking coordinator readiness logic. The coordinator commits only when both goal-local reserves meet the target and its local readiness checks pass.
 8. A caller quotes/sends COMMIT. Base checks its exact reserve/round and enables owner claims. Claims retain permanent achievement and do not bridge tokens.
 
-Callers fund messaging fees. Solana send/quote instructions require the correct Endpoint/library accounts; EVM sends use the quoted native fee and caller-supplied execution options. Configuring/quoting adequate options and maintaining a keeper are still operational work. Events alone do not deliver a packet.
+Callers fund messaging fees. Solana send/quote instructions require the correct Endpoint/library accounts; EVM sends use the quoted native fee and caller-supplied execution options. The reviewed testnet execution used explicit options and fresh real-worker quotes. Maintaining an unattended keeper remains operational work. Events alone do not deliver a packet.
 
 ## Retry and isolation properties
 
@@ -50,8 +51,10 @@ Callers fund messaging fees. Solana send/quote instructions require the correct 
 
 | Check | Result |
 | --- | --- |
-| EVM local suite | 60 passing tests, including 12 deployment/configuration tests, 3 cash-mode regressions, 9 OApp/codec/factory tests and 6 multi-goal cases; conservation fuzzing runs 256 cases |
-| Pinned EVM forks | 17 passing cases: 15 across three testnets and 2 retained Base mainnet cases; artificial balances, local time and injected application authentication are explicitly labeled |
+| EVM local suite | 64 passing tests: the prior 60 plus four explicit security-stack tooling cases; conservation fuzzing runs 256 cases |
+| Pinned EVM forks | 17 retained cases plus one configuration/lifecycle fork; artificial balances, local time and injected application authentication are explicitly labeled |
+| Operator journal | Regression passes for original-signature reconciliation, changed financial intent rejection, expiry and network guards |
+| Public cash lifecycle | Seven actual messages DELIVERED, 4+6 USDC deposits, partial/full claims, zero remaining vault balances and permanent achievement |
 | Solana native | Default 35 core + 4 transport; Devnet 38 core + 4 transport; the test-only library passes its program-ID check in both |
 | Solana SBF | Both core and transport compiled with Agave 4.3.0 / platform-tools 1.57 |
 | LiteSVM | Fresh artifacts pass 6 default and 7 Devnet scenarios using the actual Endpoint snapshot; send/quote use a test-only fixed-fee library |
@@ -87,8 +90,14 @@ pnpm --filter @nabungfi/solana-runtime test:sbf
 
 The SVM test enforces the fixture hash. A future Endpoint upgrade requires an explicitly reviewed fixture update; do not bypass the mismatch or call a different binary equivalent evidence. `NABUNGFI_SBF_DIR` and `NABUNGFI_ENDPOINT_ELF` can point to alternate local artifact paths. `NABUNGFI_TEST_PACKAGE_JSON` supports using a separate Linux dependency install when the checkout's node_modules were installed on Windows. Generated binaries, toolchains, local keys and snapshots are ignored by Git.
 
+## Public cash-mode proof
+
+The [receipt/state manifest](../contracts/deployments/layerzero-solana-base-live.json) records REGISTER, REGISTERED, PROGRESS, PREPARE, READY and COMMIT, followed by a seventh PROGRESS after claims. Each has actual source and destination transactions, successful DVN verification and no configuration error. The operators used the real libraries and Executor; no live packet was injected.
+
+The 10-USDC goal received 4 USDC on Solana and 6 USDC on Base. Early claim simulations failed even when the progress estimate already summed to 10 USDC. Actual reserves then completed round 1. The owners claimed 1+3 USDC on Solana and 1+5 USDC on Base; both vaults ended at zero and both owners recovered their initial 20-USDC faucet balance. The post-claim absolute progress snapshot changed remote assets from 6 USDC to zero without relocking the goal or erasing its 10-USDC achieved total. [Operation and retry runbook](LAYERZERO_TESTNET_RUNBOOK.md).
+
 ## Remaining release work
 
-Public testnet deployment profiles now distinguish owned Devnet program identities from the default local identities. EVM active components use canonical Circle USDC; Base/Ethereum and Solana Devnet are cash-only, while Arbitrum is Aave-enabled. Receipt manifests record actual deployments; their existence does not establish library/DVN/Executor configuration or delivered messages. Explicit security-stack verification before sealing, two-way delivery and fee/compute measurements, keeper/retry operations, actual Kamino execution, upgrade-authority policy, and independent release review remain required. No mainnet transaction or live financial yield is claimed.
+Public testnet deployment profiles distinguish owned Devnet identities from the default local identities. EVM components use canonical Circle USDC; Base/Ethereum and Solana Devnet are cash-only, while Arbitrum is Aave-enabled. The separate public lifecycle manifest establishes explicit configuration, two-way delivery, measured fees/compute and cash claims for the Solana–Base pair. Persistent keeper/retry operations, actual Kamino execution/current valuation, investment policy, upgrade-authority policy and an independent security audit remain work before real funds. No mainnet transaction or live financial yield is claimed.
 
 The implemented coordinator/transport has one registered EVM peer (Base). Ethereum, Arbitrum and Robinhood Chain are additional product/track candidates; supporting several EVM peers in the same goal requires a registered peer set, per-peer sequences/readiness and reserve aggregation. The current domain `2` must not be reused to combine several chains silently.

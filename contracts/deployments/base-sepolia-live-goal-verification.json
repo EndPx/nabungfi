@@ -1,0 +1,32 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "address": "0x02d8cfaaa82d86edd42c3ce8ad7eb5659b4dbe2d",
+  "source": "contracts/evm/src/NabungGoalVault.sol:NabungGoalVault",
+  "creationTransaction": "0x205b27074500da9720f97f8e5b5cf6b32e054c6b7992c6fa3e8fcb0e4fb57b04",
+  "verification": {
+    "provider": "Etherscan V2 / BaseScan",
+    "status": "Pass - Verified",
+    "guid": "ejsaabexnamqavixg3d4tmjfjhy6adqhabwihazgc5jms8jut6",
+    "sourceReadbackPresent": true,
+    "contractName": "NabungGoalVault",
+    "compilerVersion": "v0.8.30+commit.73712a01",
+    "optimizerRuns": 200,
+    "evmVersion": "cancun",
+    "explorer": "https://sepolia.basescan.org/address/0x02d8cfaaa82d86edd42c3ce8ad7eb5659b4dbe2d#code",
+    "checkedAtUtc": "2026-09-30T12:36:13.4569198Z"
+  },
+  "constructor": {
+    "owner": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+    "goalId": "0x7342efe41d6d93a7a295c4f7209f108edb4be1173d538d70a1bed6d3d87ccf4d",
+    "configHash": "0xdbb4817437eb81c32b1a45420eb78df585fc9d56dfe24ee8fc55683620dcea07",
+    "targetRaw": "10000000",
+    "messenger": "0x9b897086dbdf754ed88ce3610e2a40c3df1ab40b",
+    "sourceCoordinator": "0x6edea077d6285eb7ea67092dc1a824441212d99ce463c15a2de0c6a19fe0d7c6",
+    "minimumIdleRaw": "0",
+    "asset": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+    "pool": "0x0000000000000000000000000000000000000000",
+    "receipt": "0x0000000000000000000000000000000000000000"
+  },
+  "proofBoundary": "Explorer verification matches public source and constructor arguments. It is not an audit or independent proof of cross-chain completion. This goal uses cash-only USDC custody, with earning disabled."
+}

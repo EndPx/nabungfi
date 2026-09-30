@@ -62,7 +62,7 @@
     "evmVersion": "cancun",
     "libraries": {}
   },
-  "status": "confirmed-unsealed-zero-goals",
+  "status": "confirmed-sealed-live-goal-fully-claimed",
   "router": "0x9b897086dbdf754ed88ce3610e2a40c3df1ab40b",
   "factory": "0xf4fa9d34ddc40f9c5990d6b9144d78cda1ea546b",
   "transactionHash": "0xe11991e5617579c8fb312f2fbb352906fbc431b4fe5cb7c6fe1ebccae885e455",
@@ -142,9 +142,10 @@
     "factory": "f6a45459148efd65d889e0840642373c1fd9dcb628b6d6190c695e7bb137aca6"
   },
   "limits": [
-    "No goals funded/created, no seal, no LayerZero library/DVN configuration or messages.",
-    "Wire v1 only supports Solana\u2013Base; other EVM deployments remain staging.",
-    "Cash-only networks do not earn; Solana profile is also cash-only."
+    "Cash-only proof: no interest, Kamino execution or live DeFi liquidity claim.",
+    "One registered Base peer per goal; Arbitrum and Ethereum remain staging for a multi-peer extension.",
+    "Operator drove the lifecycle; no persistent unattended keeper proven.",
+    "Single required Labs DVN test stack; Solana upgrade authority retained; source verification and peer review are not audits."
   ],
   "sourceVerification": {
     "router": {
@@ -157,5 +158,7 @@
       "explorerUrl": "https://sepolia.basescan.org/address/0xf4fa9d34ddc40f9c5990d6b9144d78cda1ea546b#code",
       "result": "Pass - Verified"
     }
-  }
+  },
+  "deploymentStatus": "confirmed-unsealed-zero-goals",
+  "operationalEvidence": "layerzero-solana-base-live.json"
 }

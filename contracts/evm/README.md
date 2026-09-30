@@ -2,7 +2,7 @@
 
 This package implements non-upgradeable, single-owner, single-goal USDC vaults. Aave-enabled vaults own their funds and aTokens; explicit cash-only vaults disable earning and hold USDC directly. The prototype has no early payout, target edit, timeout escape, admin sweep, borrowing or arbitrary-call method.
 
-The local suite covers accounting, transport, multi-goal isolation, deployment guards and the Foundry deployment entrypoint. Conservation fuzzing runs 256 cases. The original Base mainnet fork regression uses actual USDC/Aave bytecode at block **51,893,120**, artificial balances and local time advance. The local EVM endpoint is a labeled test harness. Router/factory components are also deployed on three public testnets, unsealed with zero goals; deployment does not prove messaging or a savings lifecycle. [Deployment receipts](../deployments/) and [transport proof boundaries](../../docs/LAYERZERO_INTEGRATION.md).
+The 64-test local suite covers accounting, transport, multi-goal isolation, deployment guards and operator tooling. Conservation fuzzing runs 256 cases. The original Base mainnet fork uses actual USDC/Aave bytecode at block **51,893,120**, artificial balances and local time advance. Its local endpoint remains a labeled test harness. Separately, the sealed public Solana Devnet–Base Sepolia cash pair completed seven real LayerZero deliveries, 4+6-USDC deposits and partial/full claims. Arbitrum/Ethereum components remain staging. [Public lifecycle receipts](../deployments/layerzero-solana-base-live.json), [deployment receipts](../deployments/) and [transport proof boundaries](../../docs/LAYERZERO_INTEGRATION.md).
 
 `test/MultiGoalIsolation.t.sol` checks separate car/laptop/house vaults for one owner: receipt accounting, interest/loss attribution, completion and claims, rejected cross-goal commands, independent rounds/counters, and a cash-funded goal completing while another goal is illiquid. These scenarios use local mock tokens, a mock pool and a mock transport; they do not verify production message authenticity or goal-pair registration. See the [contract-first plan](../../docs/CONTRACT_PLAN.md).
 
@@ -37,6 +37,24 @@ On Windows, enter WSL and navigate to the checkout under `/mnt/` before running 
 Upstream dependency distributions retain their licenses. OpenZeppelin provides ERC20 interfaces, SafeERC20 and ReentrancyGuard; the official LayerZero OApp supplies endpoint/peer checks and send/quote integration. forge-std is test-only.
 
 ## Layout and environment
+
+### LayerZero wiring and goal operations
+
+`script/ConfigureLayerZero.s.sol` reads public network variables from `.env`, checks the actual router/Endpoint identities, then sets explicit SendULN302, ReceiveULN302, Executor and required DVN configuration. Its `audit()` entrypoint checks custom configuration readbacks and prints route ownership/delegate state. The reviewed testnet stack requires the LayerZero Labs DVN, uses Base-origin confirmations **2** and Solana-origin confirmations **10**, and explicitly disables optional DVNs with the ULN NIL count. This single-operator testnet stack is not a production security quorum.
+
+`quote()` calls the actual Endpoint and worker contracts with the actual OApp sender/receiver and a 222-byte message. Its illustrative goal identities make it a fee/pathway check, not a delivery or registration test. Solana receive options are type 3, with compute units and lamports; `.env` controls both.
+
+```sh
+# Simulate first; add --account deployer-wallet --password '' --broadcast --slow only after review.
+forge script script/ConfigureLayerZero.s.sol:ConfigureLayerZero --rpc-url "$BASE_SEPOLIA_RPC_URL"
+forge script script/ConfigureLayerZero.s.sol:ConfigureLayerZero --sig 'audit()' --rpc-url "$BASE_SEPOLIA_RPC_URL"
+forge script script/ConfigureLayerZero.s.sol:ConfigureLayerZero --sig 'quote()' --rpc-url "$BASE_SEPOLIA_RPC_URL"
+RUN_LZ_CONFIGURATION_FORK=true forge test --match-path 'test/fork/LayerZeroConfigurationFork.t.sol' -vv
+```
+
+The wiring fork pins Base Sepolia block **47,500,917**, applies all four configuration transactions locally, seals the forked router, creates a real vault, quotes real workers, and checks REGISTER/PREPARE/COMMIT handlers with injected authenticated callers. Injected callers and artificial USDC balances are test facilities; this does not prove public DVN verification or delivery.
+
+`script/OperateNabungFi.s.sol` provides individually invoked `seal()`, `create()`, `registration()`, `deposit()`, `progress()`, `ready()`, `report()` and `claim()` steps. Each validates the reviewed route, owner, goal identity/configuration, operation nonce and applicable contract state. Message stages quote the actual goal and enforce `MAX_MESSAGE_FEE_WEI`. After every broadcast, reconcile its receipt and onchain state before updating `EXPECTED_OPERATION_NONCE`; never blindly rerun after a timeout. `seal()` irreversibly renounces router ownership and makes the router its Endpoint delegate, so verify both chains and account discovery before invoking it. Do not deposit before authenticated pair registration completes on both chains.
 
 ```text
 src/              Savings contracts, adapter, router, factory, wire codec
@@ -87,7 +105,7 @@ After a deployment, verify source using the original compiler settings and exact
 
 An authenticated abort permanently marks the current round `Aborted`, clears the prepared snapshot, returns to `Locked` and emits `AbortAcknowledged`. It does not pay the user. A new round must have a larger round number. Delayed old commits cannot unlock an aborted round; commits cannot later be aborted or relocked. The coordinator must wait for every registered abort acknowledgment before opening a new round.
 
-## Messaging boundary — not an installed bridge
+## Messaging boundary
 
 `receiveCommand(sourceChain, sender, Command)` accepts calls only from the immutable messenger **contract**, for the immutable coordinator identity and application source domain. It checks the goal, configuration hash, destination domain and destination vault, exact next command sequence, completion round, phase and local reserve.
 
@@ -97,7 +115,7 @@ Command kinds match the Solana prototype: **0 invalid, 1 PREPARE, 2 COMMIT, 3 AB
 
 Command sequences advance across rounds, not per round. The vault rejects duplicate and out-of-order commands without consuming its application sequence. The OApp router consumes authenticated stale command retries as no-ops; future commands still revert and must be retried after their predecessors. Lifecycle outbound `reportSequence` advances only for `ReadyReported` and `AbortAcknowledged`. Permissionless progress events use a **separate** `progressSequence`, preventing progress spam from skipping the next expected lifecycle report. Report fields contain goal/config, source domain/vault, amount where applicable, sequence, round where applicable, and an observation block.
 
-`NabungLzRouter` now implements the official OApp boundary, and `NabungVaultFactory` plus the shared wire/configuration fixtures establish the registration encoding. The router seals its peer/delegate configuration before creating goals and accepts registration only from the authenticated Solana peer. READY and ABORT_ACK are read from a durable vault outbox. Actual DVN/library/confirmation configuration, fee budgets, network delivery and deployment/upgrade identities remain unverified. The Base vault still depends on authenticated coordinator evidence for remote reserves. The legacy mock transport exists **only in tests**.
+`NabungLzRouter` implements the official OApp boundary, and `NabungVaultFactory` plus the shared wire/configuration fixtures establish the registration encoding. The router seals its peer/delegate configuration before creating goals and accepts registration only from the authenticated Solana peer. READY and ABORT_ACK are read from a durable vault outbox. Explicit ULN302/DVN/Executor configuration, measured fee options and public delivery are recorded for the cash-mode test pair in the lifecycle manifest. The Base vault still depends on authenticated coordinator evidence for remote reserves. The legacy mock transport exists **only in tests**.
 
 ## Aave fork proof and rounding
 
@@ -115,7 +133,7 @@ The second test advances only the fork's local timestamp by one day and observes
 
 ## Scope and remaining work
 
-- Configure and verify an actual two-way pathway using the implemented OApp/codec, measure fees and delivery, and review deployment authority. Local SDK/SBF tests are not network acceptance.
+- Operate the verified testnet pathway with a persistent keeper and reconciliation policy. Local SDK/SBF checks remain separate from its actual public receipts.
 - Review initialization authority, malicious peer behavior, token freezes, protocol upgrades, chain halts and keeper/transport liveness before real funds.
 - Select the actual idle reserve/exposure policy and monitoring thresholds. No operator can rewrite this vault's target or withdraw on the owner's behalf.
 - Test current deployed-market controls and receipt rounding at deployment time. No-term Aave supply remains subject to protocol liquidity and pause conditions; see [Pool integration](https://aave.com/docs/aave-v3/smart-contracts/pool) and [withdrawal conditions](https://aave.com/help/supplying/withdraw-tokens).

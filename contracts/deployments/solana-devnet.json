@@ -4,7 +4,7 @@
   "rpc": "https://api.devnet.solana.com",
   "eid": 40168,
   "profile": "devnet-cash-only",
-  "status": "programs-deployed-oapp-registered-unsealed",
+  "status": "programs-deployed-sealed-live-goal-fully-claimed",
   "deployer": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
   "core": {
     "program": "3tPb29y74ycYSHa6Pz1tsUTsnaD6Xh9HPEzFKtWnwXM4",
@@ -42,14 +42,16 @@
     "receiveTypes": "Cbke57GRMkjTgFVjWruwv8QdYP7DxQvESqm47U47P1AL",
     "endpoint": "76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6",
     "registry": "C5r1MmCixykCW6EwYw8QP2dFbq9MyWumhx7jyEbEKvpU",
-    "delegate": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+    "delegate": "5fMoiRiAghVMDtKYfJno7FFy8WF1hbwDV1iuKhHxtJ49",
     "baseEid": 40245,
     "basePeer": "0x9b897086dbdf754ed88ce3610e2a40c3df1ab40b",
-    "routeSealed": false,
+    "routeSealed": true,
     "signature": "3K7KDCQmHoih7fwRVeFgLs4dFKk1kCgwgq17T2pcnqBdz8HrGhZP9DwPHx4U4RNihjAXwSgMDxBXaEqkiVbFDcf1",
     "slot": 505873497,
     "confirmation": "finalized",
-    "bootstrapSimulationComputeUnits": 42540
+    "bootstrapSimulationComputeUnits": 42540,
+    "bootstrapDelegate": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+    "sealSignature": "cD7HnVWCdntxnFmrNwgYDVZLQtKy24QqjWhbRhxyYVMfhTDSDy9xiAC8SgmZjAALSiMLnzyQddhZVzxczE4qZTQ"
   },
   "validation": {
     "defaultNative": {
@@ -65,10 +67,11 @@
   },
   "limits": [
     "Cash-only Devnet: Kamino supply/redeem are disabled; sentinel is not a Kamino market.",
-    "Route is unsealed: no explicit security-stack configuration or public LayerZero delivery claimed.",
-    "No savings goal has been created or funded by this deployment.",
-    "Current coordinator binds only one Base peer; no simultaneous multi-EVM goal aggregation.",
-    "Upgrade authority remains with the deployment signer; programs are not immutable.",
+    "One registered Base peer per goal; Arbitrum and Ethereum remain staging for a multi-peer extension.",
+    "Operator drove the lifecycle; no persistent unattended keeper proven.",
+    "Single required Labs DVN test stack; Solana upgrade authority retained; source verification and peer review are not audits.",
     "ELF download equality is bytecode provenance, not a reproducible-build attestation or audit."
-  ]
+  ],
+  "deploymentStatus": "programs-deployed-oapp-registered-unsealed",
+  "operationalEvidence": "layerzero-solana-base-live.json"
 }
