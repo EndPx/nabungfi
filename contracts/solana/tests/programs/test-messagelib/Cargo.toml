@@ -1,0 +1,23 @@
+[package]
+name = "nabungfi-test-messagelib"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "nabungfi_test_messagelib"
+
+[features]
+default = []
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+idl-build = ["anchor-lang/idl-build", "messagelib-interface/idl-build"]
+
+[dependencies]
+anchor-lang = "=0.32.1"
+messagelib-interface = { git = "https://github.com/LayerZero-Labs/LayerZero-v2", rev = "9c741e7f9790639537b1710a203bcdfd73b0b9ac", package = "messagelib-interface-latest", features = ["cpi"] }

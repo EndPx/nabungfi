@@ -1,0 +1,13 @@
+{
+  "name": "@nabungfi/evm",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@layerzerolabs/oapp-evm": "0.4.1",
+    "@layerzerolabs/lz-evm-protocol-v2": "3.0.168",
+    "@layerzerolabs/lz-evm-messagelib-v2": "3.0.168",
+    "@layerzerolabs/lz-evm-v1-0.7": "3.0.168",
+    "@openzeppelin/contracts": "5.7.0",
+    "@openzeppelin/contracts-upgradeable": "5.7.0"
+  }
+}

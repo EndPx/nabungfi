@@ -1,0 +1,29 @@
+# Local-only material. Do not add these to the public repository.
+/apps/
+/research/
+/DESIGN.md
+/IMPLEMENTATION_STATUS.md
+/docs/BROWSER_VERIFICATION.md
+
+# Dependencies, generated files and local state.
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.local/
+*.log
+coverage/
+contracts/evm/out/
+contracts/evm/cache/
+contracts/evm/broadcast/
+contracts/solana/target/
+test-results/
+playwright-report/
+*.tsbuildinfo
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
