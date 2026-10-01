@@ -2,7 +2,7 @@
 
 The authenticated application uses the deployed v2 testnet contracts. Each user's linked Solana and EVM wallets own their goals. The API produces unsigned plans and validates original receipts; it never signs user financial operations.
 
-Publication status: this step publishes the keeper kernel capability and its regression tests. The application API, database admission attachment and their release acceptance are a separate pending publication step. API descriptions below specify that integration boundary; they are not evidence of a published backend or new-user financial lifecycle.
+Publication status: the keeper kernel and the authenticated application API/database admission source are published in separate verified steps. Direct Node runtime and genuine owner login evidence are recorded in [backend acceptance](BACKEND_ACCEPTANCE.md). A fresh owner-signed backend financial lifecycle and hosted uptime remain separate acceptance gates.
 
 ## Authority
 

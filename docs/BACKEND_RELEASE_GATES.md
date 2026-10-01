@@ -2,6 +2,8 @@
 
 The backend release is separate from visual frontend completion. The existing UI can serve as an integration test client; production frontend publication and VPS provisioning follow backend acceptance.
 
+The dated results and remaining gates are recorded in [backend acceptance](BACKEND_ACCEPTANCE.md).
+
 ## Required evidence
 
 | Gate | Required result |
