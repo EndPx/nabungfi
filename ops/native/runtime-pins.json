@@ -1,0 +1,16 @@
+{
+  "architecture": "linux-x64",
+  "node": {
+    "version": "24.18.0",
+    "archive": "node-v24.18.0-linux-x64.tar.xz",
+    "archiveSha256": "55aa7153f9d88f28d765fcdad5ae6945b5c0f98a36881703817e4c450fa76742",
+    "path": "/opt/nabungfi/runtime/node-v24.18.0-linux-x64/bin/node"
+  },
+  "pnpm": {"version": "10.21.0", "prefix": "/opt/nabungfi/runtime/pnpm-10.21.0"},
+  "cast": {
+    "version": "1.8.3",
+    "commit": "cae51ad458f6abb64852b7709eb784352429825d",
+    "sha256": "1412cb2374f68032ce2c73a3fcb04e0e02a8d2b1744c160456ce513bdb2416da",
+    "path": "/opt/nabungfi/runtime/foundry-1.8.3/cast"
+  }
+}

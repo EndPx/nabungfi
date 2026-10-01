@@ -32,7 +32,7 @@ export async function publishKeeperRegistry(repo:Pick<ApplicationRepository,'lis
  catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
  const records=await repo.listKeeperBindings(),goals=mergeRegistry(prior.goals,records.map(r=>operatorGoal(r.binding)));
  await mkdir(dirname(path),{recursive:true});const temporary=path+'.'+randomUUID()+'.tmp';
- await writeFile(temporary,JSON.stringify({version:1,updatedAt:new Date().toISOString(),goals}),{encoding:'utf8',mode:0o600});await rename(temporary,path);
+ await writeFile(temporary,JSON.stringify({version:1,updatedAt:new Date().toISOString(),goals}),{encoding:'utf8',mode:0o640});await rename(temporary,path);
  return{goals:goals.length,capacity:500};
 }
 export function startRegistryPublisher(repo:Pick<ApplicationRepository,'listKeeperBindings'>,file:string) {

@@ -37,7 +37,7 @@ try {
     } catch(error) {
       errors++;log({event:'registry-paused',code:'registry-or-journal-validation-failed',error:error.name});if(once)process.exitCode=1;
     }
-    atomicWrite(config.statusFile??join(config.stateDirectory,'operator-status.json'),{version:1,authorityMode:'permissionless',broadcast,lastCycleAt:new Date().toISOString(),goalCount,errors,capacity:ACTIVE_CAPACITY,completedGoalIds});
+    atomicWrite(config.statusFile??join(config.stateDirectory,'operator-status.json'),{version:1,authorityMode:'permissionless',broadcast,lastCycleAt:new Date().toISOString(),goalCount,errors,capacity:ACTIVE_CAPACITY,completedGoalIds},{mode:0o640});
     if(once||stopped)break;
     await new Promise(resolve=>{const finish=()=>{clearTimeout(timer);process.off('SIGINT',finish);process.off('SIGTERM',finish);resolve();};const timer=setTimeout(finish,config.intervalMs);process.once('SIGINT',finish);process.once('SIGTERM',finish);});
   } while(!stopped);

@@ -1,0 +1,46 @@
+[Unit]
+Description=NabungFi authenticated testnet API
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=nabungfi-api
+Group=nabungfi-api
+SupplementaryGroups=nabungfi-bridge
+WorkingDirectory=/opt/nabungfi/current/apps/server
+EnvironmentFile=/etc/nabungfi/api.env
+Environment=HOME=/var/lib/nabungfi-api
+Environment=NODE_OPTIONS=--max-old-space-size=384
+ExecStart=/opt/nabungfi/runtime/node-v24.18.0-linux-x64/bin/node --import tsx src/index.ts
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=35
+KillSignal=SIGTERM
+KillMode=control-group
+UMask=0027
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+ReadWritePaths=/var/lib/nabungfi-api/.local /var/lib/nabungfi/.local/registry
+ReadOnlyPaths=/var/lib/nabungfi/.local/status
+InaccessiblePaths=/var/lib/nabungfi-keeper /etc/nabungfi/keeper.json /etc/nabungfi/keeper.env
+MemoryMax=512M
+CPUQuota=50%
+TasksMax=64
+LimitNOFILE=2048
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nabungfi-api
+
+[Install]
+WantedBy=multi-user.target

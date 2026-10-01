@@ -1,1 +1,4 @@
 /apps/server/migrations/*.sql text eol=lf
+/ops/native/*.sh text eol=lf
+/ops/native/*.service text eol=lf
+/ops/native/*.timer text eol=lf

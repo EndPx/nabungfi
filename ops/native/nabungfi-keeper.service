@@ -1,0 +1,46 @@
+[Unit]
+Description=NabungFi permissionless testnet coordinator
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=600
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=nabungfi-keeper
+Group=nabungfi-keeper
+SupplementaryGroups=nabungfi-bridge
+WorkingDirectory=/opt/nabungfi/current
+EnvironmentFile=/etc/nabungfi/keeper.env
+Environment=HOME=/var/lib/nabungfi-keeper
+Environment=NODE_OPTIONS=--max-old-space-size=384
+ExecStart=/usr/bin/flock --nonblock --no-fork /var/lib/nabungfi-keeper/.local/operator.lock.supervisor /opt/nabungfi/runtime/node-v24.18.0-linux-x64/bin/node contracts/keeper/src/supervisor.mjs --config /etc/nabungfi/keeper.json --broadcast
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=15min
+KillSignal=SIGTERM
+KillMode=control-group
+UMask=0027
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+ReadWritePaths=/var/lib/nabungfi-keeper /var/lib/nabungfi/.local/status
+ReadOnlyPaths=/var/lib/nabungfi/.local/registry
+InaccessiblePaths=/var/lib/nabungfi-api /etc/nabungfi/api.env
+MemoryMax=512M
+CPUQuota=50%
+TasksMax=64
+LimitNOFILE=2048
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nabungfi-keeper
+
+[Install]
+WantedBy=multi-user.target

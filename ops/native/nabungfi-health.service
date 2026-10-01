@@ -1,0 +1,21 @@
+[Unit]
+Description=Read-only NabungFi localhost availability check
+After=nabungfi-api.service
+
+[Service]
+Type=oneshot
+User=nabungfi-api
+Group=nabungfi-api
+WorkingDirectory=/opt/nabungfi/current
+ExecStart=/opt/nabungfi/runtime/node-v24.18.0-linux-x64/bin/node ops/native/check-health.mjs
+TimeoutStartSec=20
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+InaccessiblePaths=/var/lib/nabungfi-keeper /etc/nabungfi
+MemoryMax=128M
+TasksMax=16
+StandardOutput=journal
+StandardError=journal
