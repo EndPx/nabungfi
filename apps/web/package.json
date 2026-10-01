@@ -12,6 +12,11 @@
     "doctor": "react-doctor ."
   },
   "dependencies": {
+    "@privy-io/react-auth": "3.46.0",
+    "@solana/kit": "8.4.0",
+    "@solana-program/memo": "0.15.0",
+    "@solana-program/system": "0.15.0",
+    "@solana-program/token": "0.17.0",
     "@nabungfi/shared": "workspace:*",
     "@fontsource/outfit": "5.2.8",
     "@fontsource/work-sans": "5.2.8",

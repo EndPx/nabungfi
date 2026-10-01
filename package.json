@@ -4,12 +4,14 @@
   "version": "0.1.0",
   "packageManager": "pnpm@10.21.0",
   "scripts": {
-    "dev": "concurrently --kill-others -n api,web \"pnpm --filter @nabungfi/server dev\" \"pnpm --filter @nabungfi/web dev\"",
-    "preview": "concurrently --kill-others -n api,web \"pnpm --filter @nabungfi/server start\" \"pnpm --filter @nabungfi/web preview\"",
+    "dev": "concurrently --kill-others -n demo,web \"pnpm --filter @nabungfi/server dev:demo -- --port 3001\" \"pnpm --filter @nabungfi/web dev\"",
+    "preview": "concurrently --kill-others -n demo,web \"pnpm --filter @nabungfi/server start:demo -- --port 3001\" \"pnpm --filter @nabungfi/web preview\"",
     "build": "pnpm -r --if-present build",
     "test": "pnpm -r --if-present test",
     "typecheck": "pnpm -r --if-present typecheck",
-    "repo:files": "git ls-files --cached --others --exclude-standard"
+    "repo:files": "git ls-files --cached --others --exclude-standard",
+    "dev:backend": "pnpm --filter @nabungfi/server dev",
+    "start:backend": "node --import tsx apps/server/src/index.ts"
   },
   "devDependencies": {
     "concurrently": "10.0.5",

@@ -2,7 +2,7 @@
 
 The common TypeScript package for NabungFi. It contains exact USDC conversion, chain/lifecycle types, the reference savings state machine, its public-state projection and regression tests. The local API uses the model; the local web app imports the response types. Response types are derived from `publicState`, rather than maintained as a second interface definition.
 
-The current `Model.goal` is singular. Supporting several concurrent goals per user is required; an owner-scoped collection, goal-targeted transitions and migration of existing state are pending. See [multiple-goal requirements](../docs/MULTI_GOAL_REQUIREMENTS.md). The current replacement-style create-goal operation does not satisfy that requirement.
+The legacy reference `Model.goal` is singular and remains a simulator. The authenticated backend uses the separate `@nabungfi/shared/application` types for owner-scoped goal collections and durable wallet steps, plus `@nabungfi/shared/chain` for immutable bindings, exact raw amounts and canonical testnet identities. Several simultaneous goals are required; no portfolio aggregate may unlock another goal. See [multiple-goal requirements](../docs/MULTI_GOAL_REQUIREMENTS.md).
 
 ## Use
 
@@ -24,4 +24,4 @@ pnpm --filter @nabungfi/shared typecheck
 pnpm --filter @nabungfi/shared build
 ```
 
-The existing 14 tests exercise exact units, lock/claim rules, idempotent actions, reserve freezes, liquidity/loss cases and irreversible achievement. The same accounting logic was moved from the former domain package; contract implementations remain in `contracts/`.
+The 17 tests exercise exact units, lock/claim rules, idempotent actions, reserve freezes, liquidity/loss cases and irreversible achievement. The same accounting logic was moved from the former domain package; contract implementations remain in `contracts/`.

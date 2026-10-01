@@ -2,7 +2,7 @@
 
 **Build what you're saving for.**
 
-NabungFi is a multichain, goal-locked savings prototype. The product must support several simultaneous savings goals per user, such as a car, laptop and house. Contracts isolate each goal's target, reserves and claims. The local application still models one goal; its multiple-goal UI/API work remains unfinished. Each goal is intended to have its own 100-piece construction. [Multiple-goal requirements](docs/MULTI_GOAL_REQUIREMENTS.md).
+NabungFi is a multichain, goal-locked savings prototype. The product must support several simultaneous savings goals per user, such as a car, laptop and house. Contracts isolate each goal's target, reserves and claims. The authenticated backend stores multiple owner-scoped goals with independent onchain bindings and wallet-action journals; the published visual prototype still uses a separate simulated goal. Each goal is intended to have its own 100-piece construction. [Multiple-goal requirements](docs/MULTI_GOAL_REQUIREMENTS.md).
 
 This repository contains the interactive web prototype, local API, shared model and contract implementations. Research, private configuration and local state remain excluded from Git.
 
@@ -10,7 +10,7 @@ This repository contains the interactive web prototype, local API, shared model 
 
 ```text
 apps/web/            React/Vite prototype, procedural 3D construction and audio feedback
-apps/server/         Local-demo HTTP API and persistent simulated ledger
+apps/server/         Privy-authenticated Neon API, unsigned plans and receipt verification
 shared/              @nabungfi/shared: exact-unit model, API types and tests
 contracts/evm/       Domain-specific EVM goal vaults, Aave adapter and Foundry tooling/tests
 contracts/solana/    Anchor single-peer and multi-peer coordinator/transport programs
@@ -35,7 +35,7 @@ pnpm typecheck
 pnpm build
 ```
 
-These commands verify the shared model, local server, frontend and keeper. Contract-specific Foundry/Cargo checks use their package instructions.
+These commands verify the shared model, authenticated server, published frontend prototype and keeper. Contract-specific Foundry/Cargo checks use their package instructions.
 
 The [shared package](shared/README.md) exports exact six-decimal USDC conversion, lifecycle rules, state transitions and response types. The local server and frontend consume `@nabungfi/shared`; they do not maintain separate API type definitions. [API contract](docs/API_CONTRACT.md).
 
@@ -61,13 +61,13 @@ The live restart preserved 24 original intent hashes; the later journal also con
 
 The v2 public testnet goal completed **registration → 4+2+2+2-USDC deposits → same-round reserves → achievement → partial and full claims** across Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. The recorded achieved total is 10 USDC. Every vault ended at zero, and each chain's owner token account recovered its initial 20-USDC faucet balance. Real LayerZero DVNs/Executors delivered **21 messages**, including post-claim zero-balance reports from all three EVM peers; funds stayed on their original chains. [Four-chain transaction/state evidence](contracts/deployments/multichain/live-goal.json), [operator runbook](docs/MULTICHAIN_TESTNET_RUNBOOK.md), [v2 protocol design](docs/MULTICHAIN_V2_PLAN.md).
 
-The latest verification pass includes **71 EVM unit tests**, **three v2 testnet fork scenarios**, **59 native Rust checks** and **six v2 SBF/LiteSVM scenarios**. The shared model retains 14 regression tests. These local/fork/runtime checks are distinct from the public transaction receipts. Earlier v1 verification included 64 EVM units, 17 retained pinned fork cases, a configuration fork, 35+4 default native checks or 38+4 Devnet checks, and six default/seven Devnet SVM scenarios; these are dated prior gates rather than additional new v2 public executions. See [LayerZero implementation and reproduction](docs/LAYERZERO_INTEGRATION.md) and the [contract-first plan](docs/CONTRACT_PLAN.md).
+The latest verification pass includes **71 EVM unit tests**, **three v2 testnet fork scenarios**, **59 native Rust checks** and **six v2 SBF/LiteSVM scenarios**. The shared package passes 17 tests; the authenticated server passes 40 tests, and the permissionless keeper passes 36 tests. The real Neon persistence pass performed 41 checks across migrations 1-9 and cleaned only its unique test rows, with zero financial transactions. These local/fork/runtime checks are distinct from the public transaction receipts. Earlier v1 verification included 64 EVM units, 17 retained pinned fork cases, a configuration fork, 35+4 default native checks or 38+4 Devnet checks, and six default/seven Devnet SVM scenarios; these are dated prior gates rather than additional new v2 public executions. See [LayerZero implementation and reproduction](docs/LAYERZERO_INTEGRATION.md) and the [contract-first plan](docs/CONTRACT_PLAN.md).
 
 The [v2 component manifests](contracts/deployments/multichain/) bind fresh Solana programs and EVM routers/factories to canonical Circle USDC. The coordinator has a fixed registered participant set and independent per-peer identities, sequences and readiness; completion requires every participant. Base, Ethereum and Solana use cash-only profiles. Arbitrum has a compatible Aave adapter available, but its demonstrated 2 USDC stayed idle: **this four-chain run proves cash custody and coordination, not earning**.
 
 Arbitrum's original v2 router, factory and completed vault, plus the three concurrent-goal vaults, have exact creation/runtime source matches on Sourcify. Pinned recompilation and live RPC comparisons are recorded. Original Etherscan/Arbiscan queue statuses remain separate. [Original source proof](contracts/deployments/multichain/arbitrum-source-verification.json), [concurrent vault proof](contracts/deployments/multichain/arbitrum-concurrent-vault-verification.json), [provider status](docs/ARBITRUM_SOURCE_VERIFICATION.md).
 
-The TypeScript application still simulates one goal; multiple-goal API/UI migration and wallet integration remain unfinished. The keeper's autonomous coordination is now proven locally on public testnets, with explicit Root funding/claim pauses; it is a local WSL process, not a hosted always-on service, and cannot run while the host is asleep/offline. At the recorded terminal state it remains idle without signing fresh actions for zero balances. Actual Kamino execution, demonstrated earning, investment policy and production hosting/security remain work. Local SVM fixtures do not prove DVN delivery. One required testnet DVN and retained Solana upgrade authority remain trust boundaries. Robinhood/CRE are absent; no mainnet operation, live earning or audit assurance is claimed.
+The authenticated TypeScript backend now verifies Privy tokens and authoritative wallets, persists multiple isolated goals in Neon, prepares unsigned owner transactions and reconciles exact testnet receipts. The legacy visual prototype remains simulated; the separate integration UI is not part of this backend publication. A genuine owner Privy browser session now returns HTTP 200 from the authenticated session and goal-list endpoints with authoritative EVM/Solana wallet bindings. A fresh owner-signed backend financial lifecycle remains an acceptance gate; historical receipts and fixture authentication do not establish it. The keeper's autonomous coordination is now proven locally on public testnets, with explicit Root funding/claim pauses; it is a local WSL process, not a hosted always-on service, and cannot run while the host is asleep/offline. At the recorded terminal state it remains idle without signing fresh actions for zero balances. Actual Kamino execution, demonstrated earning, investment policy and production hosting/security remain work. Local SVM fixtures do not prove DVN delivery. One required testnet DVN and retained Solana upgrade authority remain trust boundaries. Robinhood/CRE are absent; no mainnet operation, live earning or audit assurance is claimed.
 
 The earlier Solana–Base v1 cash proof remains preserved with its [seven-message lifecycle manifest](contracts/deployments/layerzero-solana-base-live.json) and [historical source commit](https://github.com/EndPx/nabungfi/tree/b64280b28ea771fa8c53beae8e8f061d7651e46a). The v2 domain accessor changes source/compilation metadata; current v1-named source must not be described as byte-for-byte identical to those historical deployed binaries.
 
@@ -75,4 +75,4 @@ The earlier Solana–Base v1 cash proof remains preserved with its [seven-messag
 
 Run `pnpm dev` from the repository root. The frontend runs at `http://127.0.0.1:5173` and the local API at `http://127.0.0.1:3001`. After `pnpm build`, use `pnpm preview` for the built UI at `http://127.0.0.1:4173`. See the [web prototype](apps/web/README.md) and [local API](apps/server/README.md).
 
-The application uses sample funds and one simulated goal. It does not connect a wallet, submit onchain transactions or use the prepared Privy/Neon credentials yet. Its UI is separate from the genuine four-chain contract/keeper evidence.
+The root `dev`/`preview` commands pair the published visual prototype with the explicitly separate simulator on port 3001. It uses sample funds and one simulated goal. To run the authenticated backend separately, use `pnpm dev:backend` or `pnpm start:backend`; do not run both APIs on the same port. The authenticated API requires private local configuration and remains separate from the historical visual demo. See [backend release gates](docs/BACKEND_RELEASE_GATES.md). Direct Node processes are used locally and intended for VPS hosting; Docker is not required.
