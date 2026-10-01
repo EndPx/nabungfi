@@ -11,5 +11,31 @@ test('one READY never unlocks three peers; zero READY is still required',()=>{co
 test('ABORT path drains missing command predecessor and durable reports',()=>{const s=state();Object.assign(s.sol,{phase:2,round:'1',outboundSequence:'2'});assert.equal(chooseAction(goal,s,ledger(),policy,now).sequence,'1');for(const p of s.peers)p.commandSequence='2';s.peers[2].reportSequence='1';assert.deepEqual(chooseAction(goal,s,ledger(),policy,now),{kind:'report',domain:4,round:'1',sequence:'1'});});
 test('ambiguous original action pauses only this goal',()=>{const l=ledger();l.intents.bad={status:'ambiguous'};assert.equal(chooseAction(goal,state(),l,policy,now),null);assert.equal(chooseAction({...goal,goalId:'different'},state(),ledger(),policy,now).kind,'prepare');});
 test('terminal zero NAV stops heartbeat without relocking',()=>{const s=state();s.sol.phase=3;for(const p of s.peers)Object.assign(p,{totalAssets:'0',netAssets:'0'});assert.equal(chooseAction(goal,s,ledger(),policy,now),null);s.peers[1].netAssets='1000000';assert.equal(chooseAction(goal,s,ledger(),policy,now).kind,'progress');});
+test('manual-owner target needs fresh zero-peer reports without automatic owner preparation',()=>{
+ const s=state(),manual={...goal,autoPrepare:false};s.localCash='4000000';
+ for(const p of s.peers)Object.assign(p,{totalAssets:'0',netAssets:'0',evmProgressSequence:'0',progressSequence:'0',receivedAt:'0'});
+ assert.deepEqual(chooseAction(manual,s,ledger(),policy,now),{kind:'progress',domain:2,sequence:'1'});
+});
+test('unchanged below-target manual goals do not burn native fees on idle heartbeats',()=>{
+ const s=state();s.sol.target='8000000';for(const p of s.peers)p.receivedAt='1';
+ assert.equal(chooseAction({...goal,autoPrepare:false},s,ledger(),policy,now),null);
+ s.peers[1].totalAssets='1000001';assert.equal(chooseAction({...goal,autoPrepare:false},s,ledger(),policy,now).domain,3);
+});
+test('oldest-first refresh cannot starve later peers even after a 750-second revisit',()=>{
+ const s=state(),manual={...goal,autoPrepare:false},l=ledger();for(const p of s.peers)p.receivedAt=String(now/1000-900);
+ const domains=[];let clock=now;
+ for(let i=0;i<3;i++){
+  const action=chooseAction(manual,s,l,policy,clock);domains.push(action.domain);
+  const p=s.peers.find(p=>p.domain===action.domain);p.receivedAt=String(clock/1000);p.progressSequence=String(BigInt(p.progressSequence)+1n);p.evmProgressSequence=p.progressSequence;
+  l.intents[String(i)]={action,status:'delivered',deliveredAt:clock};clock+=750000;
+ }
+ assert.deepEqual(domains,[2,3,4]);
+});
+test('bounded active-goal cadence obtains all fresh peers without using the portfolio sum',()=>{
+ const goals=Array.from({length:6},(_,i)=>({g:{...goal,goalId:String(i),autoPrepare:false},s:state(),l:ledger()}));
+ for(const {s}of goals)for(const p of s.peers)p.receivedAt=String(now/1000-900);
+ for(let cycle=0;cycle<3;cycle++)for(const {g,s,l}of goals){const clock=now+cycle*30000,action=chooseAction(g,s,l,policy,clock),p=s.peers.find(p=>p.domain===action.domain);p.receivedAt=String(clock/1000);p.progressSequence=String(BigInt(p.progressSequence)+1n);p.evmProgressSequence=p.progressSequence;l.intents[String(cycle)]={action,status:'delivered',deliveredAt:clock};}
+ for(const {s}of goals)assert(s.peers.every(p=>now+90000-Number(p.receivedAt)*1000<policy.maxProgressAgeMs));
+});
 import{delivered}from'../src/scheduler.mjs';
 test('confirmed readiness does not strand abort recovery after later phase transitions',()=>{const s=state();Object.assign(s.sol,{phase:0,round:'1',outboundSequence:'2',localReady:false});Object.assign(s.peers[0],{round:'1',reportSequence:'2',evmPhase:0});assert(delivered({kind:'local-ready',round:'1',sequence:'1'},s));assert(delivered({kind:'ready',domain:2,round:'1',sequence:'1'},s));});

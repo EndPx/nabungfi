@@ -40,17 +40,21 @@ export function chooseAction(goal,s,ledger,policy,now){
   const total=n(s.localCash)+s.peers.reduce((sum,p)=>sum+n(p.netAssets),0n);
   const actualTotal=n(s.localCash)+s.peers.reduce((sum,p)=>sum+n(p.totalAssets),0n);
   const eligible=g.phase===0&&goal.autoPrepare&&n(g.round)<n(goal.maxAutoPrepareRounds??1);
-  for(const p of s.peers)if(n(p.totalAssets)!==n(p.netAssets))return pick({kind:'progress',domain:p.domain,sequence:(n(p.evmProgressSequence)+1n).toString()});
+  const oldest=[...s.peers].sort((a,b)=>Number(a.receivedAt)-Number(b.receivedAt)||a.domain-b.domain);
+  for(const p of oldest)if(n(p.totalAssets)!==n(p.netAssets))return pick({kind:'progress',domain:p.domain,sequence:(n(p.evmProgressSequence)+1n).toString()});
   const fresh=s.peers.every(p=>n(p.progressSequence)>0n&&now-Number(p.receivedAt)*1000<=policy.maxProgressAgeMs&&Number(p.receivedAt)*1000<=now+policy.clockSkewMs);
   if(eligible&&fresh&&s.peers.every(p=>n(p.receiptBalance)===0n)&&total>=n(g.target))return pick({kind:'prepare',round:(n(g.round)+1n).toString(),sequence:(n(g.outboundSequence)+1n).toString()});
-  for(const p of s.peers){
+  const targetFunded=g.phase===0&&actualTotal>=n(g.target);
+  // Manual-owner goals need fresh zero-peer reports too, without continuous idle spend.
+  for(const p of oldest){
    const latest=Object.values(ledger.intents).filter(e=>e.action.kind==='progress'&&e.action.domain===p.domain&&e.status==='delivered').at(-1);
    const coldZero=n(p.totalAssets)===0n&&n(p.netAssets)===0n&&n(p.evmProgressSequence)===0n;
    const terminalZero=g.phase===3&&n(p.totalAssets)===0n&&n(p.netAssets)===0n;
    const stale=n(p.progressSequence)===0n||now-Number(p.receivedAt)*1000>policy.maxProgressAgeMs;
    const due=!latest||now-latest.deliveredAt>=policy.progressRefreshMs;
-   const neededZero=eligible&&actualTotal>=n(g.target)&&coldZero;
-   if(!terminalZero&&(neededZero||(!coldZero&&(due||(eligible&&total>=n(g.target)&&stale)))))return pick({kind:'progress',domain:p.domain,sequence:(n(p.evmProgressSequence)+1n).toString()});
+   const neededZero=targetFunded&&coldZero;
+   if(goal.autoPrepare===false&&g.phase===0&&!targetFunded)continue;
+   if(!terminalZero&&(neededZero||(!coldZero&&(due||(targetFunded&&stale)))))return pick({kind:'progress',domain:p.domain,sequence:(n(p.evmProgressSequence)+1n).toString()});
   }
  }
 
