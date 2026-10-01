@@ -4,18 +4,21 @@
 
 NabungFi is a multichain, goal-locked savings prototype. The product must support several simultaneous savings goals per user, such as a car, laptop and house. Contracts isolate each goal's target, reserves and claims. The local application still models one goal; its multiple-goal UI/API work remains unfinished. Each goal is intended to have its own 100-piece construction. [Multiple-goal requirements](docs/MULTI_GOAL_REQUIREMENTS.md).
 
-This repository contains the shared model and contract implementations. The interactive web app, local API and research workspace are kept locally and excluded from Git.
+This repository contains the interactive web prototype, local API, shared model and contract implementations. Research, private configuration and local state remain excluded from Git.
 
 ## Structure
 
 ```text
+apps/web/            React/Vite prototype, procedural 3D construction and audio feedback
+apps/server/         Local-demo HTTP API and persistent simulated ledger
 shared/              @nabungfi/shared: exact-unit model, API types and tests
 contracts/evm/       Domain-specific EVM goal vaults, Aave adapter and Foundry tooling/tests
 contracts/solana/    Anchor single-peer and multi-peer coordinator/transport programs
 contracts/deployments/ Public component, configuration and lifecycle receipts
+contracts/keeper/    Durable per-goal testnet coordination and recovery tests
 docs/                Technical interface and repository-scope documentation
 package.json         Workspace commands
-pnpm-workspace.yaml  Shared package and optional local app discovery
+pnpm-workspace.yaml  Application, shared and contract workspaces
 pnpm-lock.yaml       Pinned JavaScript dependencies
 ```
 
@@ -32,7 +35,7 @@ pnpm typecheck
 pnpm build
 ```
 
-In a public-only checkout these commands verify `shared/`. If the local `apps/` workspaces are present, the same commands also verify them.
+These commands verify the shared model, local server, frontend and keeper. Contract-specific Foundry/Cargo checks use their package instructions.
 
 The [shared package](shared/README.md) exports exact six-decimal USDC conversion, lifecycle rules, state transitions and response types. The local server and frontend consume `@nabungfi/shared`; they do not maintain separate API type definitions. [API contract](docs/API_CONTRACT.md).
 
@@ -70,4 +73,6 @@ The earlier Solana–Base v1 cash proof remains preserved with its [seven-messag
 
 ## Optional local prototype
 
-The ignored `apps/web` and `apps/server` can run with `pnpm dev` when present. The frontend runs at `http://127.0.0.1:5173` and the local API at `http://127.0.0.1:3001`. The local UI uses sample funds and no connected wallet. This application is not included in a public-only checkout.
+Run `pnpm dev` from the repository root. The frontend runs at `http://127.0.0.1:5173` and the local API at `http://127.0.0.1:3001`. After `pnpm build`, use `pnpm preview` for the built UI at `http://127.0.0.1:4173`. See the [web prototype](apps/web/README.md) and [local API](apps/server/README.md).
+
+The application uses sample funds and one simulated goal. It does not connect a wallet, submit onchain transactions or use the prepared Privy/Neon credentials yet. Its UI is separate from the genuine four-chain contract/keeper evidence.

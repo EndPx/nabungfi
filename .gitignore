@@ -1,9 +1,9 @@
 # Local-only material. Do not add these to the public repository.
-/apps/
 /research/
 /DESIGN.md
 /IMPLEMENTATION_STATUS.md
 /docs/BROWSER_VERIFICATION.md
+/apps/web/assets/audio/pixabay-building-208359.mp3
 
 # Dependencies, generated files and local state.
 node_modules/
