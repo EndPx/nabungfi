@@ -105,8 +105,10 @@ export interface LifecycleRuntime {
 export class OwnerLifecycleError extends Error {
     constructor(readonly code: string, message: string) { super(message); this.name = 'OwnerLifecycleError'; }
 }
-function requireThat(value: unknown, code: string, message: string): asserts value { if (!value)
-    throw new OwnerLifecycleError(code, message); }
+function requireThat(value: unknown, code: string, message: string): asserts value {
+    if (!value)
+        throw new OwnerLifecycleError(code, message);
+}
 export function validateFixtureIdentity(identity: FixtureIdentity): void {
     requireThat(/^did:privy:nabungfi-owner-fixture-[0-9a-f-]{36}$/i.test(identity.subject) && uuid.test(identity.subject.slice('did:privy:nabungfi-owner-fixture-'.length)), 'FIXTURE_SUBJECT_REQUIRED', 'Use an isolated unique fixture subject, never a real user subject.');
     deriveGoalBinding({ goalId: '0x' + '1'.repeat(64), targetRaw: '2000000', owner: identity.owner, networks: ['solana', 'base'] });
@@ -133,8 +135,12 @@ export async function startOwnerFixtureServer(input: {
     requireThat(!input.config.production && input.config.host === '127.0.0.1' && input.config.origins.every(origin => new URL(origin).protocol === 'http:' && new URL(origin).hostname === '127.0.0.1'), 'FIXTURE_SERVER_NOT_PRODUCTION', 'Fixture authentication cannot run in production or on a public listen address.');
     requireThat(input.fixtureToken.length >= 32, 'FIXTURE_TOKEN_REQUIRED', 'Supply a private one-run fixture token.');
     const expected = Buffer.from('Bearer ' + input.fixtureToken);
-    const auth: Authentication = { async authenticate(header) { const actual = Buffer.from(header ?? ''); if (actual.length !== expected.length || !timingSafeEqual(actual, expected))
-            throw new ApiError('UNAUTHENTICATED', 401, 'Explicit fixture token required.'); return { subject: input.identity.subject, wallets: [{ chainType: 'solana', address: input.identity.owner.solana }, { chainType: 'ethereum', address: input.identity.owner.evm.toLowerCase() }] } satisfies VerifiedIdentity; } };
+    const auth: Authentication = { async authenticate(header) {
+            const actual = Buffer.from(header ?? '');
+            if (actual.length !== expected.length || !timingSafeEqual(actual, expected))
+                throw new ApiError('UNAUTHENTICATED', 401, 'Explicit fixture token required.');
+            return { subject: input.identity.subject, wallets: [{ chainType: 'solana', address: input.identity.owner.solana }, { chainType: 'ethereum', address: input.identity.owner.evm.toLowerCase() }] } satisfies VerifiedIdentity;
+        } };
     // The caller must provide actual Neon repository, actual ChainServices and the real operator runtime.
     // Normal src/index.ts never imports this factory; no environment flag enables it there.
     const server = applicationServer(input.config, input.repo, auth, input.chain, input.runtime);
@@ -147,10 +153,17 @@ export async function startOwnerFixtureServer(input: {
 }
 export function stableStageId(runId: string, label: string): string { requireThat(uuid.test(runId), 'RUN_ID_REQUIRED', 'Use a stable UUID run identifier.'); const bytes = createHash('sha256').update(runId + ':' + label).digest().subarray(0, 16); bytes[6] = (bytes[6]! & 15) | 128; bytes[8] = (bytes[8]! & 63) | 128; const hex = bytes.toString('hex'); return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-'); }
 function hashFormat(network: ChainNetwork, hash: string): boolean { return network === 'solana' ? /^[1-9A-HJ-NP-Za-km-z]{70,100}$/.test(hash) : /^0x[0-9a-f]{64}$/i.test(hash); }
-function assertGoal(goal: GoalDTO, options: OwnerLifecycleOptions): void { const b = goal.binding; requireThat(goal.targetRaw === '2000000' && b.targetRaw === '2000000' && b.owner.solana === options.identity.owner.solana && b.owner.evm.toLowerCase() === options.identity.owner.evm.toLowerCase() && b.participants.length === 1 && b.participants[0]?.network === 'base', 'GOAL_IDENTITY_CHANGED', 'The fixed owner/target/Solana+Base goal identity changed.'); if (options.resume?.goalId)
-    requireThat(goal.goalId === options.resume.goalId, 'GOAL_IDENTITY_CHANGED', 'Resume the original goal only.'); }
-function assertStep(step: GoalStepDTO, goal: GoalDTO, evidence: OwnerStepEvidence): void { requireThat(step.metadataGoalId === goal.id && step.goalId === goal.goalId && step.action === evidence.action && step.network === evidence.network && step.amountRaw === evidence.amountRaw, 'STEP_IDENTITY_CHANGED', 'The stored step is not this exact goal/action/network/amount.'); if (evidence.stepId)
-    requireThat(evidence.stepId === step.id, 'STEP_IDENTITY_CHANGED', 'The original step ID changed.'); }
+function assertGoal(goal: GoalDTO, options: OwnerLifecycleOptions): void {
+    const b = goal.binding;
+    requireThat(goal.targetRaw === '2000000' && b.targetRaw === '2000000' && b.owner.solana === options.identity.owner.solana && b.owner.evm.toLowerCase() === options.identity.owner.evm.toLowerCase() && b.participants.length === 1 && b.participants[0]?.network === 'base', 'GOAL_IDENTITY_CHANGED', 'The fixed owner/target/Solana+Base goal identity changed.');
+    if (options.resume?.goalId)
+        requireThat(goal.goalId === options.resume.goalId, 'GOAL_IDENTITY_CHANGED', 'Resume the original goal only.');
+}
+function assertStep(step: GoalStepDTO, goal: GoalDTO, evidence: OwnerStepEvidence): void {
+    requireThat(step.metadataGoalId === goal.id && step.goalId === goal.goalId && step.action === evidence.action && step.network === evidence.network && step.amountRaw === evidence.amountRaw, 'STEP_IDENTITY_CHANGED', 'The stored step is not this exact goal/action/network/amount.');
+    if (evidence.stepId)
+        requireThat(evidence.stepId === step.id, 'STEP_IDENTITY_CHANGED', 'The original step ID changed.');
+}
 export async function runOwnerLifecycle(options: OwnerLifecycleOptions, runtime: LifecycleRuntime = {}): Promise<OwnerLifecycleJournal> {
     requireThat(options.profile === OWNER_FIXTURE_PROFILE && options.acknowledgement === OWNER_FIXTURE_ACKNOWLEDGEMENT, 'EXPLICIT_FIXTURE_REQUIRED', 'This authoring module cannot run without explicit fixture approval.');
     loopback(options.baseUrl);
@@ -166,18 +179,26 @@ export async function runOwnerLifecycle(options: OwnerLifecycleOptions, runtime:
     const save = () => options.checkpoint(structuredClone(journal));
     const progress = (stage: string, message: string) => options.onProgress?.({ stage, time: new Date(now()).toISOString(), message });
     const budget = () => requireThat(now() < deadline, 'LIFECYCLE_DEADLINE', 'Deadline reached. Preserve goal, original hashes, registry and funded state; never reset or delete.');
-    async function api<T>(path: string, method = 'GET', data?: unknown, idempotency?: string): Promise<T> { budget(); const response = await request(options.baseUrl.replace(/\/$/, '') + path, { method, redirect: 'error', signal: AbortSignal.timeout(20000), headers: { authorization: 'Bearer ' + options.fixtureToken, ...(data !== undefined ? { 'content-type': 'application/json' } : {}), ...(idempotency ? { 'Idempotency-Key': idempotency } : {}) }, ...(data !== undefined ? { body: JSON.stringify(data) } : {}) }); const result = await response.json() as T & {
-        code?: string;
-    }; if (!response.ok)
-        throw new OwnerLifecycleError(result.code ?? 'HTTP_FAILED', 'Fixture API operation did not complete; preserve its immutable request and original outcome.'); return result; }
-    async function wait<T>(stage: string, read: () => Promise<T>, ready: (value: T) => boolean): Promise<T> { while (true) {
+    async function api<T>(path: string, method = 'GET', data?: unknown, idempotency?: string): Promise<T> {
         budget();
-        const value = await read();
-        if (ready(value))
-            return value;
-        progress(stage, 'Waiting for authoritative original receipt or crosschain application state.');
-        await sleep(Math.min(pollMs, Math.max(1, deadline - now())));
-    } }
+        const response = await request(options.baseUrl.replace(/\/$/, '') + path, { method, redirect: 'error', signal: AbortSignal.timeout(20000), headers: { authorization: 'Bearer ' + options.fixtureToken, ...(data !== undefined ? { 'content-type': 'application/json' } : {}), ...(idempotency ? { 'Idempotency-Key': idempotency } : {}) }, ...(data !== undefined ? { body: JSON.stringify(data) } : {}) });
+        const result = await response.json() as T & {
+            code?: string;
+        };
+        if (!response.ok)
+            throw new OwnerLifecycleError(result.code ?? 'HTTP_FAILED', 'Fixture API operation did not complete; preserve its immutable request and original outcome.');
+        return result;
+    }
+    async function wait<T>(stage: string, read: () => Promise<T>, ready: (value: T) => boolean): Promise<T> {
+        while (true) {
+            budget();
+            const value = await read();
+            if (ready(value))
+                return value;
+            progress(stage, 'Waiting for authoritative original receipt or crosschain application state.');
+            await sleep(Math.min(pollMs, Math.max(1, deadline - now())));
+        }
+    }
     await save();
     try {
         const session = await api<SessionDTO>('/api/session');
@@ -193,9 +214,14 @@ export async function runOwnerLifecycle(options: OwnerLifecycleOptions, runtime:
         journal.metadataGoalId = goal.id;
         journal.goalId = goal.goalId;
         await save();
-        const refreshGoal = async () => { const result = await api<{
-            goal: GoalDTO;
-        }>('/api/goals/' + goal.id); assertGoal(result.goal, options); goal = result.goal; return goal; };
+        const refreshGoal = async () => {
+            const result = await api<{
+                goal: GoalDTO;
+            }>('/api/goals/' + goal.id);
+            assertGoal(result.goal, options);
+            goal = result.goal;
+            return goal;
+        };
         async function step(label: string, action: ChainAction, network: ChainNetwork, amountRaw?: string): Promise<void> {
             const evidence = journal.stages[label] ?? { label, requestId: stableStageId(options.runId, label), action, network, ...(amountRaw ? { amountRaw } : {}), walletStarted: false, confirmed: false };
             requireThat(evidence.action === action && evidence.network === network && evidence.amountRaw === amountRaw, 'STEP_IDENTITY_CHANGED', 'Resume only the original finite action.');
@@ -242,8 +268,14 @@ export async function runOwnerLifecycle(options: OwnerLifecycleOptions, runtime:
                 evidence.fingerprint = plan.fingerprint;
                 await save();
                 try {
-                    const result = await options.sendPlan(plan, { label, deadline, async recordOriginalHash(hash) { requireThat(hashFormat(network, hash), 'INVALID_SIGNED_HASH', 'External signer must provide its actual signed transaction hash.'); const normalized = network === 'solana' ? hash : hash.toLowerCase(); if (evidence.transactionHash)
-                            requireThat(evidence.transactionHash === normalized, 'ORIGINAL_HASH_CHANGED', 'Never replace the original signed transaction.'); evidence.transactionHash = normalized; await save(); } });
+                    const result = await options.sendPlan(plan, { label, deadline, async recordOriginalHash(hash) {
+                            requireThat(hashFormat(network, hash), 'INVALID_SIGNED_HASH', 'External signer must provide its actual signed transaction hash.');
+                            const normalized = network === 'solana' ? hash : hash.toLowerCase();
+                            if (evidence.transactionHash)
+                                requireThat(evidence.transactionHash === normalized, 'ORIGINAL_HASH_CHANGED', 'Never replace the original signed transaction.');
+                            evidence.transactionHash = normalized;
+                            await save();
+                        } });
                     requireThat(!!evidence.transactionHash && result.transactionHash === (network === 'solana' ? evidence.transactionHash : evidence.transactionHash.toLowerCase()), 'SIGNER_WAL_NOT_DURABLE', 'Signer must durably record and return the original hash before broadcast.');
                 }
                 catch (error) {
@@ -255,9 +287,15 @@ export async function runOwnerLifecycle(options: OwnerLifecycleOptions, runtime:
                 }
             }
             const original = evidence.transactionHash!;
-            await wait(label, async () => { const result = await api<{
-                step: GoalStepDTO;
-            }>(`/api/goals/${goal.id}/steps/${current.id}/reconcile`, 'POST', { transactionHash: original }); assertStep(result.step, goal, evidence); requireThat(result.step.transactionHash === original, 'ORIGINAL_HASH_CHANGED', 'Reconciliation changed the original transaction.'); requireThat(result.step.status !== 'failed' && result.step.status !== 'rejected', 'OWNER_TRANSACTION_FAILED', 'Original transaction failed; no automatic replacement.'); return result.step; }, value => value.status === 'confirmed');
+            await wait(label, async () => {
+                const result = await api<{
+                    step: GoalStepDTO;
+                }>(`/api/goals/${goal.id}/steps/${current.id}/reconcile`, 'POST', { transactionHash: original });
+                assertStep(result.step, goal, evidence);
+                requireThat(result.step.transactionHash === original, 'ORIGINAL_HASH_CHANGED', 'Reconciliation changed the original transaction.');
+                requireThat(result.step.status !== 'failed' && result.step.status !== 'rejected', 'OWNER_TRANSACTION_FAILED', 'Original transaction failed; no automatic replacement.');
+                return result.step;
+            }, value => value.status === 'confirmed');
             evidence.confirmed = true;
             await save();
             await refreshGoal();
@@ -318,16 +356,24 @@ export async function runOwnerLifecycle(options: OwnerLifecycleOptions, runtime:
 }
 interface ScanRecord {
     pathway: {
+        sender: {
+            address: string;
+        };
+        receiver: {
+            address: string;
+        };
         srcEid: number;
         dstEid: number;
     };
     source: {
+        status: string;
         tx: {
             txHash: string;
             payload: string;
         };
     };
     destination: {
+        status: string;
         tx?: {
             txHash: string;
         };
@@ -352,7 +398,7 @@ export function verifyLayerZeroWitness(binding: GoalBinding, source: MessageSour
     requireThat(payload.length === 222 && payload.subarray(0, 4).toString() === 'NBFG' && payload[4] === 2, 'WRONG_LAYERZERO_PAYLOAD', 'Require the real deployed v2 payload.');
     const src = payload.readUInt32BE(6), dst = payload.readUInt32BE(10), solToBase = src === 1 && dst === 2, baseToSol = src === 2 && dst === 1;
     requireThat(solToBase || baseToSol, 'WRONG_LAYERZERO_PATH', 'Only the selected Solana/Base pair belongs to this fixture.');
-    requireThat(record.source.tx.txHash === source.transactionHash && record.pathway.srcEid === (solToBase ? 40168 : 40245) && record.pathway.dstEid === (solToBase ? 40245 : 40168) && record.status.name === 'DELIVERED' && record.config?.error === false && record.verification?.dvn?.status === 'SUCCEEDED' && !!record.destination.tx?.txHash, 'LAYERZERO_NOT_DELIVERED', 'Require actual source, successful configured verification and destination delivery.');
+    requireThat(record.source.tx.txHash === source.transactionHash && record.pathway.srcEid === (solToBase ? 40168 : 40245) && record.pathway.dstEid === (solToBase ? 40245 : 40168) && record.status.name === 'DELIVERED' && record.source.status === 'SUCCEEDED' && record.destination.status === 'SUCCEEDED' && record.pathway.sender.address === (solToBase ? 'v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp' : p.router) && record.pathway.receiver.address === (solToBase ? p.router : 'v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp') && record.config?.error === false && record.verification?.dvn?.status === 'SUCCEEDED' && !!record.destination.tx?.txHash, 'LAYERZERO_NOT_DELIVERED', 'Require actual source, successful configured verification and destination delivery.');
     requireThat('0x' + payload.subarray(14, 46).toString('hex') === binding.goalId && '0x' + payload.subarray(46, 78).toString('hex') === configurationHash(binding, p, p.vault), 'WRONG_LAYERZERO_GOAL', 'Message belongs to another goal or immutable configuration.');
     const sol = solanaAddressWord(binding.solanaGoal), vault = addressWord(p.vault), owner = addressWord(binding.owner.evm);
     requireThat(payload.subarray(78, 110).toString('hex') === (solToBase ? sol : vault) && payload.subarray(110, 142).toString('hex') === (solToBase ? vault : sol) && payload.subarray(142, 174).toString('hex') === owner, 'WRONG_LAYERZERO_GOAL', 'Source/destination/owner must be the actual bound goal.');
@@ -361,13 +407,15 @@ export function verifyLayerZeroWitness(binding: GoalBinding, source: MessageSour
     if (kind === 7 || kind === 8)
         requireThat((kind === 7 ? solToBase : baseToSol) && round === 0n && sequence === 0n && amount === 2000000n, 'INVALID_LIFECYCLE_WITNESS', 'Registration must certify this exact target.');
     else if (kind === 1)
-        requireThat(solToBase && round === 1n && sequence === 1n && amount === 2000000n, 'INVALID_LIFECYCLE_WITNESS', 'Require the original preparation round.');
+        requireThat(solToBase && round === 1n && sequence === 1n && amount === 0n, 'INVALID_LIFECYCLE_WITNESS', 'Require the original preparation round with zero amount.');
     else if (kind === 4)
         requireThat(baseToSol && round === 1n && sequence === 1n && amount === 1000000n, 'INVALID_LIFECYCLE_WITNESS', 'Require the actual Base cash reserve.');
     else if (kind === 2)
         requireThat(solToBase && round === 1n && sequence === 2n && amount === 1000000n && aggregate === 2000000n, 'INVALID_LIFECYCLE_WITNESS', 'Require exact reserve and committed aggregate.');
     else
         requireThat(kind === 6 && baseToSol && sequence > 0n && (amount === 1000000n || amount === 0n), 'INVALID_LIFECYCLE_WITNESS', 'Require an actual absolute progress message.');
+    if (kind !== 2)
+        requireThat(aggregate === 0n, 'INVALID_LIFECYCLE_WITNESS', 'Only COMMIT carries aggregate reserve.');
     requireThat(/^0x[0-9a-f]{64}$/i.test(record.guid), 'INVALID_LIFECYCLE_WITNESS', 'Require the actual message GUID.');
     return { sourceHash: source.transactionHash, destinationHash: record.destination.tx!.txHash, guid: record.guid, kind: payload[5]!, amountRaw: payload.readBigUInt64BE(190).toString(), round: payload.readBigUInt64BE(174).toString(), applicationSequence: payload.readBigUInt64BE(182).toString(), srcEid: record.pathway.srcEid, dstEid: record.pathway.dstEid, status: 'DELIVERED', observedAt: new Date().toISOString() };
 }

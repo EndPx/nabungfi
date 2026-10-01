@@ -4,7 +4,7 @@ Checkpoint: 1 October 2026 UTC. This records the backend source and direct-proce
 
 | Evidence | Observed result |
 | --- | --- |
-| Server tests | 40 passed, including official Privy ES256 verification, exact receipts, wallet-start recovery, owner isolation and bounded shutdown |
+| Server tests | 41 passed, including official Privy ES256 verification, exact receipts, wallet-start recovery, owner isolation, actual deployed PREPARE semantics and bounded shutdown |
 | Shared tests | 17 passed, including exact USDC units, per-goal binding and irreversible achievement |
 | Permissionless keeper tests | 36 passed; financial owner operations are denied at the operator signing boundary |
 | Real Neon | 41 persistence checks passed across applied migrations 1-9; only unique test rows removed; zero financial transactions |

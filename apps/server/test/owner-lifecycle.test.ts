@@ -15,22 +15,28 @@ function harness() {
     }[] = [], binding = deriveGoalBinding({ goalId: '0x' + '5'.repeat(64), targetRaw: '2000000', owner: identity.owner, networks: ['solana', 'base'] }), goal: GoalDTO = { id: '81111111-1111-4111-8111-111111111111', goalId: binding.goalId, name: 'Fixture', model: 'custom', targetRaw: '2000000', createdAt: new Date(time).toISOString(), updatedAt: new Date(time).toISOString(), binding, chainState: null, chainStatus: 'unprovisioned' }, sid = '91111111-1111-4111-8111-111111111111', raw = { id: sid, goalId: binding.goalId, action: 'create-vault' as const, network: 'base' as const, owner: binding.owner.evm, createdAt: new Date(time).toISOString(), expiresAt: new Date(time + 60000).toISOString(), transaction: { kind: 'evm' as const, chainId: 84532, to: binding.participants[0]!.router, data: createVaultCalldata(binding), value: '0' } }, plan = { ...raw, fingerprint: planFingerprint(raw) };
     let step: GoalStepDTO = { id: sid, goalId: binding.goalId, metadataGoalId: goal.id, action: 'create-vault', network: 'base', status: 'planned', plan, transactionHash: null, createdAt: raw.createdAt, updatedAt: raw.createdAt };
     let markerStatus = 'signing';
-    const fakeFetch: typeof fetch = async (input, init) => { const path = new URL(String(input)).pathname, method = init?.method ?? 'GET', body = init?.body ? JSON.parse(String(init.body)) : undefined; requests.push({ path, method, body }); let response: unknown; if (path === '/api/session')
-        response = { profile: 'testnet', user: { id: 'fixture-user', privySubject: subject, wallets: [{ chainType: 'solana', address: identity.owner.solana }, { chainType: 'ethereum', address: identity.owner.evm }] } };
-    else if (path === '/api/goals')
-        response = { goal };
-    else if (path.endsWith('/wallet-start')) {
-        step = { ...step, status: markerStatus as GoalStepDTO['status'] };
-        response = { step };
-    }
-    else if (path.endsWith('/reconcile')) {
-        step = { ...step, status: 'attention', transactionHash: body.transactionHash };
-        response = { step };
-    }
-    else if (path.endsWith('/steps'))
-        response = { step };
-    else
-        throw Error('Unexpected HTTP ' + path); return new Response(JSON.stringify(response), { status: 200, headers: { 'content-type': 'application/json' } }); };
+    const fakeFetch: typeof fetch = async (input, init) => {
+        const path = new URL(String(input)).pathname, method = init?.method ?? 'GET', body = init?.body ? JSON.parse(String(init.body)) : undefined;
+        requests.push({ path, method, body });
+        let response: unknown;
+        if (path === '/api/session')
+            response = { profile: 'testnet', user: { id: 'fixture-user', privySubject: subject, wallets: [{ chainType: 'solana', address: identity.owner.solana }, { chainType: 'ethereum', address: identity.owner.evm }] } };
+        else if (path === '/api/goals')
+            response = { goal };
+        else if (path.endsWith('/wallet-start')) {
+            step = { ...step, status: markerStatus as GoalStepDTO['status'] };
+            response = { step };
+        }
+        else if (path.endsWith('/reconcile')) {
+            step = { ...step, status: 'attention', transactionHash: body.transactionHash };
+            response = { step };
+        }
+        else if (path.endsWith('/steps'))
+            response = { step };
+        else
+            throw Error('Unexpected HTTP ' + path);
+        return new Response(JSON.stringify(response), { status: 200, headers: { 'content-type': 'application/json' } });
+    };
     const options: OwnerLifecycleOptions = { profile: OWNER_FIXTURE_PROFILE, acknowledgement: OWNER_FIXTURE_ACKNOWLEDGEMENT, runId, baseUrl: 'http://127.0.0.1:39001', fixtureToken: 'fixture-token-only-not-real-credentials-123', identity, deadlineMs: 1000, pollMs: 100, checkpoint: async (j) => { saved = structuredClone(j); }, sendPlan: async (_plan, context) => { signs++; assert(requests.some(r => r.path.endsWith('/wallet-start'))); await context.recordOriginalHash(realHistoricalHash); assert.equal(saved?.stages['create-base-vault']?.transactionHash, realHistoricalHash); throw Error('Unknown submission outcome (no actual signer in unit test)'); }, collectMessageSources: async () => [] };
     return { options, runtime: { fetch: fakeFetch, now: () => time, sleep: async (ms: number) => { assert(ms <= 30000); time += ms; } }, requests, get saved() { return saved; }, get signs() { return signs; }, set marker(value: string) { markerStatus = value; }, advance(ms: number) { time += ms; } };
 }
@@ -42,4 +48,10 @@ test('actual wallet-start marker is required before invoking an external signer'
 test('external callback cannot replace its first signed hash', async () => { const h = harness(); h.options.sendPlan = async (_plan, context) => { await context.recordOriginalHash(realHistoricalHash); await context.recordOriginalHash('0x39fea21b3184ca8471a0016eb66fe777f5d6468f7d74d67174d2100223be49f8'); return { transactionHash: realHistoricalHash }; }; await assert.rejects(runOwnerLifecycle(h.options, h.runtime), { code: 'ORIGINAL_HASH_CHANGED' }); assert.equal(h.saved!.stages['create-base-vault']!.transactionHash, realHistoricalHash); });
 test('fixture server cannot enable test authentication on production/public listen config', async () => { await assert.rejects(startOwnerFixtureServer({ profile: OWNER_FIXTURE_PROFILE, acknowledgement: OWNER_FIXTURE_ACKNOWLEDGEMENT, identity, fixtureToken: 'fixture-token-only-not-real-credentials-123', config: { production: true, host: '0.0.0.0', origins: ['https://example.com'] } as any, repo: {} as any, chain: {} as any, runtime: {} as any }), { code: 'FIXTURE_SERVER_NOT_PRODUCTION' }); });
 import { configurationHash, addressWord, solanaAddressWord } from '../src/chain/codec.js';
-test('public message witness requires exact bound payload, direction, reserves and actual delivered verification', () => { const b = deriveGoalBinding({ goalId: '0x' + '5'.repeat(64), targetRaw: '2000000', owner: identity.owner, networks: ['solana', 'base'] }), p = b.participants[0]!; p.vault = '0x341339ccce04e50038dfd056dad14e3f44496228'; p.configHash = configurationHash(b, p, p.vault); const bytes = Buffer.alloc(222); bytes.write('NBFG'); bytes[4] = 2; bytes[5] = 2; bytes.writeUInt32BE(1, 6); bytes.writeUInt32BE(2, 10); Buffer.from(b.goalId.slice(2), 'hex').copy(bytes, 14); Buffer.from(p.configHash.slice(2), 'hex').copy(bytes, 46); Buffer.from(solanaAddressWord(b.solanaGoal), 'hex').copy(bytes, 78); Buffer.from(addressWord(p.vault), 'hex').copy(bytes, 110); Buffer.from(addressWord(b.owner.evm), 'hex').copy(bytes, 142); bytes.writeBigUInt64BE(1n, 174); bytes.writeBigUInt64BE(2n, 182); bytes.writeBigUInt64BE(1000000n, 190); bytes.writeBigUInt64BE(2000000n, 198); bytes.writeBigUInt64BE(10n, 206); bytes.writeBigUInt64BE(100n, 214); const source = { transactionHash: '4ppX3j3JdZRjHgSLUt3vhNGWakJzGbPD2qxbuHvKXw2jAsWTFVwXHJAreQBzTUauZ3byATrVpaS2AyykyAtoTYCX', label: 'unit-only synthetic payload; not public proof' }, record = { pathway: { srcEid: 40168, dstEid: 40245 }, source: { tx: { txHash: source.transactionHash, payload: '0x' + bytes.toString('hex') } }, destination: { tx: { txHash: realHistoricalHash } }, guid: '0x' + '6'.repeat(64), status: { name: 'DELIVERED' }, config: { error: false }, verification: { dvn: { status: 'SUCCEEDED' } } }; assert.equal(verifyLayerZeroWitness(b, source, record).amountRaw, '1000000'); assert.throws(() => verifyLayerZeroWitness(b, source, { ...record, status: { name: 'INFLIGHT' } }), { code: 'LAYERZERO_NOT_DELIVERED' }); const wrong = Buffer.from(bytes); wrong.writeBigUInt64BE(999999n, 190); assert.throws(() => verifyLayerZeroWitness(b, source, { ...record, source: { tx: { ...record.source.tx, payload: '0x' + wrong.toString('hex') } } }), { code: 'INVALID_LIFECYCLE_WITNESS' }); assert.throws(() => verifyLayerZeroWitness({ ...b, goalId: '0x' + '7'.repeat(64) }, source, record), { code: 'WRONG_LAYERZERO_GOAL' }); });
+test('public message witness requires exact bound payload, direction, reserves and actual delivered verification', () => { const b = deriveGoalBinding({ goalId: '0x' + '5'.repeat(64), targetRaw: '2000000', owner: identity.owner, networks: ['solana', 'base'] }), p = b.participants[0]!; p.vault = '0x341339ccce04e50038dfd056dad14e3f44496228'; p.configHash = configurationHash(b, p, p.vault); const bytes = Buffer.alloc(222); bytes.write('NBFG'); bytes[4] = 2; bytes[5] = 2; bytes.writeUInt32BE(1, 6); bytes.writeUInt32BE(2, 10); Buffer.from(b.goalId.slice(2), 'hex').copy(bytes, 14); Buffer.from(p.configHash.slice(2), 'hex').copy(bytes, 46); Buffer.from(solanaAddressWord(b.solanaGoal), 'hex').copy(bytes, 78); Buffer.from(addressWord(p.vault), 'hex').copy(bytes, 110); Buffer.from(addressWord(b.owner.evm), 'hex').copy(bytes, 142); bytes.writeBigUInt64BE(1n, 174); bytes.writeBigUInt64BE(2n, 182); bytes.writeBigUInt64BE(1000000n, 190); bytes.writeBigUInt64BE(2000000n, 198); bytes.writeBigUInt64BE(10n, 206); bytes.writeBigUInt64BE(100n, 214); const source = { transactionHash: '4ppX3j3JdZRjHgSLUt3vhNGWakJzGbPD2qxbuHvKXw2jAsWTFVwXHJAreQBzTUauZ3byATrVpaS2AyykyAtoTYCX', label: 'unit-only synthetic payload; not public proof' }, record = { pathway: { sender: { address: 'v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp' }, receiver: { address: p.router }, srcEid: 40168, dstEid: 40245 }, source: { status: 'SUCCEEDED', tx: { txHash: source.transactionHash, payload: '0x' + bytes.toString('hex') } }, destination: { status: 'SUCCEEDED', tx: { txHash: realHistoricalHash } }, guid: '0x' + '6'.repeat(64), status: { name: 'DELIVERED' }, config: { error: false }, verification: { dvn: { status: 'SUCCEEDED' } } }; assert.equal(verifyLayerZeroWitness(b, source, record).amountRaw, '1000000'); assert.throws(() => verifyLayerZeroWitness(b, source, { ...record, pathway: { ...record.pathway, sender: { address: p.router } } }), { code: 'LAYERZERO_NOT_DELIVERED' }); assert.throws(() => verifyLayerZeroWitness(b, source, { ...record, source: { ...record.source, status: 'FAILED' } }), { code: 'LAYERZERO_NOT_DELIVERED' }); assert.throws(() => verifyLayerZeroWitness(b, source, { ...record, status: { name: 'INFLIGHT' } }), { code: 'LAYERZERO_NOT_DELIVERED' }); const wrong = Buffer.from(bytes); wrong.writeBigUInt64BE(999999n, 190); assert.throws(() => verifyLayerZeroWitness(b, source, { ...record, source: { ...record.source, tx: { ...record.source.tx, payload: '0x' + wrong.toString('hex') } } }), { code: 'INVALID_LIFECYCLE_WITNESS' }); assert.throws(() => verifyLayerZeroWitness({ ...b, goalId: '0x' + '7'.repeat(64) }, source, record), { code: 'WRONG_LAYERZERO_GOAL' }); });
+import { readFileSync } from 'node:fs';
+test('deployed PREPARE witness uses zero amount and aggregate from actual published hundred-message oracle', () => { const proof = JSON.parse(readFileSync(new URL('../../../contracts/deployments/multichain/concurrent-goals-live.json', import.meta.url), 'utf8')); const prepare = proof.layerzero.messages.filter((m: any) => m.packet.kind === 1); assert(prepare.length >= 3); for (const message of prepare) {
+    assert.equal(message.packet.amountRaw, '0');
+    assert.equal(message.packet.totalRaw, '0');
+    assert.equal(message.status, 'DELIVERED');
+} });
