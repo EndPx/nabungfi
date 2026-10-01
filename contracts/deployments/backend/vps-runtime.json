@@ -1,0 +1,172 @@
+{
+  "recordedAtUtc": "2026-10-01T15:47:52.044Z",
+  "status": "native-testnet-backend-live",
+  "backendUrl": "https://nabungfi-api.endpx.cloud",
+  "frontendHosting": "Vercel; publication deferred",
+  "plannedFrontendOrigin": "https://nabungfi.endpx.cloud",
+  "release": "b036c10ec98f4418978feb58640bd45c5e8f0709",
+  "runtime": {
+    "node": "24.18.0",
+    "pnpm": "10.21.0",
+    "cast": "1.8.3",
+    "dockerUsed": false
+  },
+  "services": {
+    "api": {
+      "user": "nabungfi-api",
+      "listen": "127.0.0.1:3901",
+      "enabled": true,
+      "active": true,
+      "gracefulRestartVerified": true
+    },
+    "keeper": {
+      "user": "nabungfi-keeper",
+      "enabled": true,
+      "active": true,
+      "exclusiveKernelFlock": true,
+      "processCrashRecovery": {
+        "signal": "SIGKILL",
+        "automaticRestarts": 1,
+        "staleLockReason": "exited",
+        "retainedGoals": 1,
+        "retainedIntents": 10,
+        "pendingIntents": 0
+      }
+    },
+    "healthTimer": {
+      "enabled": true,
+      "readOnly": true
+    }
+  },
+  "stateMigration": {
+    "approvedPathOnly": true,
+    "goalLedgerAndBudgetByteIdentical": true,
+    "originalManifestBackupVerified": true,
+    "originalHashesRetained": true,
+    "sourceWorkerAndPublisherStopped": true,
+    "sourceLaunchConfigArchived": true,
+    "signerPublicKeysVerified": true
+  },
+  "isolation": {
+    "apiCannotReadOperatorKeysConfigAndBudgets": true,
+    "bridgeAtomicFileModes": "0640",
+    "privateStateModes": "0600/0700",
+    "oppositeBridgeDirectoryWritesDenied": true
+  },
+  "publicHttp": {
+    "checkedAtUtc": "2026-10-01T15:22:36.137Z",
+    "publicTlsVerified": true,
+    "checks": [
+      {
+        "path": "/api/health",
+        "status": 200,
+        "allowOrigin": null,
+        "health": {
+          "ok": true,
+          "mode": "testnet-app",
+          "financialAuthority": "contracts"
+        }
+      },
+      {
+        "path": "/api/goals",
+        "status": 401,
+        "allowOrigin": null
+      },
+      {
+        "path": "/api/config",
+        "origin": "https://nabungfi.endpx.cloud",
+        "status": 200,
+        "allowOrigin": "https://nabungfi.endpx.cloud",
+        "coordination": {
+          "configured": true,
+          "available": true,
+          "capacity": 6,
+          "registered": 0
+        }
+      },
+      {
+        "path": "/api/config",
+        "origin": "http://nabungfi.endpx.cloud",
+        "status": 403,
+        "allowOrigin": null
+      },
+      {
+        "path": "/api/config",
+        "origin": "https://untrusted.example",
+        "status": 403,
+        "allowOrigin": null
+      }
+    ],
+    "httpRedirect": {
+      "status": 301,
+      "location": "https://nabungfi-api.endpx.cloud/api/health"
+    }
+  },
+  "genuineUserAuthentication": {
+    "observedAtUtc": "2026-10-01T15:39:36.921Z",
+    "backend": "https://nabungfi-api.endpx.cloud",
+    "client": "local wireframe with explicit HTTPS development proxy",
+    "authenticationClass": "genuine-user-Privy-session",
+    "responses": [
+      {
+        "path": "/api/session",
+        "status": 200
+      },
+      {
+        "path": "/api/goals",
+        "status": 200
+      },
+      {
+        "path": "/api/session",
+        "status": 200
+      },
+      {
+        "path": "/api/goals",
+        "status": 200
+      },
+      {
+        "path": "/api/session",
+        "status": 200
+      },
+      {
+        "path": "/api/goals",
+        "status": 200
+      }
+    ],
+    "ownerUuidDistinctFromPrivySubject": true,
+    "verifiedWallets": 2,
+    "tokensCopied": false,
+    "financialTransactions": 0
+  },
+  "existingApps": {
+    "oldVhostsUnchanged": 12,
+    "oldHttpResultsUnchanged": 11,
+    "existingServicePidsUnchanged": [
+      "commitpass-api",
+      "slope-keeper",
+      "slope-delegate",
+      "rocket-arena",
+      "trimbot",
+      "nginx"
+    ],
+    "isolatedGlobalRuntimeUnchanged": true
+  },
+  "tls": {
+    "validCertificate": true,
+    "renewalDryRunSucceeded": true,
+    "publicAcmeRoot": "/var/lib/nabungfi-acme",
+    "scopedDeployHookVerified": true
+  },
+  "verification": {
+    "serverTests": 41,
+    "keeperLinuxTests": 48,
+    "serverTypecheck": true
+  },
+  "limits": [
+    "Same-host process crash recovery verified; no actual VPS reboot performed.",
+    "No long-term uptime benchmark or live unresolved-packet reboot evidence.",
+    "Browser signing of financial actions and frontend publication remain separate work.",
+    "Testnet cash only; no earning or mainnet audit assurance.",
+    "Current nginx-backed socket-IP rate limit is aggregate 180 requests per minute."
+  ]
+}

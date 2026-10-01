@@ -25,6 +25,6 @@ No Docker engine or container image is required. A fresh Linux installation must
 
 The [fresh owner-signed backend lifecycle](BACKEND_OWNER_LIFECYCLE.md) now has actual receipt, state and LayerZero delivery evidence. It uses isolated fixture authentication and CLI owner signing; it cannot substitute for the genuine Privy session proved separately above or a browser-wallet-signed end-to-end flow. Historical four-chain and concurrent-goal proofs remain separate evidence.
 
-VPS deployment requires actual TLS ingress, exact origins, service supervision, private persistent operator journals, native-fee monitoring and reboot recovery. Internal HTTP in WSL establishes the Node runtime and HTTPS-origin policy, not those host-level results. Testnet cash custody does not establish earning, mainnet security or an audit.
+The [VPS deployment](VPS_DEPLOYMENT.md) now proves external TLS, exact origins, isolated supervised services, persistent original journals, API restart and same-host keeper process-crash recovery. Actual host reboot, long-term uptime and recovery of a live unresolved packet were not tested. Testnet cash custody does not establish earning, mainnet security or an audit.
 
 See [release gates](BACKEND_RELEASE_GATES.md), [API behavior](../apps/server/README.md) and [permissionless coordination](PERMISSIONLESS_KEEPER.md).

@@ -1,6 +1,6 @@
 # Native Node deployment on an existing VPS
 
-These are reviewable templates. They have not been installed on a remote server. The backend runs as native Linux processes behind the host's existing nginx; the frontend remains on Vercel. No container runtime is required. Deploy only the `nabungfi-*` units and one dedicated API vhost. Existing CommitPass, Slope, nginx sites, runtime binaries, and service users remain outside this deployment.
+These reviewed templates are installed for the [observed VPS testnet deployment](../../docs/VPS_DEPLOYMENT.md). The backend runs as native Linux processes behind the host's existing nginx; the frontend remains on Vercel. No container runtime is required. Deploy only the `nabungfi-*` units and one dedicated API vhost. Existing CommitPass, Slope, nginx sites, runtime binaries, and service users remain outside this deployment.
 
 ## Release gates and fixed boundaries
 
@@ -73,6 +73,8 @@ The defaults limit each daemon to 512 MiB, 50% CPU, 64 tasks and 2048 descriptor
 
 Confirm the dedicated candidate domain and certificate, then install only [nginx-api.conf.example](nginx-api.conf.example). Test the complete host config with `nginx -t` before a reload; leave unrelated vhosts untouched. The vhost forwards `/api/` to loopback 3901, limits bodies, does not cache private responses, and disables upstream retry after an ambiguous action. The frontend remains on Vercel with an explicit backend rewrite/base URL and matching Privy production-origin settings.
 
+Serve certificate challenges from the separate public `/var/lib/nabungfi-acme` directory. Do not place them below the private bridge parent: nginx must not gain registry/status group membership merely to read challenges. Preserve the HTTP challenge exception and configure Certbot's webroot for this certificate. Install [the scoped deploy hook](renew-nabungfi-tls.sh) for nginx reload after this certificate renews, then verify its actual renewal dry run.
+
 The current API deliberately does not trust arbitrary forwarded-IP headers. Behind nginx its existing 180/minute socket-IP limiter acts as a conservative aggregate beta limit. Do not silently enable forwarded-IP trust or promise a larger multi-user rate before a separate reviewed proxy policy.
 
 Useful scoped checks after installation:
@@ -93,4 +95,4 @@ The supervisor holds a kernel guard for the full worker lifetime. Automatic stal
 
 For rollback, stop **both** NabungFi services, prove the signer and child processes are gone, retain the latest authoritative state, and point `current` to a previously reviewed compatible code release. Restart against the latest journals; never restore older database/journal snapshots that forget signed or submitted work. Reconcile the original hashes before any renewed signing. A return to the local host repeats the same exclusive archive/audit/cutover procedure in reverse.
 
-Primary references: [systemd 255 execution isolation](https://github.com/systemd/systemd/blob/v255/man/systemd.exec.xml), [systemd service lifecycle](https://github.com/systemd/systemd/blob/v255/man/systemd.service.xml), and [nginx proxy directives](https://nginx.org/en/docs/http/ngx_http_proxy_module.html). VPS application of these templates, real TLS, permissions under the actual service users, and operator cutover remain deployment evidence to collect separately.
+Primary references: [systemd 255 execution isolation](https://github.com/systemd/systemd/blob/v255/man/systemd.exec.xml), [systemd service lifecycle](https://github.com/systemd/systemd/blob/v255/man/systemd.service.xml), and [nginx proxy directives](https://nginx.org/en/docs/http/ngx_http_proxy_module.html). Observed results are recorded in the [VPS deployment report](../../docs/VPS_DEPLOYMENT.md); future deployments must collect equivalent evidence.

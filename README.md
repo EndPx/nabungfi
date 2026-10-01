@@ -2,6 +2,8 @@
 
 **Build what you're saving for.**
 
+The native testnet backend is live at [nabungfi-api.endpx.cloud](https://nabungfi-api.endpx.cloud/api/health). Frontend publication remains planned for Vercel. [VPS deployment and preservation evidence](docs/VPS_DEPLOYMENT.md).
+
 NabungFi is a multichain, goal-locked savings prototype. The product must support several simultaneous savings goals per user, such as a car, laptop and house. Contracts isolate each goal's target, reserves and claims. The authenticated backend stores multiple owner-scoped goals with independent onchain bindings and wallet-action journals; the published visual prototype still uses a separate simulated goal. Each goal is intended to have its own 100-piece construction. [Multiple-goal requirements](docs/MULTI_GOAL_REQUIREMENTS.md).
 
 This repository contains the interactive web prototype, local API, shared model and contract implementations. Research, private configuration and local state remain excluded from Git.
