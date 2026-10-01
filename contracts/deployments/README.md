@@ -1,5 +1,7 @@
 # Testnet component deployments
 
+The [fresh backend owner lifecycle](backend/owner-api-lifecycle.json) records a separate 2-USDC Solana/Base run through the actual HTTP API and Neon action journal. Eight owner-signed transactions and seven real delivered LayerZero messages completed with zero assets and restored owner USDC. The owner differs from the operator on both chains. Financial fixture authentication and separately verified genuine Privy login are explicitly distinguished in the [backend runbook](../../docs/BACKEND_OWNER_LIFECYCLE.md).
+
 ## Active protocol v2: four-chain proof
 
 The current [v2 manifests](multichain/) record separate programs/contracts on Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. [live-goal.json](multichain/live-goal.json) records one actual 10-USDC goal with 4+2+2+2-USDC deposits, all-participant realized reserves, permanent achievement and complete partial/full claims. **All 21 LayerZero messages were delivered**, including post-claim zero-NAV reports from all three EVM peers. Every vault is empty and each owner's initial 20 USDC restored. Funds stayed on their original chains.

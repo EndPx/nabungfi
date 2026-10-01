@@ -63,6 +63,8 @@ pnpm --filter @nabungfi/server test:db
 
 Actual testnet contract/LayerZero evidence remains in [deployment manifests](../../contracts/deployments/README.md). The concurrent [three-goal proof](../../contracts/deployments/multichain/concurrent-goals-live.json) is separate from browser integration. Cash proofs do not establish real yield, mainnet deployment, hosted keeper availability or a complete browser-signed user lifecycle. The local testnet coordinator also has finite native-fee, registry-capacity and cycle budgets; availability depends on that operator, gas funding and message delivery.
 
+The [fresh external-owner backend acceptance](../../docs/BACKEND_OWNER_LIFECYCLE.md) confirmed eight actual owner transactions through HTTP/Neon and seven delivered LayerZero messages for a 2-USDC Solana/Base cash goal. Both owner wallets differ from the operator; full claims restored the USDC baselines and left zero assets. This harness used synthetic loopback authentication and CLI owner signing. Genuine Privy browser authentication passed separately against the normal API; browser wallet signing is a separate frontend gate.
+
 ## Separate local demo
 
 ```sh

@@ -15,13 +15,15 @@ Checkpoint: 1 October 2026 UTC. This records the backend source and direct-proce
 | Actual local API/operator | API healthy; permissionless heartbeat fresh, zero worker errors, six active-goal capacity and zero registered goals at this checkpoint |
 | Direct Linux runtime | Node 24.18.0 in WSL Ubuntu, production configuration, isolated port; health 200, unauthorized private request 401, HTTPS Origin accepted, HTTP Origin denied |
 | Native shutdown | SIGTERM with an unfinished header connection closed the socket and exited 0 after 15,129 ms, within the 30-second deadline |
+| Fresh financial API lifecycle | One external owner completed a 2-USDC Solana/Base cash goal: eight original owner receipts, seven actual delivered LayerZero messages, full claims, zero assets and restored wallet USDC |
+| Actual operational retirement | Completed goal retained in history; verified worker completion removed it from active capacity and API reported zero active registrations |
 | Repository exclusions | Environment files, keys, private state, signed wires and research excluded from Git; staged private-value and local-link scans passed |
 
 No Docker engine or container image is required. A fresh Linux installation must install its own platform dependencies; sharing Windows-installed dependencies with WSL initially exposed an esbuild binary mismatch. The isolated probe used the matching Linux binary privately. A normal Linux `pnpm install --frozen-lockfile` provides the platform dependency for that host.
 
 ## Outstanding gates
 
-A fresh owner-signed lifecycle through the backend still needs receipt and LayerZero delivery evidence. The isolated external-owner test module uses fixture authentication; it cannot substitute for the genuine Privy session proved separately above. Historical contract proofs are preserved and do not establish this new API lifecycle.
+The [fresh owner-signed backend lifecycle](BACKEND_OWNER_LIFECYCLE.md) now has actual receipt, state and LayerZero delivery evidence. It uses isolated fixture authentication and CLI owner signing; it cannot substitute for the genuine Privy session proved separately above or a browser-wallet-signed end-to-end flow. Historical four-chain and concurrent-goal proofs remain separate evidence.
 
 VPS deployment requires actual TLS ingress, exact origins, service supervision, private persistent operator journals, native-fee monitoring and reboot recovery. Internal HTTP in WSL establishes the Node runtime and HTTPS-origin policy, not those host-level results. Testnet cash custody does not establish earning, mainnet security or an audit.
 

@@ -1,0 +1,1300 @@
+{
+  "recordedAtUtc": "2026-10-01T11:54:57.368Z",
+  "status": "owner-api-lifecycle-achieved-claimed-and-delivered",
+  "authenticationClass": "fixture-authentication-not-real-Privy",
+  "genuineLoginEvidenceSeparate": true,
+  "executionClass": "actual-testnet-owner-signatures-and-permissionless-operator",
+  "goal": {
+    "id": "0x06c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c9410",
+    "metadataId": "9ed4579c-af98-49d3-a617-3bf8cfa7f4d8",
+    "targetRaw": "2000000",
+    "owner": {
+      "solana": "EYXcd5nnx94r4aC3c5xSZsqBXbZuSzHS8aenzih5qS5H",
+      "evm": "0x8860275f5e74a7e25081f7b1fd71c43d81a5e6af"
+    },
+    "operator": {
+      "solana": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "evm": "0xc82f469Aa95a2f7792300c8d11230e9023A98600"
+    },
+    "binding": {
+      "owner": {
+        "evm": "0x8860275f5e74a7e25081f7b1fd71c43d81a5e6af",
+        "solana": "EYXcd5nnx94r4aC3c5xSZsqBXbZuSzHS8aenzih5qS5H"
+      },
+      "goalId": "0x06c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c9410",
+      "profile": "nabungfi-v2-devnet-four-chain",
+      "version": 2,
+      "targetRaw": "2000000",
+      "solanaCash": "2JLxef8mxzLubCAf6LPUWB1NygxdaXfn5ztmPeMVXeCg",
+      "solanaGoal": "GD95h79D4vjF67utf8VcjDti1DX7pM1oYTSg5KmyAj9d",
+      "initialized": true,
+      "participants": [
+        {
+          "eid": 40245,
+          "asset": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+          "vault": "0x25f13a53b2006d084584e96b765310fea1027b9f",
+          "domain": 2,
+          "router": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+          "factory": "0x3c981d151ec6060fd3f2307801d764fecb22c688",
+          "network": "base",
+          "configHash": "0x41042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd5",
+          "creationHash": "0x632b0f30ce06f44610eba601942e1d56cf1bfdb22056af26e4a0eff4a5140653"
+        }
+      ]
+    }
+  },
+  "initialWalletUsdc": {
+    "solana": "1000000",
+    "base": "1000000"
+  },
+  "ownerTransactions": [
+    {
+      "label": "create-base-vault",
+      "action": "create-vault",
+      "network": "base",
+      "stepId": "c9e3d28e-b366-47d5-a844-ef980371f08a",
+      "transactionHash": "0x632b0f30ce06f44610eba601942e1d56cf1bfdb22056af26e4a0eff4a5140653",
+      "confirmed": true
+    },
+    {
+      "label": "initialize-solana",
+      "action": "initialize",
+      "network": "solana",
+      "stepId": "a6bd658b-c180-48e2-bdcf-352563e4c500",
+      "transactionHash": "2CHzoLKWAR88wqCfPC3dUKJgopJQoGpmmBG6fqtFoByQw3ncpHnDFdvZcZUTkNfQNs9dUFhmQkA7v5AS8MJBVgiU",
+      "confirmed": true
+    },
+    {
+      "label": "deposit-solana-one",
+      "action": "deposit",
+      "network": "solana",
+      "amountRaw": "1000000",
+      "stepId": "5ffa2760-06f9-48a9-a409-2f66e736fa96",
+      "transactionHash": "3pDPcBMz91eAPRnjRQ2sTSMtqH1zQkatWYCSRFGpTzL596f2PLyy9ModefC7yHCkjfd3S2a9D4oChs6o99wAatVC",
+      "confirmed": true
+    },
+    {
+      "label": "approve-base-one",
+      "action": "approve",
+      "network": "base",
+      "amountRaw": "1000000",
+      "stepId": "451add58-bd9a-4357-aafc-8725bd8f1b06",
+      "transactionHash": "0x7d081c738dcb70e4904318a2fd3bb53ce77d52d36b61a290793977125e9dcdb4",
+      "confirmed": true
+    },
+    {
+      "label": "deposit-base-one",
+      "action": "deposit",
+      "network": "base",
+      "amountRaw": "1000000",
+      "stepId": "113585c4-7b28-4d98-bd4f-c828c5047e79",
+      "transactionHash": "0x820751a0c2337f3b4e8f7bea1726e44fc9036adfa56ed02875a1c6123350837f",
+      "confirmed": true
+    },
+    {
+      "label": "owner-prepare",
+      "action": "prepare",
+      "network": "solana",
+      "stepId": "2f69cfc9-c61f-43e0-b6bb-a598c3f4ef09",
+      "transactionHash": "3L9AdP1E6WXcZWEuwWpZRQB71w7MWJPoamfJ9AYb31YcszrJQC9tQ9Ld8n8agdNrb3utfAh8SxzqrNfaJNz75Zzx",
+      "confirmed": true
+    },
+    {
+      "label": "claim-base-one",
+      "action": "claim",
+      "network": "base",
+      "amountRaw": "1000000",
+      "stepId": "04b1c9fa-29df-4a47-9f43-786be935ac62",
+      "transactionHash": "0x02b261da2800bb2d05b5ef1206f133c65b599a355c20f939f9461591d18f4252",
+      "confirmed": true
+    },
+    {
+      "label": "claim-solana-one",
+      "action": "claim",
+      "network": "solana",
+      "amountRaw": "1000000",
+      "stepId": "50878d23-e46e-436a-8a02-f6a800c8cee5",
+      "transactionHash": "4gEnD15vMmcoRZSufJd39c9owwqxxGfDqwKivJp7ZtJAUciSEc5YSDFJA7Q6oAw22H1bdnaQ3RpEG78dbn8r6bST",
+      "confirmed": true
+    }
+  ],
+  "final": {
+    "phase": "claimed",
+    "achievedTotalRaw": "2000000",
+    "totalAssetsRaw": "0",
+    "totalClaimedRaw": "2000000",
+    "positions": [
+      {
+        "network": "solana",
+        "assetsRaw": "0",
+        "claimedRaw": "1000000",
+        "walletUsdcRaw": "1000000",
+        "baselineRaw": "1000000"
+      },
+      {
+        "network": "base",
+        "assetsRaw": "0",
+        "claimedRaw": "1000000",
+        "walletUsdcRaw": "1000000",
+        "baselineRaw": "1000000"
+      }
+    ],
+    "authenticatedPeerReports": [
+      {
+        "domain": 2,
+        "configHash": "0x41042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd5",
+        "linked": true,
+        "netAssetsRaw": "0",
+        "progressSequence": "2",
+        "receivedAt": "1790855609",
+        "inboundSequence": "1",
+        "ready": true,
+        "reservedRaw": "1000000"
+      }
+    ]
+  },
+  "layerzero": {
+    "messages": [
+      {
+        "sourceHash": "kV7R63MLY89sZNYggdTunTiUgW5V3ynHkZVKk7t7kgggV8EXGf78uKVia1JB1YP1vgTgC43vdMdGiaxzvLKaQ4s",
+        "destinationHash": "0xa4dd10c504dc1f3d206c5ea327e6bf2a5b988a6d9e7e6e443f5fbcaee292c8a1",
+        "guid": "0x36c00925417da7bcab71da0292224878c37c4bf2949795d75d37a2622383f853",
+        "kind": 7,
+        "amountRaw": "2000000",
+        "round": "0",
+        "applicationSequence": "0",
+        "srcEid": 40168,
+        "dstEid": 40245,
+        "status": "DELIVERED",
+        "observedAt": "2026-10-01T11:54:07.127Z"
+      },
+      {
+        "sourceHash": "0xbdfb6eb4c8b7774da704333ac623cc0053da2b2a4fd5ff7bea941347ceda5b42",
+        "destinationHash": "4q8qPK2Vf6SDY8N24moUu8kUZdmSK7BeUd3U117EEbZCQCwA99nfECYWfEWhRoe1FtvxpK5x4252mhP7sTfg49b9",
+        "guid": "0xcf900347e8a5b0d48f55d4ce5397156654d57106f6bb4bc3b09b48709572a917",
+        "kind": 8,
+        "amountRaw": "2000000",
+        "round": "0",
+        "applicationSequence": "0",
+        "srcEid": 40245,
+        "dstEid": 40168,
+        "status": "DELIVERED",
+        "observedAt": "2026-10-01T11:54:07.381Z"
+      },
+      {
+        "sourceHash": "0x6d92bdd598d4edb469ddf9b02fd5005dc1f226b6db381a54c965418bb37d74f5",
+        "destinationHash": "32MSAchiSGLJnEKxqg3FZunBi4zjUpA9RkxnTSz75JW6tXQjLyfhfShagBm8mH6NVom51EL8oEsHyhmryFcKmj8b",
+        "guid": "0xbc1d3646790eb3b2cc9be413e2fd44eaf11b5cfe4362d3057b96b4ffbd3ebaa9",
+        "kind": 6,
+        "amountRaw": "1000000",
+        "round": "0",
+        "applicationSequence": "1",
+        "srcEid": 40245,
+        "dstEid": 40168,
+        "status": "DELIVERED",
+        "observedAt": "2026-10-01T11:54:08.082Z"
+      },
+      {
+        "sourceHash": "2ZXMJPrttwJwX2qEvhJA61WC9QZCRY7116VJXWDgnCbUdK45uTq4syazVXWe7ZcUuuK96TrmhreCGTSFDUXRbET8",
+        "destinationHash": "0x2bf915858b1147afada12224b876ec1051e5b548df88bf74a41073a665c5eaf2",
+        "guid": "0xe6f19a0552d205a6e90e4a4259a795e18c0ab93e4c466ca2ddd93361fabd892a",
+        "kind": 1,
+        "amountRaw": "0",
+        "round": "1",
+        "applicationSequence": "1",
+        "srcEid": 40168,
+        "dstEid": 40245,
+        "status": "DELIVERED",
+        "observedAt": "2026-10-01T11:54:08.338Z"
+      },
+      {
+        "sourceHash": "0x47a7541d799fbf623feed33f573a05aed4c02ba1d5c574b1cf4da94dcb0f3313",
+        "destinationHash": "KdTtAhFj2dQN4pAQwtPCTnYMeSF51iPjeNBKp2NPF297nnQjAPpunydBQaNAoH3Y4ATEABSivcYAmsm3Am5tFTr",
+        "guid": "0x199095e99a364eefa061112b9c4ddac4fac20f4b27cba0fab67bfe7d2e545984",
+        "kind": 4,
+        "amountRaw": "1000000",
+        "round": "1",
+        "applicationSequence": "1",
+        "srcEid": 40245,
+        "dstEid": 40168,
+        "status": "DELIVERED",
+        "observedAt": "2026-10-01T11:54:09.075Z"
+      },
+      {
+        "sourceHash": "8cU3e27dpaT2h48xxEKFfytcd1AGpXjJbdNvT9koUH1NZ2c7mwuC8zMVsNZ1ifccHdpRv2cnmApmFcNxuJrQNro",
+        "destinationHash": "0x18e6d1dcc061036c9f623513216e3ce347b3e6234ee2e7d4c87ab5dcb306df39",
+        "guid": "0x8fd744820e323890e4da4569913c1ab8304b8926e00eb8d91d2e623588eaadde",
+        "kind": 2,
+        "amountRaw": "1000000",
+        "round": "1",
+        "applicationSequence": "2",
+        "srcEid": 40168,
+        "dstEid": 40245,
+        "status": "DELIVERED",
+        "observedAt": "2026-10-01T11:54:09.330Z"
+      },
+      {
+        "sourceHash": "0x9154280fc3e2d911ab3b96a5b18159072894f7d76c6b8b81af6bd9f9465a476d",
+        "destinationHash": "2aNkR8k9jmjaGe21n682YaLJBG2NjVH2VRmJTjsyZpqmQkVCumrBAV8e9ksY4SCHJzALaDQJVNMj3CenAVHe4GtQ",
+        "guid": "0xba7f2a0c82c323d1d1e25adf31b9b4f992493e70afefa389560e0b19240e576f",
+        "kind": 6,
+        "amountRaw": "0",
+        "round": "0",
+        "applicationSequence": "2",
+        "srcEid": 40245,
+        "dstEid": 40168,
+        "status": "DELIVERED",
+        "observedAt": "2026-10-01T11:54:09.592Z"
+      }
+    ],
+    "deliveredMessages": 7,
+    "publicScanRecords": [
+      {
+        "witness": {
+          "sourceHash": "kV7R63MLY89sZNYggdTunTiUgW5V3ynHkZVKk7t7kgggV8EXGf78uKVia1JB1YP1vgTgC43vdMdGiaxzvLKaQ4s",
+          "destinationHash": "0xa4dd10c504dc1f3d206c5ea327e6bf2a5b988a6d9e7e6e443f5fbcaee292c8a1",
+          "guid": "0x36c00925417da7bcab71da0292224878c37c4bf2949795d75d37a2622383f853",
+          "kind": 7,
+          "amountRaw": "2000000",
+          "round": "0",
+          "applicationSequence": "0",
+          "srcEid": 40168,
+          "dstEid": 40245,
+          "status": "DELIVERED",
+          "observedAt": "2026-10-01T11:54:07.127Z"
+        },
+        "record": {
+          "pathway": {
+            "srcEid": 40168,
+            "dstEid": 40245,
+            "sender": {
+              "address": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+              "chain": "solana-testnet"
+            },
+            "receiver": {
+              "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+              "chain": "base-sepolia"
+            },
+            "id": "40168-40245-v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp-0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+            "nonce": 13
+          },
+          "source": {
+            "status": "SUCCEEDED",
+            "tx": {
+              "txHash": "kV7R63MLY89sZNYggdTunTiUgW5V3ynHkZVKk7t7kgggV8EXGf78uKVia1JB1YP1vgTgC43vdMdGiaxzvLKaQ4s",
+              "blockHash": "2tBPdJCm4NsYMQo2T1Lx2752B5ckZer5bNDHv4obv3bj",
+              "blockNumber": "506261068",
+              "blockTimestamp": 1790855056,
+              "from": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+              "payload": "0x4e4246470207000000010000000206c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c941041042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd5e1fb69232bec1864d37c418a6ada0633248c2e1ee6499e6d3105a3ca57a1b3c400000000000000000000000025f13a53b2006d084584e96b765310fea1027b9f0000000000000000000000008860275f5e74a7e25081f7b1fd71c43d81a5e6af0000000000000000000000000000000000000000001e84800000000000000000000000001e2cee4c000000006abe4790",
+              "readinessTimestamp": 1790855058,
+              "options": {
+                "lzReceive": {
+                  "gas": "500000",
+                  "value": "0"
+                },
+                "ordered": false
+              }
+            }
+          },
+          "destination": {
+            "nativeDrop": {
+              "status": "N/A"
+            },
+            "lzCompose": {
+              "status": "N/A"
+            },
+            "tx": {
+              "txHash": "0xa4dd10c504dc1f3d206c5ea327e6bf2a5b988a6d9e7e6e443f5fbcaee292c8a1",
+              "blockHash": "0x5df4986b8d109f32ebbc6e8a4fa4209b5d08a07bbebf816c79068c57f4fd870d",
+              "blockNumber": 47543407,
+              "blockTimestamp": 1790855102
+            },
+            "status": "SUCCEEDED"
+          },
+          "verification": {
+            "dvn": {
+              "dvns": {
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6": {
+                  "txHash": "0xc8621b2a79ae9cd14351de4f9cf2a847b4cd2593640917e3c3595a8f1618b50c",
+                  "blockHash": "0xc5f9b96c97f4a24109dba0e30371c491f7cbb3c9bfd3b532513cf508481a7cae",
+                  "blockNumber": 47543391,
+                  "blockTimestamp": 1790855070,
+                  "proof": {
+                    "packetHeader": "0x01000000000000000d00009ce80d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e900009d35000000000000000000000000c3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+                    "payloadHash": "0xf3beb8307779e61a2a277fce5bf3265007789928a43e5f109e93db1177cd4fd8"
+                  },
+                  "optional": false,
+                  "status": "SUCCEEDED"
+                }
+              },
+              "status": "SUCCEEDED"
+            },
+            "sealer": {
+              "tx": {
+                "txHash": "0xe099b890ba42fda055f91205f44961b98ae665a3c2c4f0920cf20b574e81b90b",
+                "blockHash": "0x58f17ea9785a8af864a129743bcf57a359b151fb36d65fcc8bd16082d8f76513",
+                "blockNumber": 47543397,
+                "blockTimestamp": 1790855082
+              },
+              "status": "SUCCEEDED"
+            }
+          },
+          "guid": "0x36c00925417da7bcab71da0292224878c37c4bf2949795d75d37a2622383f853",
+          "config": {
+            "error": false,
+            "receiveLibrary": "0x12523de19dc41c91F7d2093E0CFbB76b17012C8d",
+            "sendLibrary": "2XgGZG4oP29U3w5h4nTk1V2LFHL23zKDPJjs3psGzLKQ",
+            "inboundConfig": {
+              "confirmations": 10,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": []
+            },
+            "outboundConfig": {
+              "confirmations": 10,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": [],
+              "executor": "AwrbHeCyniXaQhiJZkLhgWdUCteeWSGaSN1sTfLiY7xK"
+            },
+            "ulnSendVersion": "V302",
+            "ulnReceiveVersion": "V302"
+          },
+          "status": {
+            "name": "DELIVERED",
+            "message": "Executor transaction confirmed"
+          },
+          "created": "2026-10-01T11:44:22.000Z",
+          "updated": "2026-10-01T11:45:28.000Z"
+        }
+      },
+      {
+        "witness": {
+          "sourceHash": "0xbdfb6eb4c8b7774da704333ac623cc0053da2b2a4fd5ff7bea941347ceda5b42",
+          "destinationHash": "4q8qPK2Vf6SDY8N24moUu8kUZdmSK7BeUd3U117EEbZCQCwA99nfECYWfEWhRoe1FtvxpK5x4252mhP7sTfg49b9",
+          "guid": "0xcf900347e8a5b0d48f55d4ce5397156654d57106f6bb4bc3b09b48709572a917",
+          "kind": 8,
+          "amountRaw": "2000000",
+          "round": "0",
+          "applicationSequence": "0",
+          "srcEid": 40245,
+          "dstEid": 40168,
+          "status": "DELIVERED",
+          "observedAt": "2026-10-01T11:54:07.381Z"
+        },
+        "record": {
+          "pathway": {
+            "srcEid": 40245,
+            "dstEid": 40168,
+            "sender": {
+              "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+              "chain": "base-sepolia"
+            },
+            "receiver": {
+              "address": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+              "chain": "solana-testnet"
+            },
+            "id": "40245-40168-0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1-v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+            "nonce": 30
+          },
+          "source": {
+            "status": "SUCCEEDED",
+            "tx": {
+              "txHash": "0xbdfb6eb4c8b7774da704333ac623cc0053da2b2a4fd5ff7bea941347ceda5b42",
+              "blockHash": "0xd5fdc1f7cb06d1d868885d09a2b7975d6fdac08c5290f654bc312534000c67c1",
+              "blockNumber": "47543411",
+              "blockTimestamp": 1790855110,
+              "from": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+              "payload": "0x4e4246470208000000020000000106c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c941041042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd500000000000000000000000025f13a53b2006d084584e96b765310fea1027b9fe1fb69232bec1864d37c418a6ada0633248c2e1ee6499e6d3105a3ca57a1b3c40000000000000000000000008860275f5e74a7e25081f7b1fd71c43d81a5e6af0000000000000000000000000000000000000000001e848000000000000000000000000002d57473000000006abe47c6",
+              "readinessTimestamp": 1790855114,
+              "options": {
+                "lzReceive": {
+                  "gas": "200000",
+                  "value": "2500000"
+                },
+                "ordered": false
+              }
+            }
+          },
+          "destination": {
+            "nativeDrop": {
+              "status": "N/A"
+            },
+            "lzCompose": {
+              "status": "N/A"
+            },
+            "tx": {
+              "txHash": "4q8qPK2Vf6SDY8N24moUu8kUZdmSK7BeUd3U117EEbZCQCwA99nfECYWfEWhRoe1FtvxpK5x4252mhP7sTfg49b9",
+              "blockHash": "6vucSb4nK77dcuLgzJa7L5Ncs6xu8mZiyqFz8sfvMc43",
+              "blockNumber": 506261458,
+              "blockTimestamp": 1790855147
+            },
+            "status": "SUCCEEDED"
+          },
+          "verification": {
+            "dvn": {
+              "dvns": {
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb": {
+                  "txHash": "uBMcGJ9PwmUCiE8aukoqzpeiWKNUjJdY9s4c8PgWS9gehcu4DvQ6H77YC3V8qmKuYocWDeQcahAbHGqoXY4utxw",
+                  "blockHash": "tvicv3rcRhXJFmy55Qi63mszeAKowVjjvgnW64zCazQ",
+                  "blockNumber": 506261365,
+                  "blockTimestamp": 1790855126,
+                  "proof": {
+                    "packetHeader": "0x01000000000000001e00009d35000000000000000000000000c3bf62a605f52a2ae238766a47b2f21623dfd1a100009ce80d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e9",
+                    "payloadHash": "0xa2f83a69165b8c46d0c6265ac50a1093237341b1017950d3df9cba0de8161232"
+                  },
+                  "optional": false,
+                  "status": "SUCCEEDED"
+                }
+              },
+              "status": "SUCCEEDED"
+            },
+            "sealer": {
+              "tx": {
+                "txHash": "3crpRKtsyoK65xtvYZ6cLEZWV8JWFtyYHqDGSftmXb7P6rC9VXvmy8nkFLKkjz5Wj23tSEnePdFULsDDy5rSSqrK",
+                "blockHash": "FMYy3pX9Jg95PWyV6LXmoiy9FhXYWbSKu7i4r39g6gCj",
+                "blockNumber": 506261411,
+                "blockTimestamp": 1790855136
+              },
+              "status": "SUCCEEDED"
+            }
+          },
+          "guid": "0xcf900347e8a5b0d48f55d4ce5397156654d57106f6bb4bc3b09b48709572a917",
+          "config": {
+            "error": false,
+            "receiveLibrary": "7a4WjyR8VZ7yZz5XJAKm39BUGn5iT9CKcv2pmG9tdXVH",
+            "sendLibrary": "0xC1868e054425D378095A003EcbA3823a5D0135C9",
+            "inboundConfig": {
+              "confirmations": 2,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": []
+            },
+            "outboundConfig": {
+              "confirmations": 2,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": [],
+              "executor": "0x8A3D588D9f6AC041476b094f97FF94ec30169d3D"
+            },
+            "ulnSendVersion": "V302",
+            "ulnReceiveVersion": "V302"
+          },
+          "status": {
+            "name": "DELIVERED",
+            "message": "Executor transaction confirmed"
+          },
+          "created": "2026-10-01T11:45:25.000Z",
+          "updated": "2026-10-01T11:45:59.000Z"
+        }
+      },
+      {
+        "witness": {
+          "sourceHash": "0x6d92bdd598d4edb469ddf9b02fd5005dc1f226b6db381a54c965418bb37d74f5",
+          "destinationHash": "32MSAchiSGLJnEKxqg3FZunBi4zjUpA9RkxnTSz75JW6tXQjLyfhfShagBm8mH6NVom51EL8oEsHyhmryFcKmj8b",
+          "guid": "0xbc1d3646790eb3b2cc9be413e2fd44eaf11b5cfe4362d3057b96b4ffbd3ebaa9",
+          "kind": 6,
+          "amountRaw": "1000000",
+          "round": "0",
+          "applicationSequence": "1",
+          "srcEid": 40245,
+          "dstEid": 40168,
+          "status": "DELIVERED",
+          "observedAt": "2026-10-01T11:54:08.082Z"
+        },
+        "record": {
+          "pathway": {
+            "srcEid": 40245,
+            "dstEid": 40168,
+            "sender": {
+              "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+              "chain": "base-sepolia"
+            },
+            "receiver": {
+              "address": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+              "chain": "solana-testnet"
+            },
+            "id": "40245-40168-0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1-v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+            "nonce": 31
+          },
+          "source": {
+            "status": "SUCCEEDED",
+            "tx": {
+              "txHash": "0x6d92bdd598d4edb469ddf9b02fd5005dc1f226b6db381a54c965418bb37d74f5",
+              "blockHash": "0x4c8f28c6512a2a504e47a237ced587034b86ece74bcbfa8631572a49047a7104",
+              "blockNumber": "47543482",
+              "blockTimestamp": 1790855252,
+              "from": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+              "payload": "0x4e4246470206000000020000000106c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c941041042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd500000000000000000000000025f13a53b2006d084584e96b765310fea1027b9fe1fb69232bec1864d37c418a6ada0633248c2e1ee6499e6d3105a3ca57a1b3c40000000000000000000000008860275f5e74a7e25081f7b1fd71c43d81a5e6af0000000000000000000000000000000100000000000f424000000000000000000000000002d574ba000000006abe4854",
+              "readinessTimestamp": 1790855256,
+              "options": {
+                "lzReceive": {
+                  "gas": "200000",
+                  "value": "2500000"
+                },
+                "ordered": false
+              }
+            }
+          },
+          "destination": {
+            "nativeDrop": {
+              "status": "N/A"
+            },
+            "lzCompose": {
+              "status": "N/A"
+            },
+            "tx": {
+              "txHash": "32MSAchiSGLJnEKxqg3FZunBi4zjUpA9RkxnTSz75JW6tXQjLyfhfShagBm8mH6NVom51EL8oEsHyhmryFcKmj8b",
+              "blockHash": "8qdDVR3rWcraivyWeRKp9VshR7phuYYrQyrV696Js1My",
+              "blockNumber": 506262044,
+              "blockTimestamp": 1790855285
+            },
+            "status": "SUCCEEDED"
+          },
+          "verification": {
+            "dvn": {
+              "dvns": {
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb": {
+                  "txHash": "5SFL1RF7pXbhm5Qc6LPSkEZ4mmddfauqLwd5SEjGMGoTo6sRqtVh37fCHzTKDDfBePQBPSUnPqs1ESB8kWvq3UJp",
+                  "blockHash": "FUT2m9coHgmSrzC2xc2DSKVvoakQPpGyYLBnd4sxBe93",
+                  "blockNumber": 506261966,
+                  "blockTimestamp": 1790855266,
+                  "proof": {
+                    "packetHeader": "0x01000000000000001f00009d35000000000000000000000000c3bf62a605f52a2ae238766a47b2f21623dfd1a100009ce80d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e9",
+                    "payloadHash": "0x0b22d0c7d6c7047828c1b6837578cf851bc5a5bc801e12d8fa40704dddd80ecd"
+                  },
+                  "optional": false,
+                  "status": "SUCCEEDED"
+                }
+              },
+              "status": "SUCCEEDED"
+            },
+            "sealer": {
+              "tx": {
+                "txHash": "UBSFzj1raEHjGQ1k8bwD56VRdPQgUiJxg85FVKq9anPZGYUcKeFSBS77WAiBe7w7DpgRTosm3S3d5KEonKkRRSN",
+                "blockHash": "DF12Y3bHTMZbN7js1vEU74KTUYNLkm2f5go2Ws9pm918",
+                "blockNumber": 506261993,
+                "blockTimestamp": 1790855273
+              },
+              "status": "SUCCEEDED"
+            }
+          },
+          "guid": "0xbc1d3646790eb3b2cc9be413e2fd44eaf11b5cfe4362d3057b96b4ffbd3ebaa9",
+          "config": {
+            "error": false,
+            "receiveLibrary": "7a4WjyR8VZ7yZz5XJAKm39BUGn5iT9CKcv2pmG9tdXVH",
+            "sendLibrary": "0xC1868e054425D378095A003EcbA3823a5D0135C9",
+            "inboundConfig": {
+              "confirmations": 2,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": []
+            },
+            "outboundConfig": {
+              "confirmations": 2,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": [],
+              "executor": "0x8A3D588D9f6AC041476b094f97FF94ec30169d3D"
+            },
+            "ulnSendVersion": "V302",
+            "ulnReceiveVersion": "V302"
+          },
+          "status": {
+            "name": "DELIVERED",
+            "message": "Executor transaction confirmed"
+          },
+          "created": "2026-10-01T11:47:46.000Z",
+          "updated": "2026-10-01T11:48:16.000Z"
+        }
+      },
+      {
+        "witness": {
+          "sourceHash": "2ZXMJPrttwJwX2qEvhJA61WC9QZCRY7116VJXWDgnCbUdK45uTq4syazVXWe7ZcUuuK96TrmhreCGTSFDUXRbET8",
+          "destinationHash": "0x2bf915858b1147afada12224b876ec1051e5b548df88bf74a41073a665c5eaf2",
+          "guid": "0xe6f19a0552d205a6e90e4a4259a795e18c0ab93e4c466ca2ddd93361fabd892a",
+          "kind": 1,
+          "amountRaw": "0",
+          "round": "1",
+          "applicationSequence": "1",
+          "srcEid": 40168,
+          "dstEid": 40245,
+          "status": "DELIVERED",
+          "observedAt": "2026-10-01T11:54:08.338Z"
+        },
+        "record": {
+          "pathway": {
+            "srcEid": 40168,
+            "dstEid": 40245,
+            "sender": {
+              "address": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+              "chain": "solana-testnet"
+            },
+            "receiver": {
+              "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+              "chain": "base-sepolia"
+            },
+            "id": "40168-40245-v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp-0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+            "nonce": 14
+          },
+          "source": {
+            "status": "SUCCEEDED",
+            "tx": {
+              "txHash": "2ZXMJPrttwJwX2qEvhJA61WC9QZCRY7116VJXWDgnCbUdK45uTq4syazVXWe7ZcUuuK96TrmhreCGTSFDUXRbET8",
+              "blockHash": "EJbZrqCrLzYVcHGQZ6xenUQKnCswcXYynPrPe2W7AWtL",
+              "blockNumber": "506262234",
+              "blockTimestamp": 1790855329,
+              "from": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+              "payload": "0x4e4246470201000000010000000206c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c941041042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd5e1fb69232bec1864d37c418a6ada0633248c2e1ee6499e6d3105a3ca57a1b3c400000000000000000000000025f13a53b2006d084584e96b765310fea1027b9f0000000000000000000000008860275f5e74a7e25081f7b1fd71c43d81a5e6af0000000000000001000000000000000100000000000000000000000000000000000000001e2cf2da000000006abe48a1",
+              "readinessTimestamp": 1790855331,
+              "options": {
+                "lzReceive": {
+                  "gas": "500000",
+                  "value": "0"
+                },
+                "ordered": false
+              }
+            }
+          },
+          "destination": {
+            "nativeDrop": {
+              "status": "N/A"
+            },
+            "lzCompose": {
+              "status": "N/A"
+            },
+            "tx": {
+              "txHash": "0x2bf915858b1147afada12224b876ec1051e5b548df88bf74a41073a665c5eaf2",
+              "blockHash": "0x2de2ab7a90fb2666a95d4de1559d43301d5191de2c54dfcc4ff2b214cc3b7fa4",
+              "blockNumber": 47543545,
+              "blockTimestamp": 1790855378
+            },
+            "status": "SUCCEEDED"
+          },
+          "verification": {
+            "dvn": {
+              "dvns": {
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6": {
+                  "txHash": "0x6bb8096d838c0757d6693dc50be1d768972b84e3ba7b4384c3d49e048a808ede",
+                  "blockHash": "0xb913721dc20083afcc90f135f668aa3bfe6db6008d6c5c501e3f76e1a2acfab2",
+                  "blockNumber": 47543527,
+                  "blockTimestamp": 1790855342,
+                  "proof": {
+                    "packetHeader": "0x01000000000000000e00009ce80d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e900009d35000000000000000000000000c3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+                    "payloadHash": "0x6cbcd00ab7d1c59154e7f435dd7ec2a948a09f436890d074790aabc4fa35e3b0"
+                  },
+                  "optional": false,
+                  "status": "SUCCEEDED"
+                }
+              },
+              "status": "SUCCEEDED"
+            },
+            "sealer": {
+              "tx": {
+                "txHash": "0x822b4a29abcba048b90a5b801aa9056b0ebe3352e9098a78ee5614e18502329a",
+                "blockHash": "0xd8498f650ee75ebb62df52cbbcb09f81cfc79076517fb1e034ee1926fc1e761b",
+                "blockNumber": 47543535,
+                "blockTimestamp": 1790855358
+              },
+              "status": "SUCCEEDED"
+            }
+          },
+          "guid": "0xe6f19a0552d205a6e90e4a4259a795e18c0ab93e4c466ca2ddd93361fabd892a",
+          "config": {
+            "error": false,
+            "receiveLibrary": "0x12523de19dc41c91F7d2093E0CFbB76b17012C8d",
+            "sendLibrary": "2XgGZG4oP29U3w5h4nTk1V2LFHL23zKDPJjs3psGzLKQ",
+            "inboundConfig": {
+              "confirmations": 10,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": []
+            },
+            "outboundConfig": {
+              "confirmations": 10,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": [],
+              "executor": "AwrbHeCyniXaQhiJZkLhgWdUCteeWSGaSN1sTfLiY7xK"
+            },
+            "ulnSendVersion": "V302",
+            "ulnReceiveVersion": "V302"
+          },
+          "status": {
+            "name": "DELIVERED",
+            "message": "Executor transaction confirmed"
+          },
+          "created": "2026-10-01T11:48:56.000Z",
+          "updated": "2026-10-01T11:49:59.000Z"
+        }
+      },
+      {
+        "witness": {
+          "sourceHash": "0x47a7541d799fbf623feed33f573a05aed4c02ba1d5c574b1cf4da94dcb0f3313",
+          "destinationHash": "KdTtAhFj2dQN4pAQwtPCTnYMeSF51iPjeNBKp2NPF297nnQjAPpunydBQaNAoH3Y4ATEABSivcYAmsm3Am5tFTr",
+          "guid": "0x199095e99a364eefa061112b9c4ddac4fac20f4b27cba0fab67bfe7d2e545984",
+          "kind": 4,
+          "amountRaw": "1000000",
+          "round": "1",
+          "applicationSequence": "1",
+          "srcEid": 40245,
+          "dstEid": 40168,
+          "status": "DELIVERED",
+          "observedAt": "2026-10-01T11:54:09.075Z"
+        },
+        "record": {
+          "pathway": {
+            "srcEid": 40245,
+            "dstEid": 40168,
+            "sender": {
+              "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+              "chain": "base-sepolia"
+            },
+            "receiver": {
+              "address": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+              "chain": "solana-testnet"
+            },
+            "id": "40245-40168-0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1-v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+            "nonce": 32
+          },
+          "source": {
+            "status": "SUCCEEDED",
+            "tx": {
+              "txHash": "0x47a7541d799fbf623feed33f573a05aed4c02ba1d5c574b1cf4da94dcb0f3313",
+              "blockHash": "0xfe5409dfc684aa62caf10c6289ea2451fac8086ae210bbf8f4d85ceb8615f0a5",
+              "blockNumber": "47543569",
+              "blockTimestamp": 1790855426,
+              "from": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+              "payload": "0x4e4246470204000000020000000106c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c941041042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd500000000000000000000000025f13a53b2006d084584e96b765310fea1027b9fe1fb69232bec1864d37c418a6ada0633248c2e1ee6499e6d3105a3ca57a1b3c40000000000000000000000008860275f5e74a7e25081f7b1fd71c43d81a5e6af0000000000000001000000000000000100000000000f424000000000000000000000000002d57507000000006abe48ee",
+              "readinessTimestamp": 1790855430,
+              "options": {
+                "lzReceive": {
+                  "gas": "200000",
+                  "value": "2500000"
+                },
+                "ordered": false
+              }
+            }
+          },
+          "destination": {
+            "nativeDrop": {
+              "status": "N/A"
+            },
+            "lzCompose": {
+              "status": "N/A"
+            },
+            "tx": {
+              "txHash": "KdTtAhFj2dQN4pAQwtPCTnYMeSF51iPjeNBKp2NPF297nnQjAPpunydBQaNAoH3Y4ATEABSivcYAmsm3Am5tFTr",
+              "blockHash": "FDa4NTH8iYxaLUssGyFhpb9VrMh9XdeyhR8z3r8WpttC",
+              "blockNumber": 506262762,
+              "blockTimestamp": 1790855452
+            },
+            "status": "SUCCEEDED"
+          },
+          "verification": {
+            "dvn": {
+              "dvns": {
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb": {
+                  "txHash": "4CRXCVdUcqnKRR6aJhNRY39TPdNTi851oFdBGgUv99mGX8sC9tM4H7hT4PJCLM25fZmXBfiam3oH9AW7dQpsGGFo",
+                  "blockHash": "FnXh2sxMF89itDeqx7VbidYDhH9aT2x8W3k7zY8vEffr",
+                  "blockNumber": 506262698,
+                  "blockTimestamp": 1790855437,
+                  "proof": {
+                    "packetHeader": "0x01000000000000002000009d35000000000000000000000000c3bf62a605f52a2ae238766a47b2f21623dfd1a100009ce80d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e9",
+                    "payloadHash": "0x07cdadceb5a65287e34442d11a2b1e99d362bc9df3e442796250c14a9920d30f"
+                  },
+                  "optional": false,
+                  "status": "SUCCEEDED"
+                }
+              },
+              "status": "SUCCEEDED"
+            },
+            "sealer": {
+              "tx": {
+                "txHash": "4xXQK2DHug4SuNj5SkdqJBPmXfZNnypn9NR7n86fPWssz4v54BfWUo5t79PxrU7CA8A973KQu1ffG3hkLTXg5wCV",
+                "blockHash": "EzK7jKHMeBwM2hVrhfwyAPuymYtpWYtsdJVChfVHLV1y",
+                "blockNumber": 506262715,
+                "blockTimestamp": 1790855441
+              },
+              "status": "SUCCEEDED"
+            }
+          },
+          "guid": "0x199095e99a364eefa061112b9c4ddac4fac20f4b27cba0fab67bfe7d2e545984",
+          "config": {
+            "error": false,
+            "receiveLibrary": "7a4WjyR8VZ7yZz5XJAKm39BUGn5iT9CKcv2pmG9tdXVH",
+            "sendLibrary": "0xC1868e054425D378095A003EcbA3823a5D0135C9",
+            "inboundConfig": {
+              "confirmations": 2,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": []
+            },
+            "outboundConfig": {
+              "confirmations": 2,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": [],
+              "executor": "0x8A3D588D9f6AC041476b094f97FF94ec30169d3D"
+            },
+            "ulnSendVersion": "V302",
+            "ulnReceiveVersion": "V302"
+          },
+          "status": {
+            "name": "DELIVERED",
+            "message": "Executor transaction confirmed"
+          },
+          "created": "2026-10-01T11:50:37.000Z",
+          "updated": "2026-10-01T11:51:05.000Z"
+        }
+      },
+      {
+        "witness": {
+          "sourceHash": "8cU3e27dpaT2h48xxEKFfytcd1AGpXjJbdNvT9koUH1NZ2c7mwuC8zMVsNZ1ifccHdpRv2cnmApmFcNxuJrQNro",
+          "destinationHash": "0x18e6d1dcc061036c9f623513216e3ce347b3e6234ee2e7d4c87ab5dcb306df39",
+          "guid": "0x8fd744820e323890e4da4569913c1ab8304b8926e00eb8d91d2e623588eaadde",
+          "kind": 2,
+          "amountRaw": "1000000",
+          "round": "1",
+          "applicationSequence": "2",
+          "srcEid": 40168,
+          "dstEid": 40245,
+          "status": "DELIVERED",
+          "observedAt": "2026-10-01T11:54:09.330Z"
+        },
+        "record": {
+          "pathway": {
+            "srcEid": 40168,
+            "dstEid": 40245,
+            "sender": {
+              "address": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+              "chain": "solana-testnet"
+            },
+            "receiver": {
+              "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+              "chain": "base-sepolia"
+            },
+            "id": "40168-40245-v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp-0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+            "nonce": 15
+          },
+          "source": {
+            "status": "SUCCEEDED",
+            "tx": {
+              "txHash": "8cU3e27dpaT2h48xxEKFfytcd1AGpXjJbdNvT9koUH1NZ2c7mwuC8zMVsNZ1ifccHdpRv2cnmApmFcNxuJrQNro",
+              "blockHash": "6LgAvs5hkMCvXg9twLuMJkQ6KmJN4qbMdHTDpRJm61Wz",
+              "blockNumber": "506262897",
+              "blockTimestamp": 1790855484,
+              "from": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+              "payload": "0x4e4246470202000000010000000206c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c941041042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd5e1fb69232bec1864d37c418a6ada0633248c2e1ee6499e6d3105a3ca57a1b3c400000000000000000000000025f13a53b2006d084584e96b765310fea1027b9f0000000000000000000000008860275f5e74a7e25081f7b1fd71c43d81a5e6af0000000000000001000000000000000200000000000f424000000000001e8480000000001e2cf571000000006abe493b",
+              "readinessTimestamp": 1790855486,
+              "options": {
+                "lzReceive": {
+                  "gas": "500000",
+                  "value": "0"
+                },
+                "ordered": false
+              }
+            }
+          },
+          "destination": {
+            "nativeDrop": {
+              "status": "N/A"
+            },
+            "lzCompose": {
+              "status": "N/A"
+            },
+            "tx": {
+              "txHash": "0x18e6d1dcc061036c9f623513216e3ce347b3e6234ee2e7d4c87ab5dcb306df39",
+              "blockHash": "0x71de240363de5290668df1fbb2d9cc39742f0254d4c3ad9965e8224f2aefdd65",
+              "blockNumber": 47543621,
+              "blockTimestamp": 1790855530
+            },
+            "status": "SUCCEEDED"
+          },
+          "verification": {
+            "dvn": {
+              "dvns": {
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6": {
+                  "txHash": "0xee1deeebf79113f9ce832d71da235f2cb9d31120fa21e35ec6da6c57d98a2780",
+                  "blockHash": "0xd16bd4d4cb361cc48d03efc4414df9f56c6a0dbe9915536d5a635f41a0022098",
+                  "blockNumber": 47543605,
+                  "blockTimestamp": 1790855498,
+                  "proof": {
+                    "packetHeader": "0x01000000000000000f00009ce80d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e900009d35000000000000000000000000c3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+                    "payloadHash": "0x0ef7a29d26087e6ec4f381f1ec4a3e8767be0cc6b74d66977cd3cd0baee67e61"
+                  },
+                  "optional": false,
+                  "status": "SUCCEEDED"
+                }
+              },
+              "status": "SUCCEEDED"
+            },
+            "sealer": {
+              "tx": {
+                "txHash": "0xf552df86333187ecfb18c77934448d6c876077fefcb2567575b339406f666cd0",
+                "blockHash": "0xaf0a146238c132573ac9ebaa478067285ee8085930f1378cfc286ac4f5632ace",
+                "blockNumber": 47543610,
+                "blockTimestamp": 1790855508
+              },
+              "status": "SUCCEEDED"
+            }
+          },
+          "guid": "0x8fd744820e323890e4da4569913c1ab8304b8926e00eb8d91d2e623588eaadde",
+          "config": {
+            "error": false,
+            "receiveLibrary": "0x12523de19dc41c91F7d2093E0CFbB76b17012C8d",
+            "sendLibrary": "2XgGZG4oP29U3w5h4nTk1V2LFHL23zKDPJjs3psGzLKQ",
+            "inboundConfig": {
+              "confirmations": 10,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": []
+            },
+            "outboundConfig": {
+              "confirmations": 10,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": [],
+              "executor": "AwrbHeCyniXaQhiJZkLhgWdUCteeWSGaSN1sTfLiY7xK"
+            },
+            "ulnSendVersion": "V302",
+            "ulnReceiveVersion": "V302"
+          },
+          "status": {
+            "name": "DELIVERED",
+            "message": "Executor transaction confirmed"
+          },
+          "created": "2026-10-01T11:51:34.000Z",
+          "updated": "2026-10-01T11:52:30.000Z"
+        }
+      },
+      {
+        "witness": {
+          "sourceHash": "0x9154280fc3e2d911ab3b96a5b18159072894f7d76c6b8b81af6bd9f9465a476d",
+          "destinationHash": "2aNkR8k9jmjaGe21n682YaLJBG2NjVH2VRmJTjsyZpqmQkVCumrBAV8e9ksY4SCHJzALaDQJVNMj3CenAVHe4GtQ",
+          "guid": "0xba7f2a0c82c323d1d1e25adf31b9b4f992493e70afefa389560e0b19240e576f",
+          "kind": 6,
+          "amountRaw": "0",
+          "round": "0",
+          "applicationSequence": "2",
+          "srcEid": 40245,
+          "dstEid": 40168,
+          "status": "DELIVERED",
+          "observedAt": "2026-10-01T11:54:09.592Z"
+        },
+        "record": {
+          "pathway": {
+            "srcEid": 40245,
+            "dstEid": 40168,
+            "sender": {
+              "address": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+              "chain": "base-sepolia"
+            },
+            "receiver": {
+              "address": "v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+              "chain": "solana-testnet"
+            },
+            "id": "40245-40168-0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1-v4GPUZ7BbKvpzyrtTBXYsASXcDKiC4TZppZaRSeudrp",
+            "nonce": 33
+          },
+          "source": {
+            "status": "SUCCEEDED",
+            "tx": {
+              "txHash": "0x9154280fc3e2d911ab3b96a5b18159072894f7d76c6b8b81af6bd9f9465a476d",
+              "blockHash": "0x6aa477b1f8d980defda16578b5bb6549ae5f803138b34816bca57da2d5c11a98",
+              "blockNumber": "47543643",
+              "blockTimestamp": 1790855574,
+              "from": "0xc82f469aa95a2f7792300c8d11230e9023a98600",
+              "payload": "0x4e4246470206000000020000000106c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c941041042a68e53698d1b18f842017a3e0bbea54e7dbb8d2a3aee8c68204572cfcd500000000000000000000000025f13a53b2006d084584e96b765310fea1027b9fe1fb69232bec1864d37c418a6ada0633248c2e1ee6499e6d3105a3ca57a1b3c40000000000000000000000008860275f5e74a7e25081f7b1fd71c43d81a5e6af00000000000000000000000000000002000000000000000000000000000000000000000002d5755b000000006abe4996",
+              "readinessTimestamp": 1790855578,
+              "options": {
+                "lzReceive": {
+                  "gas": "200000",
+                  "value": "2500000"
+                },
+                "ordered": false
+              }
+            }
+          },
+          "destination": {
+            "nativeDrop": {
+              "status": "N/A"
+            },
+            "lzCompose": {
+              "status": "N/A"
+            },
+            "tx": {
+              "txHash": "2aNkR8k9jmjaGe21n682YaLJBG2NjVH2VRmJTjsyZpqmQkVCumrBAV8e9ksY4SCHJzALaDQJVNMj3CenAVHe4GtQ",
+              "blockHash": "7AArWFu45mBHpnDM3YMW5NAkCN6NsM2EidQnJ2MHnMgr",
+              "blockNumber": 506263436,
+              "blockTimestamp": 1790855610
+            },
+            "status": "SUCCEEDED"
+          },
+          "verification": {
+            "dvn": {
+              "dvns": {
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb": {
+                  "txHash": "3jDrXuXE7knPBWiFkuoBATzuaukN2Z69obfUareKdfa1hrfCi27E1MU3dFqnnAm3JabcpBZ3ds83LB1RRqowNXnu",
+                  "blockHash": "H3o9C7kTMLfG2ZjGDU49hBVSQAWMDoQV8quvAWrNNBU4",
+                  "blockNumber": 506263344,
+                  "blockTimestamp": 1790855588,
+                  "proof": {
+                    "packetHeader": "0x01000000000000002100009d35000000000000000000000000c3bf62a605f52a2ae238766a47b2f21623dfd1a100009ce80d97799798af49b3251411c02453ff7cd0437de31c10fa7b62384a633a6be6e9",
+                    "payloadHash": "0xf506f8ed1b0c13e99ccbf2385273f1907ea9c24de7ff89fd3828458f8a745e9f"
+                  },
+                  "optional": false,
+                  "status": "SUCCEEDED"
+                }
+              },
+              "status": "SUCCEEDED"
+            },
+            "sealer": {
+              "tx": {
+                "txHash": "2kTjoHhYeyZq6juTvJpkDPwzoV5SjofTRju4yDRKVahtWqkehuzZ4SP7aH2R4CUAeMMkAw8gxVgKCvqcVFB8nBiP",
+                "blockHash": "7dfjg1B1fACDvyjHdGo2ypr9E16injVmKctuvcwT27Hu",
+                "blockNumber": 506263389,
+                "blockTimestamp": 1790855599
+              },
+              "status": "SUCCEEDED"
+            }
+          },
+          "guid": "0xba7f2a0c82c323d1d1e25adf31b9b4f992493e70afefa389560e0b19240e576f",
+          "config": {
+            "error": false,
+            "receiveLibrary": "7a4WjyR8VZ7yZz5XJAKm39BUGn5iT9CKcv2pmG9tdXVH",
+            "sendLibrary": "0xC1868e054425D378095A003EcbA3823a5D0135C9",
+            "inboundConfig": {
+              "confirmations": 2,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "4VDjp6XQaxoZf5RGwiPU9NR1EXSZn2TP4ATMmiSzLfhb"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": []
+            },
+            "outboundConfig": {
+              "confirmations": 2,
+              "requiredDVNCount": 1,
+              "optionalDVNCount": 0,
+              "optionalDVNThreshold": 0,
+              "requiredDVNs": [
+                "0xe1a12515f9ab2764b887bf60b923ca494ebbb2d6"
+              ],
+              "requiredDVNNames": [
+                "LayerZero Labs"
+              ],
+              "optionalDVNs": [],
+              "optionalDVNNames": [],
+              "executor": "0x8A3D588D9f6AC041476b094f97FF94ec30169d3D"
+            },
+            "ulnSendVersion": "V302",
+            "ulnReceiveVersion": "V302"
+          },
+          "status": {
+            "name": "DELIVERED",
+            "message": "Executor transaction confirmed"
+          },
+          "created": "2026-10-01T11:53:08.000Z",
+          "updated": "2026-10-01T11:53:42.000Z"
+        }
+      }
+    ]
+  },
+  "limits": [
+    "Synthetic fixture authentication for the financial harness; genuine user Privy login verified separately.",
+    "CLI owner signing; browser wallet signing remains a separate frontend acceptance gate.",
+    "Cash-only testnet flow; no earning, mainnet security, hosted uptime or audit assurance."
+  ],
+  "selectedNetworks": [
+    "solana-devnet",
+    "base-sepolia"
+  ],
+  "operatorRetirement": {
+    "version": 1,
+    "authorityMode": "permissionless",
+    "broadcast": true,
+    "lastCycleAt": "2026-10-01T11:58:02.075Z",
+    "goalCount": 1,
+    "errors": 0,
+    "capacity": 6,
+    "completedGoalIds": [
+      "0x06c3a4500d21c4b98d9cba9a931b21249589139a30682d386f22f04b6e2c9410"
+    ]
+  },
+  "funding": {
+    "intentId": "backend-owner-funding-v1",
+    "recipient": {
+      "solana": "EYXcd5nnx94r4aC3c5xSZsqBXbZuSzHS8aenzih5qS5H",
+      "evm": "0x8860275f5e74a7e25081f7b1fd71c43d81a5e6af"
+    },
+    "operations": [
+      {
+        "stage": "solana-native",
+        "hash": "2AfhpkZ19DtE5YGBAcKcrvHwiRJAopg1DvrNWpbuXmSgNUJYv6kLs9TNAJFmA7tCRPp5NBSF8FqfLEQhvX3gLt1m",
+        "status": "confirmed-conserved",
+        "receipt": {
+          "network": "solana-devnet",
+          "hash": "2AfhpkZ19DtE5YGBAcKcrvHwiRJAopg1DvrNWpbuXmSgNUJYv6kLs9TNAJFmA7tCRPp5NBSF8FqfLEQhvX3gLt1m",
+          "slot": 506258388,
+          "fee": "5120",
+          "operatorFundedAta": false,
+          "conserved": true
+        }
+      },
+      {
+        "stage": "solana-usdc",
+        "hash": "2RyfGjWPux4DURt4JrMPexQ3huX4pdHtvTfNuo8jHKrTGjnkZwxf5uEeALkK2CbbngqcsMm9ViYGkV38Tgr4nGZT",
+        "status": "confirmed-conserved",
+        "receipt": {
+          "network": "solana-devnet",
+          "hash": "2RyfGjWPux4DURt4JrMPexQ3huX4pdHtvTfNuo8jHKrTGjnkZwxf5uEeALkK2CbbngqcsMm9ViYGkV38Tgr4nGZT",
+          "slot": 506258400,
+          "fee": "5120",
+          "operatorFundedAta": true,
+          "conserved": true
+        }
+      },
+      {
+        "stage": "base-native",
+        "hash": "0x58c0ead98673b25aa687d9d768eec0c6ee0975a9917e7aa3933792b70cba1fd6",
+        "status": "confirmed-conserved",
+        "receipt": {
+          "network": "base-sepolia",
+          "hash": "0x58c0ead98673b25aa687d9d768eec0c6ee0975a9917e7aa3933792b70cba1fd6",
+          "block": "0x2d57323",
+          "gasUsed": "0x5208",
+          "effectiveGasPrice": "0xb71b00",
+          "l1Fee": "5762344034",
+          "operatorFee": "0",
+          "conserved": true
+        }
+      },
+      {
+        "stage": "base-usdc",
+        "hash": "0x084830c9b124bbea2c6bbc0ec05b80a6687b206ca3b38e12bb8ac420fc4c83a9",
+        "status": "confirmed-conserved",
+        "receipt": {
+          "network": "base-sepolia",
+          "hash": "0x084830c9b124bbea2c6bbc0ec05b80a6687b206ca3b38e12bb8ac420fc4c83a9",
+          "block": "0x2d5739c",
+          "gasUsed": "0xf2cf",
+          "effectiveGasPrice": "0xb71b00",
+          "l1Fee": "6212053861",
+          "operatorFee": "0",
+          "conserved": true
+        }
+      }
+    ],
+    "financialTransfers": 4,
+    "amounts": {
+      "solanaLamports": "100000000",
+      "solanaUsdcRaw": "1000000",
+      "baseWei": "3000000000000000",
+      "baseUsdcRaw": "1000000"
+    },
+    "originalOnlyRecovery": true
+  }
+}
