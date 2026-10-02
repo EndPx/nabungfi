@@ -37,6 +37,8 @@ export default defineConfig({
           "/manifest.webmanifest",
           "/favicon.svg",
           "/brand/nabungfi-mark.svg",
+          "/brand/nabungfi-mark-small.svg",
+          "/brand/nabungfi-mark-mono.svg",
           "/icons/icon-192.png",
           "/icons/icon-512.png",
           "/icons/maskable-512.png",
