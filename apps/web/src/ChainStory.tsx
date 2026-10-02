@@ -65,25 +65,49 @@ export function ChainStory() {
           ))}
         </svg>
         <div className="chain-story-node chain-node--solana">
-          <i>S</i>
+          <img
+            src="/chains/solana.png"
+            width={36}
+            height={36}
+            alt=""
+            aria-hidden="true"
+          />
           <span>
             Solana<small>Your vault</small>
           </span>
         </div>
         <div className="chain-story-node chain-node--base">
-          <i>B</i>
+          <img
+            src="/chains/base.png"
+            width={36}
+            height={36}
+            alt=""
+            aria-hidden="true"
+          />
           <span>
             Base<small>Your vault</small>
           </span>
         </div>
         <div className="chain-story-node chain-node--arbitrum">
-          <i>A</i>
+          <img
+            src="/chains/arbitrum.png"
+            width={36}
+            height={36}
+            alt=""
+            aria-hidden="true"
+          />
           <span>
             Arbitrum<small>Your vault</small>
           </span>
         </div>
         <div className="chain-story-node chain-node--ethereum">
-          <i>E</i>
+          <img
+            src="/chains/ethereum.png"
+            width={36}
+            height={36}
+            alt=""
+            aria-hidden="true"
+          />
           <span>
             Ethereum<small>Your vault</small>
           </span>

@@ -564,18 +564,14 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-control);
 }
-.chain-story-node > i {
-  display: grid;
-  place-items: center;
+.chain-story-node > img {
+  display: block;
   width: 36px;
   height: 36px;
-  background: var(--blue-soft);
-  font: 500 var(--text-lead) / 1 var(--font-display);
-  font-style: normal;
+  object-fit: contain;
   flex-shrink: 0;
-  border-radius: var(--radius-small);
-  color: var(--blue-ink);
 }
+.chain-node--arbitrum > img { transform:scale(2); }
 .chain-story-node small {
   display: block;
   font-size: var(--text-xs);
@@ -593,11 +589,6 @@
 }
 .chain-node--ethereum {
   inset: auto 0 11% auto;
-}
-.chain-node--base > i,
-.chain-node--ethereum > i {
-  background: var(--green-soft);
-  color: var(--green-ink);
 }
 .chain-story-goal {
   position: absolute;
@@ -641,7 +632,7 @@
   .chain-story-node {
     gap: var(--space-2);
   }
-  .chain-story-node > i {
+  .chain-story-node > img {
     width: 28px;
     height: 28px;
   }
@@ -673,10 +664,9 @@
     gap: var(--space-1);
     font-size: var(--text-xs);
   }
-  .chain-story-node > i {
+  .chain-story-node > img {
     width: 24px;
     height: 24px;
-    font-size: var(--text-sm);
   }
   .chain-story-goal .building-mark {
     width: 68px;

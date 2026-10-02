@@ -15,3 +15,15 @@ No AI-generated model art, remote product screenshot or stock illustration is pa
 ## Additional procedural goal models
 
 The laptop, house and custom 100-component sculpture are original deterministic geometry in `src/goal-models.ts`. They reuse the existing construction animation, optional credited assembly recording and original completion cue; no third-party 3D model or trademarked toy geometry is copied. PWA PNG icons are rasterized from the canonical SVG using Pillow with antialiasing. The maskable mark is inset to remain inside the central safe circle; its warm background may be cropped by the platform.
+
+
+## Landing chain PNG identifiers
+
+Retrieved 2 October 2026; original PNG files are served locally without recoloring or pixel edits. They identify supported networks and do not imply endorsement.
+
+- `public/chains/solana.png`: [Solana brand page](https://solana.com/branding), [original PNG logomark](https://solana.com/src/img/branding/solanaLogoMark.png).
+- `public/chains/base.png`: blue Square from `1_Base Brand Assets/The Square/Base_square_blue.png` inside the [official Base brand archive](https://brand.base.org/base-brand.zip), linked by [Base core identifiers](https://brand.base.org/core-identifiers).
+- `public/chains/arbitrum.png`: full-color logomark with built-in clear space from the [Arbitrum brand kit](https://arbitrum.io/brand-kit), [original PNG](https://arbitrum.io/brandkit/1225_Arbitrum_Logomark_FullColor_ClearSpace.png).
+- `public/chains/ethereum.png`: transparent black diamond from [Ethereum brand assets](https://ethereum.org/assets/), [original PNG](https://ethereum.org/_next/static/media/eth-diamond-black.31u_5ih2w7osr.png).
+
+Image frames use `object-fit: contain` and follow the existing responsive 36/28/24px slots. The Arbitrum file includes generous transparent clear space and is scaled uniformly in its slot for comparable visible mark size. Chain labels remain visible, while the images are decorative within the described progress diagram. All four paths are included in the versioned public static cache.
