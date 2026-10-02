@@ -1,8 +1,11 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ArrowRight, Box, LockKeyhole, Check, Plus } from "./icons";
-import { Button, Logo, WorkshopBoundary } from "./ui";
+import { Button, IconButton, Logo, WorkshopBoundary } from "./ui";
 import { GoalIllustration } from "./GoalIllustration";
 import type { WorkshopModel } from "./goal-models";
+import { BuildingMark } from "./BuildingMark";
+import { ChainStory } from "./ChainStory";
+import { useLandingMotion } from "./useLandingMotion";
 import "./landing.css";
 
 const Workshop = lazy(() => import("./CarWorkshop"));
@@ -12,14 +15,34 @@ const models = [
   { id: "house", label: "A home" },
 ] as const;
 export default function Landing() {
+  const root = useRef<HTMLDivElement>(null);
+  const [reducedMotion, setReducedMotion] = useState(
+    () => matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const [paused, setPaused] = useState(false);
+  const motionDisabled = reducedMotion || paused;
+  const refreshMotion = useLandingMotion(root, motionDisabled);
+  useEffect(() => {
+    const media = matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
   const [model, setModel] = useState<WorkshopModel>("car");
   const [interactive, setInteractive] = useState(false);
   return (
-    <div className="landing">
+    <div
+      ref={root}
+      className="landing"
+      data-motion={motionDisabled ? "reduced" : "full"}
+    >
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
       <header className="landing-header">
+        <div className="landing-reading-track" aria-hidden="true">
+          <div className="landing-reading-progress" />
+        </div>
         <a className="brand-link" href="/" aria-label="NabungFi home">
           <Logo />
         </a>
@@ -27,6 +50,20 @@ export default function Landing() {
           <a href="#how-it-works">How it works</a>
           <a href="#questions">Questions</a>
         </nav>
+        <IconButton
+          label={
+            reducedMotion
+              ? "Motion reduced by your device setting"
+              : paused
+                ? "Enable page motion"
+                : "Pause page motion"
+          }
+          disabled={reducedMotion}
+          aria-pressed={paused}
+          onClick={() => setPaused((value) => !value)}
+        >
+          <Box size={20} />
+        </IconButton>
         <a className="button button--build" href="/app">
           Open app
           <ArrowRight size={18} />
@@ -35,7 +72,16 @@ export default function Landing() {
       <main id="main-content" tabIndex={-1}>
         <section className="landing-hero">
           <div className="landing-hero-copy">
-            <h1>Build what you’re saving for.</h1>
+            <h1 aria-label="Build what you’re saving for.">
+              {["Build", "what", "you’re", "saving", "for."].map((word, i) => (
+                <span className="hero-word-frame" key={word}>
+                  <span className="hero-word" aria-hidden="true">
+                    {word}
+                  </span>
+                  {i < 4 ? " " : ""}
+                </span>
+              ))}
+            </h1>
             <p>
               Your next car. A laptop for work. A place of your own. Turn a
               savings goal into something you can see taking shape, one block at
@@ -92,9 +138,8 @@ export default function Landing() {
                     model={model}
                     funded={100}
                     achieved={false}
-                    reducedMotion={
-                      matchMedia("(prefers-reduced-motion: reduce)").matches
-                    }
+                    reducedMotion={motionDisabled}
+                    introBuild
                     preview
                   />
                 </Suspense>
@@ -125,7 +170,7 @@ export default function Landing() {
           className="landing-chains"
           aria-label="Supported test networks"
         >
-          <span>Many chains. One goal.</span>
+          <span>Available on testnet</span>
           <div>
             <span>Solana Devnet</span>
             <span>Base Sepolia</span>
@@ -133,6 +178,7 @@ export default function Landing() {
             <span>Ethereum Sepolia</span>
           </div>
         </section>
+        <ChainStory />
         <section id="how-it-works" className="landing-explanation">
           <div>
             <h2>
@@ -207,7 +253,7 @@ export default function Landing() {
             <p>Understand the build before you start.</p>
           </div>
           <div>
-            <details>
+            <details onToggle={refreshMotion}>
               <summary>Is this using real money?</summary>
               <p>
                 This release uses testnet USDC and testnet gas tokens. It
@@ -215,7 +261,7 @@ export default function Landing() {
                 launch.
               </p>
             </details>
-            <details>
+            <details onToggle={refreshMotion}>
               <summary>Can I withdraw before the target?</summary>
               <p>
                 No. Each goal is a commitment: deposits remain locked until its
@@ -223,14 +269,14 @@ export default function Landing() {
                 time-based unlock.
               </p>
             </details>
-            <details>
+            <details onToggle={refreshMotion}>
               <summary>Do my savings earn yield?</summary>
               <p>
                 Yield integrations are planned. Yield is not active in the
                 current release; the vaults currently hold cash USDC.
               </p>
             </details>
-            <details>
+            <details onToggle={refreshMotion}>
               <summary>Are my tokens bridged into one chain?</summary>
               <p>
                 No. Savings remain in the vault on each chain. Cross-chain
@@ -238,7 +284,7 @@ export default function Landing() {
                 happen separately on each chain.
               </p>
             </details>
-            <details>
+            <details onToggle={refreshMotion}>
               <summary>Can I have more than one savings goal?</summary>
               <p>
                 Yes. Create separate goals for a car, laptop, house or something
@@ -248,7 +294,7 @@ export default function Landing() {
           </div>
         </section>
         <section className="landing-finish">
-          <img src="/brand/nabungfi-mark.svg" width={96} height={96} alt="" />
+          <BuildingMark />
           <h2>What will you build next?</h2>
           <a className="button button--build" href="/app">
             Open your workshop

@@ -8,7 +8,7 @@ import "@fontsource/work-sans/latin-600.css";
 import { registerPwa } from "./pwa";
 import { Logo } from "./ui";
 import "./styles.css";
-import "./live.css";
+import { isAppRoute } from "./app-routes";
 
 const Entry = lazy(() => import("./Entry"));
 
@@ -17,13 +17,7 @@ const Showcase = lazy(() => import("./DesignShowcase"));
 const Landing = lazy(() => import("./Landing"));
 const ModelShowcase = lazy(() => import("./ModelShowcase"));
 const parameters = new URLSearchParams(window.location.search);
-const appRoute =
-  location.pathname === "/app" ||
-  location.pathname.startsWith("/app/") ||
-  parameters.get("source") === "pwa" ||
-  ["goals", "activity", "wallets", "settings"].includes(
-    location.hash.slice(1).split("?")[0],
-  );
+const appRoute = isAppRoute(location);
 registerPwa();
 
 if (

@@ -1,8 +1,9 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Shell, InstallPanel, type Destination } from "./Shell";
+import { Shell, InstallPanel } from "./Shell";
 import { Welcome } from "./live-components";
 import { Button, Logo } from "./ui";
 import { usePwa } from "./pwa";
+import { navigateApp, readAppRoute } from "./app-routes";
 import "./live.css";
 
 const LiveApp = lazy(() => import("./LiveApp"));
@@ -13,24 +14,23 @@ function returningAccount() {
     return false;
   }
 }
-function destinationFromHash(): Destination {
-  const value = location.hash.slice(1).split("?")[0];
-  return value === "activity" || value === "wallets" || value === "settings"
-    ? value
-    : "goals";
-}
 export default function Entry() {
   // This non-sensitive hint only decides whether to load the auth SDK eagerly.
   // Privy + the API still verify the account; it grants no access or authority.
   const [openAccount, setOpenAccount] = useState(returningAccount);
   const [loginRequested, setLoginRequested] = useState(false);
-  const [destination, setDestination] =
-    useState<Destination>(destinationFromHash);
+  const [destination, setDestination] = useState(
+    () => readAppRoute(location).destination,
+  );
   const pwa = usePwa();
   useEffect(() => {
-    const update = () => setDestination(destinationFromHash());
+    const update = () => setDestination(readAppRoute(location).destination);
     window.addEventListener("hashchange", update);
-    return () => window.removeEventListener("hashchange", update);
+    window.addEventListener("popstate", update);
+    return () => {
+      window.removeEventListener("hashchange", update);
+      window.removeEventListener("popstate", update);
+    };
   }, []);
   const login = () => {
     setLoginRequested(true);
@@ -53,7 +53,7 @@ export default function Entry() {
     <Shell
       destination={destination}
       onNavigate={(value) => {
-        location.hash = value;
+        navigateApp(value);
         setDestination(value);
       }}
       pending={false}

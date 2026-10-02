@@ -12,7 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import { Button, Logo } from "./ui";
 import { usePwa } from "./pwa";
 
-export type Destination = "goals" | "activity" | "wallets" | "settings";
+export type { Destination } from "./app-routes";
+import type { Destination } from "./app-routes";
 const destinations = [
   { id: "goals", label: "Goals", Icon: Box },
   { id: "activity", label: "Activity", Icon: History },

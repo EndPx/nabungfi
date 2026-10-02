@@ -135,12 +135,14 @@
 }
 .landing-poster .goal-illustration {
   width: 100%;
-  height: 280px;
+  height: 320px;
   background: none;
-  display: grid;
-  place-items: center;
+  display: block;
 }
 .landing-poster .goal-illustration img {
+  display: block;
+  min-width: 0;
+  min-height: 0;
   width: 100%;
   height: 100%;
   max-width: 100%;
@@ -462,4 +464,255 @@
   .landing-commitment {
     flex-direction: column;
   }
+}
+
+/* Marketing motion stays inside the landing surface. */
+.landing-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  background: var(--canvas);
+}
+.landing-header .icon-button {
+  flex-shrink: 0;
+}
+.landing-reading-track {
+  position: absolute;
+  inset: auto 0 -2px;
+  height: 3px;
+  pointer-events: none;
+}
+.landing-reading-progress {
+  width: 100%;
+  height: 100%;
+  transform-origin: left;
+  background: linear-gradient(
+    90deg,
+    var(--brand-blue) 0% 34%,
+    var(--brand-yellow) 34% 67%,
+    var(--brand-green) 67%
+  );
+}
+.landing[data-motion="reduced"] .landing-reading-track {
+  display: none;
+}
+.hero-word {
+  display: inline-block;
+}
+.landing .button svg,
+.landing-text-link svg {
+  transition: transform var(--duration) var(--ease);
+}
+.landing .button:hover svg,
+.landing .button:focus-visible svg,
+.landing-text-link:hover svg,
+.landing-text-link:focus-visible svg {
+  transform: translateX(4px);
+}
+.building-mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.landing-finish .building-mark {
+  width: 96px;
+  height: 96px;
+}
+.chain-story {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: var(--space-12);
+  padding-top: var(--space-24);
+}
+.chain-story-copy > p {
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 42ch;
+  margin-block: var(--space-6);
+}
+.story-message-label {
+  display: inline-flex;
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  padding: var(--space-2) var(--space-3);
+  color: var(--green-ink);
+  background: var(--green-soft);
+  border-radius: var(--radius-small);
+}
+.chain-story-diagram {
+  position: relative;
+  min-height: 400px;
+  min-width: 0;
+  width: 100%;
+}
+.chain-story-paths {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.chain-story-node {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 38%;
+  min-height: 72px;
+  padding: var(--space-3);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+}
+.chain-story-node > i {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: var(--blue-soft);
+  font: 500 var(--text-lead) / 1 var(--font-display);
+  font-style: normal;
+  flex-shrink: 0;
+  border-radius: var(--radius-small);
+  color: var(--blue-ink);
+}
+.chain-story-node small {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  margin-top: var(--space-1);
+}
+.chain-node--solana {
+  inset: 11% auto auto 0;
+}
+.chain-node--base {
+  inset: 11% 0 auto auto;
+}
+.chain-node--arbitrum {
+  inset: auto auto 11% 0;
+}
+.chain-node--ethereum {
+  inset: auto 0 11% auto;
+}
+.chain-node--base > i,
+.chain-node--ethereum > i {
+  background: var(--green-soft);
+  color: var(--green-ink);
+}
+.chain-story-goal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-surface);
+  padding: var(--space-4);
+}
+.chain-story-goal .building-mark {
+  width: 88px;
+  height: 82px;
+}
+.chain-story-goal strong {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.landing-faq details[open] p {
+  animation: faq-open 220ms var(--ease);
+}
+@keyframes faq-open {
+  from {
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 1000px) {
+  .chain-story {
+    gap: var(--space-6);
+  }
+  .chain-story-node {
+    gap: var(--space-2);
+  }
+  .chain-story-node > i {
+    width: 28px;
+    height: 28px;
+  }
+}
+@media (max-width: 767px) {
+  .chain-story {
+    grid-template-columns: 1fr;
+    padding-top: var(--space-16);
+    gap: var(--space-6);
+  }
+  .chain-story-diagram {
+    min-height: 320px;
+  }
+  .chain-story-node {
+    font-size: var(--text-sm);
+    min-height: 60px;
+  }
+  .chain-story-goal {
+    padding: var(--space-3);
+  }
+  .chain-story-goal .building-mark {
+    width: 80px;
+    height: 74px;
+  }
+}
+@media (max-width: 359px) {
+  .chain-story-node {
+    padding: var(--space-2);
+    gap: var(--space-1);
+    font-size: var(--text-xs);
+  }
+  .chain-story-node > i {
+    width: 24px;
+    height: 24px;
+    font-size: var(--text-sm);
+  }
+  .chain-story-goal .building-mark {
+    width: 68px;
+    height: 63px;
+  }
+  .landing-header {
+    gap: var(--space-2);
+  }
+  .landing-header .icon-button {
+    width: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing .button svg,
+  .landing-text-link svg {
+    transition: none;
+  }
+  .landing .button:hover svg,
+  .landing .button:focus-visible svg,
+  .landing-text-link:hover svg,
+  .landing-text-link:focus-visible svg {
+    transform: none;
+  }
+  .landing-faq details[open] p {
+    animation: none;
+  }
+}
+.landing[data-motion="reduced"] .button svg,
+.landing[data-motion="reduced"] .landing-text-link svg {
+  transition: none;
+  transform: none;
+}
+.landing[data-motion="reduced"] .landing-faq details[open] p {
+  animation: none;
+}
+
+.landing [id] {
+  scroll-margin-block-start: calc(96px + var(--space-4));
 }

@@ -42,14 +42,8 @@ import {
   validateCanonicalBinding,
   validateTransactionSemantics,
 } from "./plan-semantics";
+import { navigateApp, readAppRoute } from "./app-routes";
 import { actions, networks } from "./live-config";
-function getDestination(): Destination {
-  const path = window.location.hash.slice(1);
-  return ["activity", "wallets", "settings"].includes(path)
-    ? (path as Destination)
-    : "goals";
-}
-
 export function useLiveController() {
   const {
     ready,
@@ -67,11 +61,13 @@ export function useLiveController() {
   const { createWallet: createEthereumWallet } = useCreateWallet();
   const { createWallet: createSolanaWallet } = useCreateSolanaWallet();
   const pwa = usePwa();
-  const [destination, setDestination] = useState<Destination>(getDestination);
+  const [destination, setDestination] = useState<Destination>(
+    () => readAppRoute(location).destination,
+  );
   const [session, setSession] = useState<SessionDTO | null>(null);
   const [goals, setGoals] = useState<GoalDTO[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(() =>
-    new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("goal"),
+  const [selectedId, setSelectedId] = useState<string | null>(
+    () => readAppRoute(location).goalId,
   );
   const [history, setHistory] = useState<GoalHistoryEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -219,15 +215,16 @@ export function useLiveController() {
   }, [authenticated, walletMembership, load]);
   useEffect(() => {
     const update = () => {
-      setDestination(getDestination());
-      setSelectedId(
-        new URLSearchParams(window.location.hash.split("?")[1] ?? "").get(
-          "goal",
-        ),
-      );
+      const route = readAppRoute(location);
+      setDestination(route.destination);
+      setSelectedId(route.goalId);
     };
     window.addEventListener("hashchange", update);
-    return () => window.removeEventListener("hashchange", update);
+    window.addEventListener("popstate", update);
+    return () => {
+      window.removeEventListener("hashchange", update);
+      window.removeEventListener("popstate", update);
+    };
   }, []);
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -273,7 +270,7 @@ export function useLiveController() {
   }, [authenticated, selectedId, request, userId, goals]);
 
   const navigate = (next: Destination, goal?: string) => {
-    window.location.hash = `${next}${goal ? `?goal=${encodeURIComponent(goal)}` : ""}`;
+    navigateApp(next, goal);
     setDestination(next);
     setSelectedId(goal ?? null);
   };

@@ -53,6 +53,7 @@ interface WorkshopProps {
   reducedMotion: boolean;
   model?: WorkshopModel;
   preview?: boolean;
+  introBuild?: boolean;
   nextPiece?: {
     fractionBasisPoints: number;
     remainingRaw: string;
@@ -388,12 +389,20 @@ export default function CarWorkshop({
   reducedMotion,
   model = "car",
   preview = false,
+  introBuild = false,
   nextPiece,
 }: WorkshopProps) {
   const pieces = WORKSHOP_MODELS[model];
-  const [built, setBuilt] = useState(() => readBuilt(goalId, funded));
-  const [sequence, setSequence] = useState<BuildSequence | null>(null);
+  const [built, setBuilt] = useState(() =>
+    preview && introBuild && !reducedMotion ? 0 : readBuilt(goalId, funded),
+  );
+  const [sequence, setSequence] = useState<BuildSequence | null>(() =>
+    preview && introBuild && !reducedMotion
+      ? { key: 1, from: 0, to: funded }
+      : null,
+  );
   const [sound, setSound] = useState(() => {
+    if (preview && introBuild) return false;
     try {
       return localStorage.getItem("nabungfi:assembly-sound") === "on";
     } catch {
@@ -414,11 +423,12 @@ export default function CarWorkshop({
   useEffect(() => {
     setAudioEnabled(sound);
     try {
-      localStorage.setItem("nabungfi:assembly-sound", sound ? "on" : "off");
+      if (!(preview && introBuild))
+        localStorage.setItem("nabungfi:assembly-sound", sound ? "on" : "off");
     } catch {
       /* Optional sound preference only. */
     }
-  }, [sound]);
+  }, [sound, preview, introBuild]);
 
   useEffect(() => () => stopBuildAudio(), []);
 

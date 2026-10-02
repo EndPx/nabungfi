@@ -66,6 +66,18 @@ The document owns scrolling. Desktop sidebar is 224px. Below 900px, the app uses
 
 ## Interaction and accessibility
 
+### Animated marketing extension
+
+Landing-only motion uses existing GSAP plus ScrollTrigger, with native document scrolling. Hero text enters as one readable sequence (0.95s, 0.06s stagger); illustrated progress messages draw toward a shared goal and its canonical N assembles from its own rectangles. The choose/save/unlock steps reveal sequentially (0.65s), and the final N assembles when its section enters the viewport. Scroll-linked diagrams use 0.65s scrub smoothing; no smooth-scroll replacement or wheel interception. UI CTA arrows move 4px on hover/focus. Native FAQ disclosure adds 0.22s content feedback without tweening height.
+
+The visitor can pause marketing motion, and OS reduced motion renders the complete readable state with no scroll-linked transforms. No content depends on an animation completing. All timelines/triggers are scoped to the landing root and reverted on unmount or preference changes. Header reading progress is decorative, never a savings balance. Cross-chain moving marks represent progress messages; captions state that funds stay on their respective chains.
+
+The original model geometry, lighting and material palette remain exempt from UI tokens. Selecting the interactive landing preview starts a silent build after an explicit click; it does not automatically enable sound or change the account's stored sound preference. Model previews contain no API or wallet operations. Static original-render posters provide the initial visual and the loading fallback.
+
+The beui `scroll-animation` and `text-animation` sources inform native reduced-motion fallback and readable grouped text. Adapt those mechanisms to the existing GSAP stack; do not add Lenis/Motion or copy their components.
+
+App URLs are `/app/goals`, `/app/activity`, `/app/wallets` and `/app/settings`. `/app` remains the goals entry; `?goal=` belongs to `/app/goals`. Browser history and legacy hash links remain supported. Account navigation never loads marketing motion.
+
 Reuse existing 160ms transform/opacity press feedback and assembly sequence; do not add auto-playing ornament or scroll capture. Model preview and sound require an explicit user action. OS reduced motion and workshop controls remain supported. All four models retain keyboard orbit controls. The savings engine and wallet lifecycle are outside this visual change.
 
 Use semantic landmarks, a skip link, labelled fields, visible 3px focus, native FAQ disclosures, text alternatives for meaningful artwork and 4.5:1 normal-text contrast. A static poster remains useful if WebGL fails. Model failure must never hide savings actions. Pending wallet requests must reconcile before a PWA update.

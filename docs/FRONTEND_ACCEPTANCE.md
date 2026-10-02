@@ -77,3 +77,25 @@ Lighthouse used the Node API attached to isolated installed Google Chrome, with 
 Mobile performance is below the frontend skill’s 100-point aspiration. This is not a full perfection-gate certification. The deferred Three.js chunk remains about 1MB before gzip. React Doctor scored 74 with eight warnings in existing financial/controller/workshop paths (loading cleanup, complexity and response parsing); no finding was suppressed and this branding pass does not certify that audit as clear. Live account UX, browser-signed transactions, physical-device installation, participant recognition of the block icons and Vercel publication remain independent release gates.
 
 Private reproducible artifacts: `.local/design-qa/checks.json`, page screenshots, `.local/design-qa/performance.json`, Lighthouse JSON reports and browser/unit logs. They are excluded from Git. No VPS service, contract, goal balance or wallet transaction was mutated by this pass.
+
+
+## Animated landing and dedicated app pages — 2 October 2026
+
+`/` now has scoped GSAP hero, canonical-mark assembly, chain-progress diagram, process-step, FAQ and closing animations. It keeps native scrolling and a pause control. Text remains fully opaque throughout motion; decorative SVG pieces may fade. Reduced motion renders the complete readable state. The original 3D model geometry/materials are unchanged; an explicitly requested model intro starts silently without overwriting the account's saved sound preference.
+
+`/app/goals`, `/app/activity`, `/app/wallets` and `/app/settings` now use dedicated URL paths. The unified parser supports existing hash links and per-goal selection, while browser Back/Forward and reload retain the destination. Root marketing anchors never open the app. The landing auth-hint boundary and app financial authority remain unchanged. The root no longer eagerly imports app-shell CSS.
+
+Verification: production build passed; 41 unit checks and 21 isolated browser checks passed. The added checks cover route compatibility, encoded goal identity, app navigation/history, scroll motion, pause/resume, device reduced motion and silent preview with sound preference preservation. Browser accessibility checks passed during active motion after removing transient text fades that reduced contrast. Mobile motion offsets were reduced to fit the page gutters. The 3D poster now has a definite image frame, preventing overlap with its caption.
+
+Production Chrome reflow was checked at 320/390/768/1280px with motion enabled and reduced, before and after scrolling. No horizontal overflow or uncaught page errors occurred in the final run. Native scrolling and the original assembly were recorded in a local WebM; neither this video nor screenshots contain a connected account or financial transaction.
+
+Three Lighthouse runs per route/preset on isolated installed Chrome measured these medians:
+
+| Route/preset | Performance | Accessibility | Best practices | SEO |
+| --- | ---: | ---: | ---: | ---: |
+| Animated landing mobile | 96 | 100 | 100 | 100 |
+| Animated landing desktop | 100 | 100 | 100 | 100 |
+| Guest app mobile | 98 | 100 | 100 | 100 |
+| Guest app desktop | 100 | 100 | 100 | 100 |
+
+These local startup scores do not establish all animation frame rates, physical-device usability, signed browser settlement or deployed Vercel performance. The 100-in-every-category perfection target remains unmet on mobile. Existing React Doctor/controller debt and live release gates remain as recorded above. Private artifacts are under `.local/animated-landing-qa/`; no public deployment, API mutation, contract transaction or VPS change occurred.

@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import { validateVercelBuild } from "./src/deployment-config.ts";
 
 validateVercelBuild({
@@ -13,6 +14,20 @@ validateVercelBuild({
 export default defineConfig({
   plugins: [
     react(),
+    {
+      name: "nabungfi-canonical-inline-mark",
+      resolveId(id) {
+        if (id === "virtual:nabungfi-mark") return "\0nabungfi-mark";
+      },
+      load(id) {
+        if (id !== "\0nabungfi-mark") return;
+        const path = fileURLToPath(
+          new URL("./public/brand/nabungfi-mark.svg", import.meta.url),
+        );
+        this.addWatchFile(path);
+        return `export default ${JSON.stringify(readFileSync(path, "utf8"))};`;
+      },
+    },
     {
       name: "nabungfi-public-shell",
       generateBundle(_options, bundle) {
@@ -27,7 +42,9 @@ export default defineConfig({
         for (const [file, item] of Object.entries(bundle)) {
           if (
             item.type === "chunk" &&
-            (item.isEntry || file.includes("/Entry-") || file.includes("/Landing-"))
+            (item.isEntry ||
+              file.includes("/Entry-") ||
+              file.includes("/Landing-"))
           )
             visit(file);
           if (/\.(css|woff2)$/.test(file)) shellFiles.add(file);

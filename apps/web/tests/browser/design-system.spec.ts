@@ -23,9 +23,10 @@ test("the brand remains visible in marketing and app layouts at narrow widths", 
 test("landing stays separate from a returning account and opens the task app", async ({
   page,
 }) => {
-  await page.addInitScript(() =>
-    localStorage.setItem("nabungfi:session-hint", "1"),
-  );
+  await page.addInitScript(() => {
+    if (location.pathname === "/")
+      localStorage.setItem("nabungfi:session-hint", "1");
+  });
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Build what you’re saving for." }),
