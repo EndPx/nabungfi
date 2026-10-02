@@ -6,7 +6,7 @@ import {
   type ButtonHTMLAttributes,
   type ReactNode,
 } from "react";
-import { Box, LoaderCircle, X } from "lucide-react";
+import { Box, LoaderCircle, X } from "./icons";
 
 export class WorkshopBoundary extends Component<
   { children: ReactNode },
@@ -163,5 +163,25 @@ export function Logo() {
       />
       <span className="brand-wordmark">NabungFi</span>
     </span>
+  );
+}
+
+export function PageHeading({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="page-heading">
+      <div>
+        <h1>{title}</h1>
+        {description && <p>{description}</p>}
+      </div>
+      {children}
+    </div>
   );
 }

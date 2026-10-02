@@ -49,3 +49,31 @@ This release uses cash USDC on testnets. Yield is inactive. No mainnet deposit, 
 The selected flat six-course N uses a fixed irregular blue/yellow/green arrangement. Four equal 2:1 rectangles connect left course five to right course two along equal 12px overlaps. Master artwork has upward studs on all uncovered tops; small-use and monochrome derivatives omit them. A canonical SVG generates those variants, favicon and PWA icons; the header uses the small-use mark. The wordmark is a unified dark Outfit “NabungFi”. The [brand reference](../apps/web/BRAND.md) documents geometry, colors and generation. Public static asset contents contribute to the service-worker version so icon-only changes update correctly.
 
 Production guest checks at 320/390/768/1280px inspect reflow, loading and offline availability. The maskable PNG foreground is checked against its 204.8px central safe circle. The final grid uses 24×24 squares, four identical 48×24 rectangles and 6×3 studs on uncovered tops; small-use and single-color marks omit studs. The local review displays full-color and one-color versions at 24px and 32px. Automated checks do not establish human recognition of the mark, another wallet transaction, physical mobile installation or a new Lighthouse result.
+
+
+## Shared design and route pass — 2 October 2026
+
+The accepted six-row N remains unchanged. The current public interface contract is `apps/web/DESIGN.md`, with one `src/tokens.css`, a custom block icon family and original-render goal posters. The user explicitly scoped the UI rules away from 3D artwork. Original car/laptop/house/sculpture geometry, 100-piece counts, lime/cream materials and lighting remain intact. Flat replacement illustrations and model recoloring were removed before release. Legacy local-demo controls use the same primitives.
+
+`/` is marketing; `/app` is the authenticated task shell. Returning-account hints do not replace the landing page. PWA launches use `/app?source=pwa`. Existing app hashes and the explicit local-demo URL remain supported. Auth and 3D runtime code are deferred; the landing’s interactive model loads after the visitor requests it. Activity, Wallets and Settings use the same presentational components in the real app and the isolated fixture harness.
+
+Observed checks for this pass:
+
+- Frozen offline dependency installation and production build passed. The unused third-party icon dependency was removed without changing pinned wallet/chain dependency resolutions.
+- 36 unit checks passed. 17 isolated browser checks passed, including landing/app navigation, mobile logo visibility, model choice, native FAQ disclosure, task-page reflow, motion preference, history navigation and the previous financial component checks.
+- 32 page/width combinations: system showcase, landing, guest app, goal overview/detail, Activity, Wallets and Settings at 320/390/768/1280px. No horizontal overflow or uncaught page errors. These are visual fixtures, not proof of live account balances.
+- Automated WCAG A/AA checks found no violations on landing, sign-in gate, system showcase, goal overview/creation dialog and Activity/Wallets/Settings. Escape restored the creation trigger’s focus. Human screen-reader and participant testing remain separate.
+- The production landing assembly preview was exercised, including its deferred 3D renderer. Offline `/app` reloaded its shell with sign-in disabled, and Cache Storage contained no API entries.
+
+Lighthouse used the Node API attached to isolated installed Google Chrome, with three runs per route/preset. Median scores during this pass:
+
+| Route/preset | Performance | Accessibility | Best practices | SEO |
+| --- | ---: | ---: | ---: | ---: |
+| Landing mobile | 97 | 100 | 100 | 100 |
+| Landing desktop | 100 | 100 | 100 | 100 |
+| Guest app mobile | 97 | 100 | 100 | 100 |
+| Guest app desktop | 100 | 100 | 100 | 100 |
+
+Mobile performance is below the frontend skill’s 100-point aspiration. This is not a full perfection-gate certification. The deferred Three.js chunk remains about 1MB before gzip. React Doctor scored 74 with eight warnings in existing financial/controller/workshop paths (loading cleanup, complexity and response parsing); no finding was suppressed and this branding pass does not certify that audit as clear. Live account UX, browser-signed transactions, physical-device installation, participant recognition of the block icons and Vercel publication remain independent release gates.
+
+Private reproducible artifacts: `.local/design-qa/checks.json`, page screenshots, `.local/design-qa/performance.json`, Lighthouse JSON reports and browser/unit logs. They are excluded from Git. No VPS service, contract, goal balance or wallet transaction was mutated by this pass.

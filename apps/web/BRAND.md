@@ -16,7 +16,7 @@ All parts follow one design unit: squares are 24×24; each of the four connectin
 | Yellow | `#FFD94E` |
 | Green | `#47AE69` |
 
-The warm canvas (`#F8F7F2`), paper (`#FFFEFA`), dark ink (`#22251E`) and existing lime actions remain the interface palette. Work Sans handles body text and controls; Outfit handles headings and the wordmark. Logo colors do not replace the semantic warning/error/success states or their text and icons.
+The warm canvas (`#F8F7F2`), paper (`#FFFEFA`), dark ink (`#22251E`) remain the base interface palette. Yellow actions, blue navigation and green progress follow [DESIGN.md](DESIGN.md). Work Sans handles body text and controls; Outfit handles headings and the wordmark. Logo colors do not replace the semantic warning/error/success states or their text and icons.
 
 ## Favicon and PWA
 
@@ -24,4 +24,4 @@ Run `python apps/web/scripts/make-icons.py` from the repository root with Pillow
 
 The build includes the canonical mark in the public PWA cache. Static asset contents contribute to the service worker version, so a logo-only or icon-only change still requests an explicit app update. Financial requests and private responses remain outside that cache.
 
-Local exploration images are not release assets. Landing/app routing, browser-wallet financial acceptance and public deployment retain their own release gates.
+Local exploration images are not release assets. The landing page and app share the system in `DESIGN.md`. Browser-wallet financial acceptance and public deployment retain their own release gates.

@@ -7,15 +7,23 @@ import "@fontsource/work-sans/latin-500.css";
 import "@fontsource/work-sans/latin-600.css";
 import { registerPwa } from "./pwa";
 import { Logo } from "./ui";
-import Entry from "./Entry";
 import "./styles.css";
+import "./live.css";
+
+const Entry = lazy(() => import("./Entry"));
 
 const DemoApp = lazy(() => import("./App"));
-const Showcase = lazy(() =>
-  import("./App").then((module) => ({ default: module.PrimitiveShowcase })),
-);
+const Showcase = lazy(() => import("./DesignShowcase"));
+const Landing = lazy(() => import("./Landing"));
 const ModelShowcase = lazy(() => import("./ModelShowcase"));
 const parameters = new URLSearchParams(window.location.search);
+const appRoute =
+  location.pathname === "/app" ||
+  location.pathname.startsWith("/app/") ||
+  parameters.get("source") === "pwa" ||
+  ["goals", "activity", "wallets", "settings"].includes(
+    location.hash.slice(1).split("?")[0],
+  );
 registerPwa();
 
 if (
@@ -46,8 +54,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Showcase />
       ) : parameters.get("demo") === "1" ? (
         <DemoApp />
-      ) : (
+      ) : appRoute ? (
         <Entry />
+      ) : (
+        <Landing />
       )}
     </Suspense>
   </React.StrictMode>,

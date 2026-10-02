@@ -7,10 +7,10 @@
 - The original MP3 is retained locally and excluded from Git. To reproduce both WAVs, obtain the credited recording from its source page, put it at `assets/audio/pixabay-building-208359.mp3`, then run `python scripts/prepare-audio.py` from `apps/web` using Python with NumPy and SoundFile. The script checks the source hash before rendering. The committed WAVs are sufficient to run the app. The user-supplied Myinstants build/construction/breaking links are references only and are not bundled.
 - `public/brand/nabungfi-mark.svg`: original code-native three-color N following the user's six-course construction. Left course five and right course two count from the bottom, with two middle rectangular connectors. Uniform 2:1 rectangles touch along equal half-unit overlaps, using an irregular fixed color arrangement and studs on uncovered tops. `scripts/make-icons.py` derives the stud-free small-use and single-color SVGs, favicon and PWA icons from that master. `src/ui.tsx` uses the small-use mark with a unified Outfit wordmark. No separate geometry or photorealistic exploration image is shipped.
 - Outfit and Work Sans: locally served through pinned Fontsource packages. Their upstream SIL Open Font Licenses remain in their package distributions; no proprietary font is used.
-- Lucide icons: supplied by the pinned `lucide-react` dependency under its ISC license.
+- `src/icons.tsx`: original block-based SVG icon family. Colored identity icons share the blue/yellow/green mark palette and exposed studs; action glyphs use square-ended readable strokes. `public/models/*.jpg` are direct screenshots of the unchanged original procedural 3D objects. `scripts/capture-model-posters.mjs` captures them through the isolated `tests/browser/posters.html` surface; no image manipulation or third-party object artwork is used. `src/GoalIllustration.tsx` renders these lightweight posters for cards, while live detail and requested previews use the original 3D renderer. No third-party pictogram set is rendered by the application.
 - Solana/Base marks are small contextual chain identifiers, not endorsements. They identify the intended networks while the persistent local-demo notice identifies this build's actual evidence boundary.
 
-No raster generated image, remote product screenshot or stock illustration is part of the shipped UI.
+No AI-generated model art, remote product screenshot or stock illustration is part of the shipped UI. The original-model JPEG posters are captured directly from the existing 3D renderer.
 
 ## Additional procedural goal models
 

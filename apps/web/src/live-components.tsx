@@ -10,7 +10,7 @@ import {
   RefreshCw,
   TriangleAlert,
   Wallet,
-} from "lucide-react";
+} from "./icons";
 import type {
   AppNetwork,
   CreateGoalRequest,
@@ -23,7 +23,7 @@ import type {
 } from "@nabungfi/shared/application";
 import { EVM_DEPLOYMENTS } from "@nabungfi/shared/chain";
 import { Button, Dialog, WorkshopBoundary } from "./ui";
-import { GoalIllustration, InstallPanel } from "./Shell";
+import { GoalIllustration } from "./Shell";
 import {
   decimalAmount,
   formatUsdc,
@@ -47,68 +47,33 @@ export function Welcome({
   offline?: boolean;
 }) {
   return (
-    <>
-      <section className="welcome-grid">
-        <div className="welcome-copy">
-          <h1>Build what you’re saving for.</h1>
-          <p>
-            A car. Your next laptop. A place of your own. Give every goal its
-            own savings vault, and watch every deposit become a piece of the
-            build.
-          </p>
-          <div className="live-actions">
-            <Button
-              variant="build"
-              disabled={!configured || !ready || offline}
-              onClick={login}
-            >
-              {offline
-                ? "Reconnect to sign in"
-                : ready
-                  ? "Open your workshop"
-                  : "Connecting…"}
-              <ArrowRight size={18} />
-            </Button>
-            <a className="button button--secondary" href="/?demo=1">
-              Try the demo
-            </a>
-          </div>
-          <p className="live-help">
-            Testnet USDC only. Deposits stay locked until this goal reaches its
-            target. No fixed yield or withdrawal date.
-          </p>
-          {!configured && (
-            <p className="live-error" role="alert">
-              Sign-in is not configured for this deployment. Set the public
-              Privy app ID before inviting users.
-            </p>
-          )}
-        </div>
-        <div className="welcome-art welcome-workshop">
-          <WorkshopBoundary>
-            <Suspense
-              fallback={
-                <div className="workshop workshop-skeleton">
-                  <GoalIllustration model="car" />
-                  <p role="status">Opening the model preview…</p>
-                </div>
-              }
-            >
-              <CarWorkshop
-                goalId="guest-preview:car"
-                funded={100}
-                achieved={false}
-                reducedMotion={
-                  window.matchMedia("(prefers-reduced-motion: reduce)").matches
-                }
-                preview
-              />
-            </Suspense>
-          </WorkshopBoundary>
-        </div>
-      </section>
-      <InstallPanel />
-    </>
+    <section className="account-gate">
+      <img src="/brand/nabungfi-mark.svg" width={88} height={88} alt="" />
+      <h1>Open your workshop.</h1>
+      <p>
+        Sign in to create savings goals, add USDC and keep track of every build.
+      </p>
+      <Button
+        variant="build"
+        disabled={!configured || !ready || offline}
+        onClick={login}
+      >
+        {offline ? "Reconnect to sign in" : ready ? "Sign in" : "Connecting…"}
+        <ArrowRight size={18} />
+      </Button>
+      <p className="live-help">
+        Test tokens only. Each goal’s deposits remain locked until its own
+        target is reached.
+      </p>
+      {!configured && (
+        <p className="live-error" role="alert">
+          Sign-in is unavailable for this deployment.
+        </p>
+      )}
+      <a className="landing-text-link" href="/">
+        Learn about NabungFi
+      </a>
+    </section>
   );
 }
 

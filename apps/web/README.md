@@ -35,7 +35,7 @@ Browser checks use isolated fixtures under `tests/browser`, with no API calls or
 
 The guest 3D model is labelled as a nonfinancial preview. For the legacy sample ledger run `pnpm dev:demo` and open `?demo=1`. Small contributions update a fractional next-piece tray; they never place an unfunded whole component. An exact USDC approval returns to a separate deposit review with the same amount and chain, without automatic wallet signing.
 
-The main route displays authenticated testnet state. `?demo=1` is the explicit legacy local demo with sample funds, and `?showcase=models` is a clearly labeled visual QA harness with example piece counts and no financial actions. The genuine four-chain contract/keeper proof is described in the [concurrent runbook](../../docs/CONCURRENT_GOALS_RUNBOOK.md). [Asset provenance](ASSET_PROVENANCE.md) describes the original procedural models, edited audio and local-only original recording.
+The `/` route is the marketing landing page; `/app` displays authenticated testnet state. Installed PWA launches use `/app?source=pwa`. Both use the shared [design system](DESIGN.md), [brand](BRAND.md) and original block icon family. `?showcase=1` displays shared component states. `?demo=1` is the explicit legacy local demo with sample funds, and `?showcase=models` is a clearly labeled visual QA harness with example piece counts and no financial actions. The genuine four-chain contract/keeper proof is described in the [concurrent runbook](../../docs/CONCURRENT_GOALS_RUNBOOK.md). [Asset provenance](ASSET_PROVENANCE.md) describes the original procedural models, edited audio and local-only original recording.
 
 ## PWA and production deployment
 

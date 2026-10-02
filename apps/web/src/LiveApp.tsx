@@ -5,22 +5,16 @@ import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 import {
   Box,
   Check,
-  ChevronRight,
-  ExternalLink,
-  History,
   LoaderCircle,
-  LockKeyhole,
   LogOut,
   Plus,
-  RefreshCw,
-  ShieldCheck,
   TriangleAlert,
   Wallet,
-} from "lucide-react";
+} from "./icons";
 import { Button } from "./ui";
 import { InstallPanel, Shell } from "./Shell";
 import { formatUsdc } from "./live-api";
-import { phases, supportedChains } from "./live-config";
+import { supportedChains } from "./live-config";
 import {
   Welcome,
   GoalCard,
@@ -31,6 +25,7 @@ import {
   RecoveryPanel,
 } from "./live-components";
 import { useLiveController } from "./useLiveController";
+import { ActivityPage, WalletsPage, SettingsPage } from "./account-pages";
 import "./live.css";
 const solanaConnectors = toSolanaWalletConnectors();
 const solanaDevnet = {
@@ -61,7 +56,7 @@ export default function LiveApp({
         loginMethods: ["email", "wallet"],
         appearance: {
           theme: "light",
-          accentColor: "#3e551e",
+          accentColor: "#215a92",
           walletChainType: "ethereum-and-solana",
         },
         supportedChains,
@@ -272,7 +267,7 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
               <>
                 <div className="page-heading">
                   <div>
-                    <h1>Your next big things.</h1>
+                    <h1>Your goals</h1>
                     <p>Separate goals. Separate vaults. One workshop.</p>
                   </div>
                   <Button
@@ -352,215 +347,28 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
               </>
             )
           ) : destination === "wallets" ? (
-            <>
-              <div className="page-heading">
-                <div>
-                  <h1>Your wallets.</h1>
-                  <p>
-                    Only verified owner wallets can create, deposit into, or
-                    claim your goals.
-                  </p>
-                </div>
-                <div className="live-actions">
-                  {session &&
-                    !session.user.wallets.some(
-                      (wallet) => wallet.chainType === "ethereum",
-                    ) && (
-                      <Button
-                        variant="build"
-                        busy={busy}
-                        disabled={hasPending || pwa.offline}
-                        onClick={() => void createMissingWallet("ethereum")}
-                      >
-                        Create EVM wallet
-                      </Button>
-                    )}
-                  {session &&
-                    !session.user.wallets.some(
-                      (wallet) => wallet.chainType === "solana",
-                    ) && (
-                      <Button
-                        variant="build"
-                        busy={busy}
-                        disabled={hasPending || pwa.offline}
-                        onClick={() => void createMissingWallet("solana")}
-                      >
-                        Create Solana wallet
-                      </Button>
-                    )}
-                  <Button variant="secondary" onClick={() => connectWallet()}>
-                    Connect wallet
-                  </Button>
-                  <Button variant="build" onClick={() => linkWallet()}>
-                    Link owner wallet
-                  </Button>
-                </div>
-              </div>
-              <div className="wallet-list">
-                {session?.user.wallets.map((wallet) => (
-                  <section
-                    className="live-panel"
-                    key={`${wallet.chainType}:${wallet.address}`}
-                  >
-                    <div className="wallet-identity">
-                      <span className="section-icon">
-                        <Wallet size={22} />
-                      </span>
-                      <div>
-                        <h2>
-                          {wallet.chainType === "solana"
-                            ? "Solana wallet"
-                            : "EVM wallet"}
-                        </h2>
-                        <span className="live-help">Verified by Privy</span>
-                      </div>
-                    </div>
-                    <p className="live-address">{wallet.address}</p>
-                    <p className="live-help">
-                      {wallet.chainType === "solana"
-                        ? "Solana Devnet"
-                        : "Base, Arbitrum and Ethereum Sepolia"}
-                    </p>
-                  </section>
-                ))}
-              </div>
-              <div className="live-notice">
-                <ShieldCheck size={20} />
-                <div>
-                  <strong>Your wallet confirms every financial action</strong>
-                  <p>
-                    NabungFi does not ask for your seed phrase. Signing and
-                    transaction fees stay in your wallet.
-                  </p>
-                </div>
-              </div>
-            </>
+            <WalletsPage
+              wallets={session?.user.wallets ?? []}
+              verified={Boolean(session)}
+              busy={busy}
+              blocked={hasPending || pwa.offline}
+              createWallet={(chain) => void createMissingWallet(chain)}
+              connect={() => connectWallet()}
+              link={() => linkWallet()}
+            />
           ) : destination === "activity" ? (
-            <>
-              <div className="page-heading">
-                <div>
-                  <h1>What’s been built.</h1>
-                  <p>
-                    Inspect confirmed and pending steps independently for each
-                    goal.
-                  </p>
-                </div>
-                <Button
-                  variant="secondary"
-                  onClick={() => void load()}
-                  disabled={loading || pwa.offline}
-                >
-                  <RefreshCw size={18} />
-                  Refresh
-                </Button>
-              </div>
-              {goals.length ? (
-                <div className="live-panel live-timeline">
-                  {goals.map((goal) => (
-                    <div className="live-timeline-row" key={goal.id}>
-                      <div>
-                        <strong>{goal.name}</strong>
-                        <p>
-                          {phases[goal.chainState?.phase ?? "unprovisioned"]} ·{" "}
-                          {goal.chainStatus === "unavailable"
-                            ? "Read unavailable"
-                            : "Testnet"}
-                        </p>
-                      </div>
-                      <Button
-                        variant="quiet"
-                        onClick={() => navigate("goals", goal.id)}
-                      >
-                        View history
-                        <ChevronRight size={18} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="empty-state">
-                  <History size={32} />
-                  <h2>Nothing recorded yet.</h2>
-                  <p>
-                    Your transaction history appears here after you create a
-                    goal.
-                  </p>
-                </div>
-              )}
-            </>
+            <ActivityPage
+              goals={goals}
+              loading={loading}
+              offline={pwa.offline}
+              refresh={() => void load()}
+              openGoal={(id) => navigate("goals", id)}
+            />
           ) : (
-            <>
-              <div className="page-heading">
-                <div>
-                  <h1>Your workshop, your way.</h1>
-                  <p>
-                    A quieter build, an app on your home screen, and clear rules
-                    for your savings.
-                  </p>
-                </div>
-              </div>
-              <div className="settings-stack">
-                <InstallPanel />
-                <section className="settings-panel">
-                  <span className="section-icon">
-                    <Box size={22} />
-                  </span>
-                  <div>
-                    <h2>Less motion</h2>
-                    <p>
-                      Build pieces without flying animations. Sound stays under
-                      the control in each workshop.
-                    </p>
-                  </div>
-                  <label className="live-check">
-                    <input
-                      type="checkbox"
-                      checked={reducedMotion}
-                      onChange={(event) =>
-                        setReducedMotion(event.target.checked)
-                      }
-                    />
-                    Reduce motion
-                  </label>
-                </section>
-                <section className="settings-panel">
-                  <span className="section-icon">
-                    <LockKeyhole size={22} />
-                  </span>
-                  <div>
-                    <h2>The savings commitment</h2>
-                    <p>
-                      Each goal unlocks only after its own target is reached and
-                      completion is delivered to its vaults. If the target is
-                      never reached, funds remain locked. Strategy yield is not
-                      active in this release.
-                    </p>
-                  </div>
-                </section>
-                <section className="settings-panel">
-                  <span className="section-icon">
-                    <ShieldCheck size={22} />
-                  </span>
-                  <div>
-                    <h2>Testnet environment</h2>
-                    <p>
-                      Use faucet USDC and gas tokens. This application connects
-                      to the deployed testnet contracts; it is not a mainnet
-                      launch.
-                    </p>
-                  </div>
-                  <a
-                    className="button button--secondary"
-                    href="https://github.com/EndPx/nabungfi"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    View source
-                    <ExternalLink size={16} />
-                  </a>
-                </section>
-              </div>
-            </>
+            <SettingsPage
+              reducedMotion={reducedMotion}
+              setReducedMotion={setReducedMotion}
+            />
           )}
           {creating && session && (
             <CreateGoalModal

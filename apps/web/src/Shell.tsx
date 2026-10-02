@@ -7,8 +7,8 @@ import {
   Download,
   WifiOff,
   RefreshCw,
-} from "lucide-react";
-import type { ReactNode } from "react";
+} from "./icons";
+import { useEffect, type ReactNode } from "react";
 import { Button, Logo } from "./ui";
 import { usePwa } from "./pwa";
 
@@ -34,6 +34,9 @@ export function Shell({
   pending: boolean;
 }) {
   const pwa = usePwa();
+  useEffect(() => {
+    document.title = `${destinations.find((item) => item.id === destination)?.label ?? "Goals"} · NabungFi`;
+  }, [destination]);
   return (
     <div className="live-shell">
       <a className="skip-link" href="#main-content">
@@ -59,9 +62,7 @@ export function Shell({
         </nav>
         <div className="sidebar-note">
           <div className="sidebar-mini-blocks" aria-hidden="true">
-            <i />
-            <i />
-            <i />
+            <Box size={44} />
           </div>
           <strong>
             Little deposits.
@@ -156,78 +157,4 @@ export function InstallPanel() {
   );
 }
 
-export function GoalIllustration({
-  model,
-  compact = false,
-}: {
-  model: string;
-  compact?: boolean;
-}) {
-  return (
-    <div
-      className={`goal-illustration ${compact ? "goal-illustration--compact" : ""}`}
-      aria-hidden="true"
-    >
-      <svg viewBox="0 0 260 160" fill="none">
-        <ellipse
-          cx="130"
-          cy="133"
-          rx="92"
-          ry="13"
-          fill="var(--line)"
-          opacity=".55"
-        />
-        {model === "house" ? (
-          <>
-            <path d="m64 88 66-46 65 45v49H64Z" fill="var(--lime)" />
-            <path
-              d="m53 91 77-58 77 58-12 6-65-47-65 47Z"
-              fill="var(--lime-dark)"
-            />
-            <path d="M112 96h34v40h-34z" fill="var(--paper)" />
-            <path
-              d="M78 91h23v22H78zm83 0h21v22h-21z"
-              fill="var(--studio-light)"
-            />
-            <path d="M181 42h14v29h-14z" fill="var(--coral)" />
-          </>
-        ) : model === "laptop" ? (
-          <>
-            <path d="M68 43h128l-9 78H58Z" fill="var(--ink)" />
-            <path d="M78 54h106l-7 55H70Z" fill="var(--lime)" />
-            <path d="m58 121 129 0 29 13-151 4-25-9Z" fill="var(--muted)" />
-            <path d="m106 123 43 0 9 7-49 2Z" fill="var(--paper)" />
-            <path
-              d="M94 85h58m-34-18v37"
-              stroke="var(--lime-dark)"
-              strokeWidth="6"
-              strokeLinecap="round"
-            />
-          </>
-        ) : (
-          <>
-            <path
-              d="m46 108 22-24h48l14 12h59l27 18-11 14H55Z"
-              fill="var(--lime)"
-            />
-            <path
-              d="m83 84 17-27h61l28 39h-59l-14-12Z"
-              fill="var(--lime-dark)"
-            />
-            <path
-              d="m105 63-10 20h29l-6-20Zm22 0 9 25h35l-18-25Z"
-              fill="var(--studio-light)"
-            />
-            <circle cx="83" cy="126" r="18" fill="var(--ink)" />
-            <circle cx="83" cy="126" r="8" fill="var(--paper)" />
-            <circle cx="178" cy="126" r="18" fill="var(--ink)" />
-            <circle cx="178" cy="126" r="8" fill="var(--paper)" />
-            <path d="M199 105h12v9h-12z" fill="var(--paper)" />
-            <path d="M52 102h13v8H52z" fill="var(--coral)" />
-            <path d="M72 77h15v6H72Zm69-27h15v6h-15Z" fill="var(--lime)" />
-          </>
-        )}
-      </svg>
-    </div>
-  );
-}
+export { GoalIllustration } from "./GoalIllustration";

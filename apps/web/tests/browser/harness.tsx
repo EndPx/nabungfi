@@ -17,6 +17,11 @@ import {
   DepositModal,
   WalletStepModal,
 } from "../../src/live-components";
+import {
+  ActivityPage,
+  WalletsPage,
+  SettingsPage,
+} from "../../src/account-pages";
 import { Button } from "../../src/ui";
 import "@fontsource/outfit/latin-500.css";
 import "@fontsource/work-sans/latin-400.css";
@@ -69,7 +74,10 @@ const goal = {
 } as GoalDTO;
 
 function Harness() {
-  const [destination, setDestination] = useState<Destination>("goals");
+  const [destination, setDestination] = useState<Destination>(
+    (params.get("page") as Destination) || "goals",
+  );
+  const [reducedMotion, setReducedMotion] = useState(true);
   const [detail, setDetail] = useState(params.get("view") === "detail");
   const [modal, setModal] = useState<"create" | "deposit" | "wallet" | null>(
     params.get("view") === "wallet" ? "wallet" : null,
@@ -109,8 +117,10 @@ function Harness() {
         ) : (
           <>
             <div className="page-heading">
-              <h1>Your next big things.</h1>
-              <Button onClick={() => setModal("create")}>New goal</Button>
+              <h1>Your goals</h1>
+              <Button variant="build" onClick={() => setModal("create")}>
+                New goal
+              </Button>
             </div>
             <div className="goal-grid">
               {(["car", "laptop", "house"] as const).map((model) => (
@@ -123,7 +133,37 @@ function Harness() {
             </div>
           </>
         ))}
-      {destination !== "goals" && <h1>{destination}</h1>}
+      {destination === "activity" && (
+        <ActivityPage
+          goals={[goal]}
+          loading={false}
+          offline={false}
+          refresh={() => setAction("refresh")}
+          openGoal={() => {
+            setDestination("goals");
+            setDetail(true);
+          }}
+        />
+      )}
+      {destination === "wallets" && (
+        <WalletsPage
+          wallets={[
+            { chainType: "solana", address: goal.binding.owner.solana },
+            { chainType: "ethereum", address: goal.binding.owner.evm },
+          ]}
+          busy={false}
+          blocked={false}
+          createWallet={() => setAction("create-wallet")}
+          connect={() => setAction("connect")}
+          link={() => setAction("link")}
+        />
+      )}
+      {destination === "settings" && (
+        <SettingsPage
+          reducedMotion={reducedMotion}
+          setReducedMotion={setReducedMotion}
+        />
+      )}
       {modal === "create" && (
         <CreateGoalModal
           wallets={[

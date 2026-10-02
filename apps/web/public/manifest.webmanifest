@@ -3,7 +3,7 @@
   "name": "NabungFi — Build your savings",
   "short_name": "NabungFi",
   "description": "Build your goals with multichain USDC savings.",
-  "start_url": "/?source=pwa",
+  "start_url": "/app?source=pwa",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f8f7f2",

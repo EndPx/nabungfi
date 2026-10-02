@@ -27,7 +27,7 @@ export default defineConfig({
         for (const [file, item] of Object.entries(bundle)) {
           if (
             item.type === "chunk" &&
-            (item.isEntry || file.includes("/Entry-"))
+            (item.isEntry || file.includes("/Entry-") || file.includes("/Landing-"))
           )
             visit(file);
           if (/\.(css|woff2)$/.test(file)) shellFiles.add(file);
@@ -42,6 +42,10 @@ export default defineConfig({
           "/icons/icon-192.png",
           "/icons/icon-512.png",
           "/icons/maskable-512.png",
+          "/models/car.jpg",
+          "/models/laptop.jpg",
+          "/models/house.jpg",
+          "/models/custom.jpg",
           ...Object.keys(bundle)
             .filter((path) => path.startsWith("assets/"))
             .map((path) => `/${path}`),

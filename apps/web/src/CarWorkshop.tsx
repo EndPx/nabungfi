@@ -20,7 +20,7 @@ import {
   RotateCcw,
   Volume2,
   VolumeX,
-} from "lucide-react";
+} from "./icons";
 import {
   PCFShadowMap,
   CylinderGeometry,

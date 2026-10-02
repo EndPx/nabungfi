@@ -28,7 +28,7 @@ import {
   Sprout,
   TriangleAlert,
   X,
-} from "lucide-react";
+} from "./icons";
 import {
   chainNames,
   money,
@@ -1395,38 +1395,5 @@ function TransactionHistory({
         </div>
       )}
     </section>
-  );
-}
-
-export function PrimitiveShowcase() {
-  return (
-    <main className="showcase main-content">
-      <Logo />
-      <h1>NabungFi interface states</h1>
-      <div className="cluster">
-        <Button>Primary</Button>
-        <Button variant="build">Build 3 pieces</Button>
-        <Button variant="secondary">Secondary</Button>
-        <Button disabled>Disabled</Button>
-        <Button busy>Saving</Button>
-      </div>
-      <label className="field-label" htmlFor="showcase-input">
-        Savings amount
-      </label>
-      <input className="text-input" id="showcase-input" placeholder="100.00" />
-      <FormError message="Enter a positive amount with up to 6 decimals." />
-      <div className="cluster">
-        <span className="status-badge">In progress</span>
-        <span className="status-badge status-badge--success">
-          Goal achieved
-        </span>
-        <ChainMark chain="solana" />
-        <ChainMark chain="base" />
-      </div>
-      <p>
-        Focus, touch sizes, normal text and visible state feedback use the same
-        primitives as the workshop.
-      </p>
-    </main>
   );
 }

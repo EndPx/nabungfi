@@ -1,0 +1,112 @@
+.system-page {
+  max-width: var(--content-width);
+  margin: auto;
+  padding: var(--space-10);
+}
+.system-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+.system-header .brand-link {
+  margin: 0;
+}
+.system-section {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--line);
+}
+.system-section h2 {
+  font-size: var(--text-section);
+  margin-bottom: var(--space-6);
+}
+.system-section > p {
+  margin-top: var(--space-5);
+  line-height: 1.5;
+  max-width: 65ch;
+  color: var(--muted);
+}
+.system-swatches,
+.system-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+.system-swatches > div,
+.system-icons > div {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.system-swatches i {
+  width: var(--space-12);
+  height: var(--space-12);
+  border-radius: var(--radius-small);
+}
+.swatch-blue {
+  background: var(--brand-blue);
+}
+.swatch-yellow {
+  background: var(--brand-yellow);
+}
+.swatch-green {
+  background: var(--brand-green);
+}
+.system-icons > div {
+  flex-direction: column;
+  font-size: var(--text-sm);
+  min-width: var(--space-16);
+}
+.system-models {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: var(--space-5);
+}
+.system-models > button {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0;
+  text-align: start;
+}
+.system-models > button[aria-pressed="true"] {
+  border-color: var(--blue-ink);
+}
+.system-models span {
+  display: block;
+  padding: var(--space-4);
+  text-transform: capitalize;
+}
+.system-workshop {
+  margin-top: var(--space-6);
+}
+.system-section .live-field {
+  max-width: 480px;
+}
+.system-section .live-error {
+  max-width: 480px;
+  margin-block: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.system-section .system-amount {
+  color: var(--ink);
+  font: 500 var(--text-balance) / 1.1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 599px) {
+  .system-page {
+    padding: var(--space-6) var(--space-5);
+  }
+  .system-header {
+    flex-wrap: wrap;
+  }
+  .system-section .system-amount {
+    font-size: var(--text-mobile-heading);
+  }
+}
