@@ -43,3 +43,9 @@ These are local guest-route measurements, not deployed Vercel, authenticated-wal
 4. Physical mobile/PWA installation, wallet return/deep-link behavior and testing with prospective users.
 
 This release uses cash USDC on testnets. Yield is inactive. No mainnet deposit, new keeper deployment, production financial claim or independent security audit is established by these frontend checks.
+
+## Logo integration — 2 October 2026
+
+The selected flat five-course N and its small exposed-top studs now share one canonical SVG across the header, favicon and PWA icons. The wordmark is a unified dark Outfit “NabungFi”. The [brand reference](../apps/web/BRAND.md) documents geometry, colors and generation. Public static asset contents now contribute to the service-worker version so icon-only changes can update correctly.
+
+Fresh production guest checks at 320/390/768/1280px loaded the mark without horizontal overflow or uncaught page errors. The SVG was present in public Cache Storage and remained visible after offline reload. The maskable PNG foreground remained inside its 204.8px central safe circle. The final grid uses 24×24 squares, three identical 48×24 rectangles, and 6×3 studs on a 12px pitch. Existing 36 unit checks and 10 browser component checks passed. This branding pass does not establish another wallet transaction, mobile-device installation, deployment or new Lighthouse result.

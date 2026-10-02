@@ -114,7 +114,7 @@ html {
   font-size: 24px;
   gap: 4px;
 }
-.brand-link .brand svg {
+.brand-link .brand-mark {
   width: 28px;
   height: 28px;
 }
@@ -928,7 +928,7 @@ html {
     font-size: 24px;
     gap: 4px;
   }
-  .mobile-brand svg {
+  .mobile-brand .brand-mark {
     width: 28px;
   }
   .environment-badge {
@@ -1062,7 +1062,7 @@ html {
   .mobile-brand .brand {
     font-size: 20px;
   }
-  .mobile-brand svg {
+  .mobile-brand .brand-mark {
     width: 24px;
   }
   .network-choices {

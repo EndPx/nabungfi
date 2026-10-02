@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { validateVercelBuild } from "./src/deployment-config";
+import { validateVercelBuild } from "./src/deployment-config.ts";
 
 validateVercelBuild({
   vercel: process.env.VERCEL,
@@ -36,6 +36,7 @@ export default defineConfig({
           "/index.html",
           "/manifest.webmanifest",
           "/favicon.svg",
+          "/brand/nabungfi-mark.svg",
           "/icons/icon-192.png",
           "/icons/icon-512.png",
           "/icons/maskable-512.png",
@@ -47,10 +48,19 @@ export default defineConfig({
           ...assets.filter((asset) => !asset.startsWith("/assets/")),
           ...[...shellFiles].map((file) => `/${file}`),
         ];
-        const version = createHash("sha256")
-          .update(assets.join("\n"))
-          .digest("hex")
-          .slice(0, 16);
+        const versionHash = createHash("sha256").update(assets.join("\n"));
+        for (const file of assets.filter(
+          (asset) => !asset.startsWith("/assets/"),
+        ))
+          versionHash.update(
+            readFileSync(
+              new URL(
+                file === "/index.html" ? "./index.html" : `./public${file}`,
+                import.meta.url,
+              ),
+            ),
+          );
+        const version = versionHash.digest("hex").slice(0, 16);
         const source = readFileSync(
           new URL("./public/sw.js", import.meta.url),
           "utf8",

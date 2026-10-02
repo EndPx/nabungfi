@@ -153,12 +153,15 @@ export function ChainMark({ chain }: { chain: "solana" | "base" }) {
 export function Logo() {
   return (
     <span className="brand">
-      <svg viewBox="0 0 36 36" aria-hidden="true">
-        <path d="M6 27V12h5l14 15h5V12h-5v8L13 6H6z" fill="currentColor" />
-        <rect x="6" y="1" width="7" height="4" rx="1" fill="currentColor" />
-        <rect x="23" y="1" width="7" height="7" rx="1" fill="currentColor" />
-      </svg>
-      Nabung<span>Fi</span>
+      <img
+        className="brand-mark"
+        src="/brand/nabungfi-mark.svg"
+        width={36}
+        height={36}
+        alt=""
+        aria-hidden="true"
+      />
+      <span className="brand-wordmark">NabungFi</span>
     </span>
   );
 }

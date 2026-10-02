@@ -1,17 +1,38 @@
-"""Rasterize the original NabungFi block monogram. Requires Pillow only."""
+"""Render favicon/PWA icons from the canonical rectangular SVG. Requires Pillow."""
 from pathlib import Path
+import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw
 
-output = Path(__file__).resolve().parent.parent / "public" / "icons"
+public = Path(__file__).resolve().parent.parent / "public"
+source = ET.parse(public / "brand" / "nabungfi-mark.svg").getroot()
+view_x, view_y, view_width, view_height = map(float, source.attrib["viewBox"].split())
+rectangles = list(source.iter("{http://www.w3.org/2000/svg}rect"))
+output = public / "icons"
 output.mkdir(parents=True, exist_ok=True)
-for name, size, inset in [("icon-192.png", 192, 0), ("icon-512.png", 512, 0), ("maskable-512.png", 512, 20)]:
-    scale = size / 100
-    image = Image.new("RGB", (size, size), "#d4ec79")
+background = "#f8f7f2"
+supersample = 4
+for name, size, fraction in [("icon-192.png", 192, .84), ("icon-512.png", 512, .84), ("maskable-512.png", 512, .64)]:
+    canvas_size = size * supersample
+    image = Image.new("RGB", (canvas_size, canvas_size), background)
     draw = ImageDraw.Draw(image)
-    def polygon(points):
-        adjusted = [(int((x * (1 - inset / 100) + inset / 2) * scale), int((y * (1 - inset / 100) + inset / 2) * scale)) for x, y in points]
-        draw.polygon(adjusted, fill="#22251e")
-    polygon([(23, 72), (23, 35), (34, 35), (66, 72), (77, 72), (77, 35), (66, 35), (66, 54), (39, 23), (23, 23)])
-    polygon([(23, 13), (39, 13), (39, 21), (23, 21)])
-    polygon([(61, 13), (77, 13), (77, 28), (61, 28)])
-    image.save(output / name, optimize=True)
+    scale = canvas_size * fraction / max(view_width, view_height)
+    offset_x = (canvas_size - view_width * scale) / 2
+    offset_y = (canvas_size - view_height * scale) / 2
+    for element in rectangles:
+        x, y, width, height = (float(element.attrib[key]) for key in ("x", "y", "width", "height"))
+        bounds = (offset_x + (x - view_x) * scale, offset_y + (y - view_y) * scale,
+                  offset_x + (x + width - view_x) * scale, offset_y + (y + height - view_y) * scale)
+        radius = float(element.attrib.get("rx", "0")) * scale
+        if radius:
+            draw.rounded_rectangle(bounds, radius=radius, fill=element.attrib["fill"])
+        else:
+            draw.rectangle(bounds, fill=element.attrib["fill"])
+    image.resize((size, size), Image.Resampling.LANCZOS).save(output / name, optimize=True)
+
+# The favicon uses the same vector contours, with a warm rounded background.
+ET.register_namespace("", "http://www.w3.org/2000/svg")
+source.insert(0, ET.Element("{http://www.w3.org/2000/svg}rect", {
+    "x": str(view_x), "y": str(view_y), "width": str(view_width), "height": str(view_height),
+    "rx": "28", "fill": background,
+}))
+ET.ElementTree(source).write(public / "favicon.svg", encoding="utf-8", xml_declaration=False)
