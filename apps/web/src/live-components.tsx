@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, type FormEvent } from "react";
+import { lazy, Suspense, useEffect, useState, type FormEvent } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -826,6 +826,7 @@ export function WalletStepModal({
   offline,
   onClose,
   confirm,
+  refreshPlan,
 }: {
   step: GoalStepDTO;
   recovery?: WalletRecovery;
@@ -833,12 +834,22 @@ export function WalletStepModal({
   offline: boolean;
   onClose: () => void;
   confirm: () => void;
+  refreshPlan: () => void;
 }) {
   const plan = step.plan;
+  const [clock, setClock] = useState(Date.now);
+  useEffect(() => {
+    if (!plan) return;
+    const timeout = window.setTimeout(
+      () => setClock(Date.now()),
+      Math.max(0, new Date(plan.expiresAt).getTime() - Date.now() + 1),
+    );
+    return () => window.clearTimeout(timeout);
+  }, [plan?.expiresAt]);
   const canSign =
     recovery?.state === "planned" &&
     plan &&
-    new Date(plan.expiresAt).getTime() > Date.now();
+    new Date(plan.expiresAt).getTime() > Math.max(clock, Date.now());
   return (
     <Dialog
       title={actions[step.action]}
@@ -895,6 +906,16 @@ export function WalletStepModal({
             This request already started or its plan expired. Keep its original
             identity and check it from the recovery panel.
           </p>
+        )}
+        {!canSign && recovery?.state === "planned" && plan && (
+          <Button
+            variant="secondary"
+            busy={busy}
+            disabled={offline}
+            onClick={refreshPlan}
+          >
+            Refresh unsigned plan
+          </Button>
         )}
         <Button
           variant="build"

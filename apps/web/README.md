@@ -39,7 +39,7 @@ The main route displays authenticated testnet state. `?demo=1` is the explicit l
 
 ## PWA and production deployment
 
-The frontend deployment target is Vercel. Follow [deployment configuration](DEPLOYMENT.md) to set the monorepo root, public API origin, approved Privy/CORS domains and production verification steps. The API and keeper host remain a separate decision.
+The frontend deployment target is Vercel. Follow [deployment configuration](DEPLOYMENT.md) to set the monorepo root, public API origin, approved Privy/CORS domains and production verification steps. The API and keeper already have a separate [native VPS deployment](../../docs/VPS_DEPLOYMENT.md). See [frontend acceptance](../../docs/FRONTEND_ACCEPTANCE.md) for current evidence and remaining gates.
 
 The production build emits `manifest.webmanifest`, original install icons and a service worker whose build-generated cache holds versioned public static assets. API/auth responses, wallet traffic, non-GET requests and other origins never enter the cache. There is no offline mutation queue. New versions wait for an explicit Update action; the button is disabled while requests need reconciliation. iOS install guidance and the standard browser install event are handled separately. A full install test needs HTTPS (localhost is permitted for development).
 

@@ -25,6 +25,6 @@ Verify the deployed build, not only localhost:
 5. Install on a supported browser or use Safari's Share → Add to Home Screen. Offline mode may serve the public shell but cannot send or replay financial actions.
 6. Leave an unresolved wallet request and confirm an update cannot interrupt it. Reconcile or owner-attest a recognized wallet rejection before choosing Update.
 
-The release remains a testnet app with cash USDC and goal locks. Mainnet deployment, strategy yield and a continuously hosted API/operator require separate verification. Actual Vercel publication is performed by the project owner after reviewing the completed source and configuration.
+The release remains a testnet app with cash USDC and goal locks. The API and operator have a separate native VPS deployment; see [VPS evidence](../../docs/VPS_DEPLOYMENT.md). Mainnet deployment and strategy yield require separate verification. Vercel publication and its exact Privy/API origin checks remain pending. Builds in a Vercel environment fail early if the public Privy app ID or a valid HTTPS API origin is missing. Local production previews can still use an explicit same-origin API proxy.
 
 Primary references: [Vite on Vercel](https://vercel.com/docs/frameworks/frontend/vite), [Vercel configuration](https://vercel.com/docs/project-configuration/vercel-json), [Privy React installation](https://docs.privy.io/basics/react/installation), and [Privy Solana transaction flow](https://docs.privy.io/wallets/using-wallets/solana/send-a-transaction).

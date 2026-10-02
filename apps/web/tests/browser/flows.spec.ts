@@ -1,6 +1,22 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test("wallet review expires visibly and only requests a refresh of its unsigned original", async ({
+  page,
+}) => {
+  await page.goto("/tests/browser/harness.html?view=wallet");
+  await expect(
+    page.getByRole("button", { name: "Confirm in wallet" }),
+  ).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: "Confirm in wallet" }),
+  ).toBeDisabled({ timeout: 6000 });
+  await page.getByRole("button", { name: "Refresh unsigned plan" }).click();
+  await expect(page.getByLabel("Fixture requested action")).toHaveText(
+    "refresh-original",
+  );
+});
+
 for (const width of [320, 390, 768, 1280]) {
   test(`goals and savings detail reflow without horizontal overflow at ${width}px`, async ({
     page,

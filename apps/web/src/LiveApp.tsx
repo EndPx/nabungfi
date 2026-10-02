@@ -597,6 +597,12 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
               )}
               onClose={() => setWalletStep(null)}
               confirm={() => void sendWallet(walletStep)}
+              refreshPlan={() => {
+                const original = recoveries.find(
+                  (record) => record.stepId === walletStep.id,
+                );
+                if (original) void resumeOriginal(original);
+              }}
             />
           )}
         </>

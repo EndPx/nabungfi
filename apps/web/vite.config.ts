@@ -2,6 +2,13 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { validateVercelBuild } from "./src/deployment-config";
+
+validateVercelBuild({
+  vercel: process.env.VERCEL,
+  appId: process.env.VITE_PRIVY_APP_ID,
+  apiOrigin: process.env.VITE_API_ORIGIN,
+});
 
 export default defineConfig({
   plugins: [

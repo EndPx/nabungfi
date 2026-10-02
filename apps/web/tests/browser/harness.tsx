@@ -15,6 +15,7 @@ import {
   GoalDetail,
   CreateGoalModal,
   DepositModal,
+  WalletStepModal,
 } from "../../src/live-components";
 import { Button } from "../../src/ui";
 import "@fontsource/outfit/latin-500.css";
@@ -70,7 +71,12 @@ const goal = {
 function Harness() {
   const [destination, setDestination] = useState<Destination>("goals");
   const [detail, setDetail] = useState(params.get("view") === "detail");
-  const [modal, setModal] = useState<"create" | "deposit" | null>(null);
+  const [modal, setModal] = useState<"create" | "deposit" | "wallet" | null>(
+    params.get("view") === "wallet" ? "wallet" : null,
+  );
+  const [walletExpiry] = useState(() =>
+    new Date(Date.now() + 2000).toISOString(),
+  );
   const [action, setAction] = useState("");
   const recordStep = (
     action: GoalStepAction,
@@ -140,6 +146,44 @@ function Harness() {
             recordStep(approve ? "approve" : "deposit", network, amount);
             setModal(null);
           }}
+        />
+      )}
+      {modal === "wallet" && (
+        <WalletStepModal
+          step={
+            {
+              id: "fixture-step",
+              metadataGoalId: goal.id,
+              goalId: goal.goalId,
+              action: "deposit",
+              network: "base",
+              amountRaw: "1000000",
+              status: "planned",
+              transactionHash: null,
+              createdAt: walletExpiry,
+              updatedAt: walletExpiry,
+              plan: {
+                ...fixtures.plans["deposit-base"],
+                expiresAt: walletExpiry,
+              },
+            } as import("@nabungfi/shared/application").GoalStepDTO
+          }
+          recovery={{
+            userId: "fixture-user",
+            goalId: goal.id,
+            stepId: "fixture-step",
+            requestId: "fixture-request",
+            action: "deposit",
+            network: "base",
+            amountRaw: "1000000",
+            state: "planned",
+            createdAt: walletExpiry,
+          }}
+          busy={false}
+          offline={false}
+          onClose={() => setModal(null)}
+          confirm={() => setAction("confirm-wallet")}
+          refreshPlan={() => setAction("refresh-original")}
         />
       )}
       <output aria-label="Fixture requested action">{action}</output>
