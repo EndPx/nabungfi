@@ -4,11 +4,11 @@ The mark is a flat three-color N built from square and rectangular blocks. It fo
 
 ## Canonical mark
 
-`public/brand/nabungfi-mark.svg` owns the geometry. Each column has six courses, numbered from the bottom. Left course five extends inward; right course two extends inward; two middle rectangles at courses four and three connect both spans. All four connecting rectangles use blue, forming one continuous descending path. Only the tops of the columns retain small studs. The generated small-use and monochrome variants omit studs and preserve the exact silhouette.
+`public/brand/nabungfi-mark.svg` owns the geometry. Each column has six courses, numbered from the bottom. Left course five extends inward; right course two extends inward; two middle rectangles at courses four and three connect both spans. A fixed, deliberately irregular blue/yellow/green arrangement distinguishes individual blocks. Colors never randomize on reload. The four connecting rectangles form one continuous descending path, with small upward studs on every exposed top segment. Covered studs are omitted. Small-use and monochrome variants omit studs and preserve the body silhouette.
 
 The header uses `nabungfi-mark-small.svg` with a single Outfit 600 **NabungFi** wordmark. Keep the spelling and capitalization together. The main frame is 36px, with 28px frames in compact navigation and 24px at the narrowest breakpoint. Preserve the intrinsic padding. The main mark retains studs for larger artwork; the small-use variant is used at 24–32px. `nabungfi-mark-mono.svg` provides a one-color silhouette for legibility review and single-color applications.
 
-All parts follow one design unit: squares are 24×24; each of the four connecting rectangles is 48×24 (2:1). Rows advance 24px and connectors advance 30px horizontally, giving equal 18px overlaps. The placement uses a quarter-unit grid, avoids unintended side contact with a column, and retains a connected silhouette without relying on color. Studs are 6×3 with 12px center spacing. Scaling preserves these ratios.
+All parts follow one design unit: squares are 24×24; each of the four connecting rectangles is 48×24 (2:1). Rows advance 24px and connectors advance 36px horizontally, giving equal 12px overlaps. Half-unit placement makes the middle rectangles easier to distinguish and aligns the stud grid: each 2-unit brick has four stud positions at a 12px pitch, rendered only where the top is uncovered. Studs are 6×3. Scaling preserves these ratios.
 
 | Identity color | Hex |
 | --- | --- |
