@@ -11,3 +11,7 @@
 - Solana/Base marks are small contextual chain identifiers, not endorsements. They identify the intended networks while the persistent local-demo notice identifies this build's actual evidence boundary.
 
 No raster generated image, remote product screenshot or stock illustration is part of the shipped UI.
+
+## Additional procedural goal models
+
+The laptop, house and custom 100-component sculpture are original deterministic geometry in `src/goal-models.ts`. They reuse the existing construction animation, optional credited assembly recording and original completion cue; no third-party 3D model or trademarked toy geometry is copied. PWA PNG icons are generated from the original NabungFi monogram by `scripts/make-icons.py` using Pillow.

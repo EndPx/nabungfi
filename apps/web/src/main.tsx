@@ -1,12 +1,22 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "@fontsource/outfit/latin-500.css";
 import "@fontsource/outfit/latin-600.css";
 import "@fontsource/work-sans/latin-400.css";
 import "@fontsource/work-sans/latin-500.css";
 import "@fontsource/work-sans/latin-600.css";
-import App, { PrimitiveShowcase } from "./App";
+import { registerPwa } from "./pwa";
+import { Logo } from "./ui";
+import Entry from "./Entry";
 import "./styles.css";
+
+const DemoApp = lazy(() => import("./App"));
+const Showcase = lazy(() =>
+  import("./App").then((module) => ({ default: module.PrimitiveShowcase })),
+);
+const ModelShowcase = lazy(() => import("./ModelShowcase"));
+const parameters = new URLSearchParams(window.location.search);
+registerPwa();
 
 if (
   import.meta.env.DEV &&
@@ -20,10 +30,25 @@ if (
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {new URLSearchParams(window.location.search).has("showcase") ? (
-      <PrimitiveShowcase />
-    ) : (
-      <App />
-    )}
+    <Suspense
+      fallback={
+        <div className="app" style={{ padding: 32 }}>
+          <Logo />
+          <p role="status" style={{ marginTop: 24 }}>
+            Opening your workshop…
+          </p>
+        </div>
+      }
+    >
+      {parameters.get("showcase") === "models" ? (
+        <ModelShowcase />
+      ) : parameters.has("showcase") ? (
+        <Showcase />
+      ) : parameters.get("demo") === "1" ? (
+        <DemoApp />
+      ) : (
+        <Entry />
+      )}
+    </Suspense>
   </React.StrictMode>,
 );

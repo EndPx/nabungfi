@@ -1,0 +1,29 @@
+/* Build replaces these values. Only this origin's versioned public shell is cached. */
+const VERSION = "__BUILD_VERSION__";
+const SHELL = "nabungfi-shell-" + VERSION;
+const PRECACHE = __PRECACHE_ASSETS__;
+const ASSETS = __PUBLIC_ASSETS__;
+self.addEventListener("install", (event) => {
+  event.waitUntil(caches.open(SHELL).then((cache) => cache.addAll(PRECACHE)));
+  // A new version waits for explicit user consent; never interrupts a wallet request.
+});
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "ACTIVATE_UPDATE") self.skipWaiting();
+});
+self.addEventListener("activate", (event) => {
+  event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("nabungfi-shell-") && key !== SHELL).map((key) => caches.delete(key)))).then(() => self.clients.claim()));
+});
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  const url = new URL(request.url);
+  if (request.method !== "GET" || url.origin !== self.location.origin || url.pathname.startsWith("/api/") || request.headers.has("authorization")) return;
+  if (request.mode === "navigate") {
+    event.respondWith(fetch(request).catch(() => caches.match("/index.html")));
+    return;
+  }
+  if (!ASSETS.includes(url.pathname)) return;
+  event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+    if (response.ok) { const copy = response.clone(); event.waitUntil(caches.open(SHELL).then((cache) => cache.put(request, copy))); }
+    return response;
+  })));
+});

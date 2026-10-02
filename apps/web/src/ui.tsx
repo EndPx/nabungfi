@@ -93,12 +93,18 @@ export function Dialog({
   useEffect(() => {
     const element = dialog.current;
     if (!element) return;
+    const previousFocus =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     element.showModal();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       element.close();
       document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected)
+        previousFocus.focus({ preventScroll: true });
     };
   }, []);
   return (

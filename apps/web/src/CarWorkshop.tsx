@@ -1,5 +1,6 @@
 import {
   Component,
+  memo,
   Suspense,
   useEffect,
   useRef,
@@ -8,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { ContactShadows, OrbitControls, RoundedBox } from "@react-three/drei";
+import { ContactShadows, OrbitControls } from "@react-three/drei";
 import { gsap } from "gsap";
 import {
   Box,
@@ -20,8 +21,16 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { PCFShadowMap, type Group } from "three";
-import { CAR_PIECES, type CarPiece } from "./car-model";
+import {
+  PCFShadowMap,
+  CylinderGeometry,
+  MeshStandardMaterial,
+  type BufferGeometry,
+  type Group,
+} from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { type CarPiece } from "./car-model";
+import { WORKSHOP_MODELS, type WorkshopModel } from "./goal-models";
 import {
   playBuildFinish,
   playBuildStep,
@@ -30,6 +39,7 @@ import {
   unlockAudio,
 } from "./sound";
 import { Button, IconButton } from "./ui";
+import { formatUsdc } from "./live-api";
 
 export interface BuildSequence {
   key: number;
@@ -41,7 +51,26 @@ interface WorkshopProps {
   funded: number;
   achieved: boolean;
   reducedMotion: boolean;
+  model?: WorkshopModel;
+  preview?: boolean;
+  nextPiece?: {
+    fractionBasisPoints: number;
+    remainingRaw: string;
+    targetFunded: boolean;
+  };
 }
+const SCENE_CAMERA = {
+  position: [6.7, 5, 7.5] as [number, number, number],
+  zoom: 73,
+  near: 0.1,
+  far: 60,
+};
+const MODEL_TARGETS: Record<WorkshopModel, [number, number, number]> = {
+  car: [0, 0.85, 0],
+  laptop: [0, 1.15, 0],
+  house: [0, 1.35, 0],
+  custom: [0, 0.75, 0],
+};
 
 function readBuilt(goalId: string, funded: number) {
   try {
@@ -54,48 +83,79 @@ function readBuilt(goalId: string, funded: number) {
   }
 }
 
-function PieceGeometry({
+// Original geometry/materials are immutable and shared by the finite model catalog.
+// Creating the same bevel geometry twice per piece stalled initial mobile rendering.
+const geometryCache = new Map<string, BufferGeometry>();
+const materialCache = new Map<string, MeshStandardMaterial>();
+const studGeometry = new CylinderGeometry(0.076, 0.078, 0.048, 12);
+function geometryFor(piece: CarPiece) {
+  const key = `${piece.kind}:${piece.size.join(":")}`;
+  let geometry = geometryCache.get(key);
+  if (!geometry) {
+    geometry =
+      piece.kind === "tire" || piece.kind === "hub"
+        ? new CylinderGeometry(
+            piece.size[0],
+            piece.size[1],
+            piece.size[2],
+            piece.kind === "tire" ? 28 : 16,
+          )
+        : new RoundedBoxGeometry(
+            piece.size[0],
+            piece.size[1],
+            piece.size[2],
+            2,
+            0.035,
+          );
+    geometryCache.set(key, geometry);
+  }
+  return geometry;
+}
+function materialFor(piece: CarPiece, ghost: boolean) {
+  const key = `${piece.color}:${piece.kind}:${ghost}`;
+  let material = materialCache.get(key);
+  if (!material) {
+    material = new MeshStandardMaterial({
+      color: ghost ? "#c8ccba" : piece.color,
+      transparent: ghost || piece.kind === "glass",
+      opacity: ghost ? 0.09 : piece.kind === "glass" ? 0.72 : 1,
+      roughness: piece.kind === "glass" ? 0.15 : 0.3,
+      metalness: piece.kind === "hub" ? 0.35 : 0.04,
+      depthWrite: !ghost,
+    });
+    materialCache.set(key, material);
+  }
+  return material;
+}
+const PieceGeometry = memo(function PieceGeometry({
   piece,
   ghost = false,
 }: {
   piece: CarPiece;
   ghost?: boolean;
 }) {
-  const material = (
-    <meshStandardMaterial
-      color={ghost ? "#c8ccba" : piece.color}
-      transparent={ghost || piece.kind === "glass"}
-      opacity={ghost ? 0.09 : piece.kind === "glass" ? 0.72 : 1}
-      roughness={piece.kind === "glass" ? 0.15 : 0.3}
-      metalness={piece.kind === "hub" ? 0.35 : 0.04}
-      depthWrite={!ghost}
-    />
-  );
+  const material = materialFor(piece, ghost);
+  const geometry = geometryFor(piece);
   if (piece.kind === "tire" || piece.kind === "hub")
     return (
-      <mesh rotation={[Math.PI / 2, 0, 0]} castShadow={!ghost} receiveShadow>
-        <cylinderGeometry
-          args={[
-            piece.size[0],
-            piece.size[1],
-            piece.size[2],
-            piece.kind === "tire" ? 28 : 16,
-          ]}
-        />
-        {material}
-      </mesh>
+      <mesh
+        geometry={geometry}
+        material={material}
+        dispose={null}
+        rotation={[Math.PI / 2, 0, 0]}
+        castShadow={!ghost}
+        receiveShadow
+      />
     );
   return (
     <>
-      <RoundedBox
-        args={piece.size}
-        radius={0.035}
-        smoothness={2}
+      <mesh
+        geometry={geometry}
+        material={material}
+        dispose={null}
         castShadow={!ghost}
         receiveShadow
-      >
-        {material}
-      </RoundedBox>
+      />
       {piece.studs &&
         !ghost &&
         [-0.22, 0.22]
@@ -105,16 +165,17 @@ function PieceGeometry({
               key={z}
               position={[0, piece.size[1] / 2 + 0.022, z]}
               castShadow
-            >
-              <cylinderGeometry args={[0.076, 0.078, 0.048, 12]} />
-              <meshStandardMaterial color={piece.color} roughness={0.34} />
-            </mesh>
+              geometry={studGeometry}
+              material={material}
+              dispose={null}
+            ></mesh>
           ))}
     </>
   );
-}
+});
 
 function Car({
+  pieces,
   built,
   sequence,
   reducedMotion,
@@ -122,6 +183,7 @@ function Car({
   onPiece,
   onComplete,
 }: {
+  pieces: readonly CarPiece[];
   built: number;
   sequence: BuildSequence | null;
   reducedMotion: boolean;
@@ -160,7 +222,7 @@ function Car({
     for (let index = from; index < to; index++) {
       const group = groups.current[index];
       if (!group) continue;
-      const piece = CAR_PIECES[index];
+      const piece = pieces[index];
       const start = (index - from) * stagger;
       const side = index % 2 ? -1 : 1;
       group.visible = false;
@@ -212,19 +274,21 @@ function Car({
       timeline.kill();
       if (!completed) stopBuildAudio();
     };
-  }, [sequence, reducedMotion, invalidate]);
+  }, [sequence, reducedMotion, invalidate, pieces]);
 
   return (
     <group position={[0, 0.06, 0]}>
-      {CAR_PIECES.map((piece) => (
+      {pieces.map((piece) => (
         <group key={piece.id}>
-          <group
-            position={piece.position}
-            rotation={piece.rotation}
-            visible={piece.id >= built && !sequence}
-          >
-            <PieceGeometry piece={piece} ghost />
-          </group>
+          {piece.id >= built && (
+            <group
+              position={piece.position}
+              rotation={piece.rotation}
+              visible={piece.id >= built && !sequence}
+            >
+              <PieceGeometry piece={piece} ghost />
+            </group>
+          )}
           <group
             ref={(element) => {
               groups.current[piece.id] = element;
@@ -250,19 +314,21 @@ function CameraControl({
   turn,
   reset,
   reducedMotion,
+  model,
 }: {
   turn: number;
   reset: number;
   reducedMotion: boolean;
+  model: WorkshopModel;
 }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const previousTurn = useRef(turn);
   const { camera, size, invalidate } = useThree();
   useEffect(() => {
-    camera.zoom = Math.min(82, size.width / 7.4);
+    camera.zoom = Math.min(82, size.width / 8.2, size.height / 4.8);
     camera.updateProjectionMatrix();
     invalidate();
-  }, [camera, size.width, invalidate]);
+  }, [camera, size.width, size.height, invalidate]);
   useEffect(() => {
     const control = controls.current;
     if (!control) return;
@@ -280,7 +346,7 @@ function CameraControl({
   return (
     <OrbitControls
       ref={controls}
-      target={[0, 0.7, 0]}
+      target={MODEL_TARGETS[model]}
       enablePan={false}
       enableZoom={false}
       enableDamping={!reducedMotion}
@@ -320,7 +386,11 @@ export default function CarWorkshop({
   funded,
   achieved,
   reducedMotion,
+  model = "car",
+  preview = false,
+  nextPiece,
 }: WorkshopProps) {
+  const pieces = WORKSHOP_MODELS[model];
   const [built, setBuilt] = useState(() => readBuilt(goalId, funded));
   const [sequence, setSequence] = useState<BuildSequence | null>(null);
   const [sound, setSound] = useState(() => {
@@ -337,7 +407,7 @@ export default function CarWorkshop({
   const validSequence = sequence && sequence.to === funded ? sequence : null;
   const active = validSequence !== null;
   const displayCount = cursor;
-  const modelKey = `${goalId}:${funded}`;
+  const modelKey = `${goalId}:${model}:${funded}`;
 
   // Parent keys this workshop by goal + funded count. A funding change destroys
   // an older animation before it can draw or announce an unfunded piece.
@@ -375,18 +445,35 @@ export default function CarWorkshop({
   return (
     <section
       className={`workshop ${achieved ? "workshop--complete" : ""}`}
-      aria-label="Your savings build"
+      aria-label={
+        preview
+          ? "Interactive model preview, no savings or transactions"
+          : "Your savings build"
+      }
     >
       <div className="workshop-top">
         <span className="stage-label">
           <span className="status-dot" />
-          {achieved ? "Goal completed" : "A little closer, piece by piece"}
+          {preview
+            ? "Model preview · no funds"
+            : achieved
+              ? "Goal completed"
+              : "A little closer, piece by piece"}
         </span>
-        <span className="model-label">Roadster / 100 pieces</span>
+        <span className="model-label">
+          {model === "car"
+            ? "Roadster"
+            : model === "house"
+              ? "Home"
+              : model === "laptop"
+                ? "Laptop"
+                : "Your sculpture"}{" "}
+          / 100 pieces
+        </span>
       </div>
       <div
         className="car-stage"
-        aria-label={`Three dimensional car with ${displayCount} of 100 funded pieces assembled. Drag to rotate, or use the rotation buttons below.`}
+        aria-label={`Three dimensional ${model === "custom" ? "goal sculpture" : model} ${preview ? "preview" : "savings build"} with ${displayCount} of 100 pieces assembled. Drag to rotate, or use the rotation buttons below.`}
         role="img"
       >
         <SceneBoundary>
@@ -400,7 +487,7 @@ export default function CarWorkshop({
           >
             <Canvas
               orthographic
-              camera={{ position: [6.7, 5, 7.5], zoom: 73, near: 0.1, far: 60 }}
+              camera={SCENE_CAMERA}
               shadows={{ type: PCFShadowMap }}
               dpr={[1, 1.5]}
               frameloop="demand"
@@ -421,6 +508,7 @@ export default function CarWorkshop({
                 color="#f6f0dc"
               />
               <Car
+                pieces={pieces}
                 key={modelKey}
                 built={cursor}
                 sequence={validSequence}
@@ -447,15 +535,18 @@ export default function CarWorkshop({
                 turn={turn}
                 reset={reset}
                 reducedMotion={reducedMotion}
+                model={model}
               />
             </Canvas>
           </Suspense>
         </SceneBoundary>
       </div>
-      <div className="stage-side-note" aria-hidden="true">
-        <span>Made of</span>
-        <strong>small steps.</strong>
-      </div>
+      {!preview && (
+        <div className="stage-side-note" aria-hidden="true">
+          <span>Made of</span>
+          <strong>small steps.</strong>
+        </div>
+      )}
       <div className="workshop-bottom">
         <div className="piece-counter">
           <span className="piece-icon">
@@ -468,12 +559,14 @@ export default function CarWorkshop({
             </strong>
             <p>
               {active
-                ? `Building ${CAR_PIECES[Math.min(built, 99)].label.toLowerCase()}…`
+                ? `Building ${pieces[Math.min(built, 99)].label.toLowerCase()}…`
                 : unbuilt > 0
                   ? `${unbuilt} new ${unbuilt === 1 ? "piece is" : "pieces are"} ready to build`
                   : achieved
                     ? "You built something worth saving for."
-                    : "Every whole step brings it to life."}
+                    : preview
+                      ? "Try the assembly. No wallet needed."
+                      : "Every deposit brings it a little closer."}
             </p>
           </div>
         </div>
@@ -498,15 +591,45 @@ export default function CarWorkshop({
           ) : (
             <>
               <RotateCcw size={17} />
-              Replay build
+              {preview ? "Try assembly" : "Replay build"}
             </>
           )}
         </Button>
       </div>
+      {nextPiece && !active && (
+        <div className="next-piece-tray">
+          <div>
+            <strong>
+              {nextPiece.targetFunded
+                ? "Your target is funded"
+                : "Your next piece is taking shape"}
+            </strong>
+            <p>
+              {nextPiece.targetFunded
+                ? "The last piece waits for verified goal completion."
+                : `$${formatUsdc(nextPiece.remainingRaw)} USDC to the next whole piece. Smaller deposits count too.`}
+            </p>
+          </div>
+          <div
+            className="next-piece-meter"
+            role="progressbar"
+            aria-label="Funding toward the next piece"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={nextPiece.fractionBasisPoints / 100}
+          >
+            <i
+              style={{
+                transform: `scaleX(${nextPiece.fractionBasisPoints / 10000})`,
+              }}
+            />
+          </div>
+        </div>
+      )}
       <div className="stage-tools">
         <div className="rotate-tools">
           <IconButton
-            label="Rotate car left"
+            label="Rotate build left"
             onClick={() => setTurn((value) => value - 1)}
           >
             <ChevronLeft size={17} />
@@ -516,7 +639,7 @@ export default function CarWorkshop({
             Drag to explore
           </span>
           <IconButton
-            label="Rotate car right"
+            label="Rotate build right"
             onClick={() => setTurn((value) => value + 1)}
           >
             <ChevronRight size={17} />
@@ -524,7 +647,7 @@ export default function CarWorkshop({
         </div>
         <div className="stage-tools-right">
           <IconButton
-            label="Reset car view"
+            label="Reset build view"
             onClick={() => setReset((value) => value + 1)}
           >
             <RotateCcw size={16} />
@@ -544,7 +667,7 @@ export default function CarWorkshop({
       </div>
       <div className="sr-only" aria-live="polite">
         {!active &&
-          `${displayCount} of 100 pieces assembled. ${achieved ? "Goal achieved." : ""}`}
+          `${displayCount} of 100 pieces assembled. ${preview ? "Preview only." : achieved ? "Goal achieved." : ""}`}
       </div>
       {achieved && (
         <div className="completion-stamp">

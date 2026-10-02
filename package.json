@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "packageManager": "pnpm@10.21.0",
   "scripts": {
-    "dev": "concurrently --kill-others -n demo,web \"pnpm --filter @nabungfi/server dev:demo -- --port 3001\" \"pnpm --filter @nabungfi/web dev\"",
-    "preview": "concurrently --kill-others -n demo,web \"pnpm --filter @nabungfi/server start:demo -- --port 3001\" \"pnpm --filter @nabungfi/web preview\"",
+    "dev": "concurrently --kill-others -n api,web \"pnpm --filter @nabungfi/server dev\" \"pnpm --filter @nabungfi/web dev\"",
+    "dev:demo": "concurrently --kill-others -n demo,web \"pnpm --filter @nabungfi/server dev:demo -- --port 3001\" \"pnpm --filter @nabungfi/web dev\"",
+    "preview": "concurrently --kill-others -n api,web \"pnpm --filter @nabungfi/server start\" \"pnpm --filter @nabungfi/web preview\"",
     "build": "pnpm -r --if-present build",
     "test": "pnpm -r --if-present test",
     "typecheck": "pnpm -r --if-present typecheck",

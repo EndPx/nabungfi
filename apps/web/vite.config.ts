@@ -1,8 +1,60 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: "nabungfi-public-shell",
+      generateBundle(_options, bundle) {
+        const shellFiles = new Set<string>();
+        const visit = (file: string) => {
+          if (shellFiles.has(file)) return;
+          const item = bundle[file];
+          if (!item) return;
+          shellFiles.add(file);
+          if (item.type === "chunk") item.imports.forEach(visit);
+        };
+        for (const [file, item] of Object.entries(bundle)) {
+          if (
+            item.type === "chunk" &&
+            (item.isEntry || file.includes("/Entry-"))
+          )
+            visit(file);
+          if (/\.(css|woff2)$/.test(file)) shellFiles.add(file);
+        }
+        const assets = [
+          "/index.html",
+          "/manifest.webmanifest",
+          "/favicon.svg",
+          "/icons/icon-192.png",
+          "/icons/icon-512.png",
+          "/icons/maskable-512.png",
+          ...Object.keys(bundle)
+            .filter((path) => path.startsWith("assets/"))
+            .map((path) => `/${path}`),
+        ];
+        const precache = [
+          ...assets.filter((asset) => !asset.startsWith("/assets/")),
+          ...[...shellFiles].map((file) => `/${file}`),
+        ];
+        const version = createHash("sha256")
+          .update(assets.join("\n"))
+          .digest("hex")
+          .slice(0, 16);
+        const source = readFileSync(
+          new URL("./public/sw.js", import.meta.url),
+          "utf8",
+        )
+          .replace('"__BUILD_VERSION__"', JSON.stringify(version))
+          .replace("__PRECACHE_ASSETS__", JSON.stringify(precache))
+          .replace("__PUBLIC_ASSETS__", JSON.stringify(assets));
+        this.emitFile({ type: "asset", fileName: "sw.js", source });
+      },
+    },
+  ],
   server: {
     port: 5173,
     strictPort: true,

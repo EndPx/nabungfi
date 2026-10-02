@@ -1,0 +1,227 @@
+{
+  "purpose": "Synthetic unsigned codec fixtures. No signatures, transactions or network execution.",
+  "unprovisioned": {
+    "version": 2,
+    "profile": "nabungfi-v2-devnet-four-chain",
+    "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+    "targetRaw": "100000000",
+    "owner": {
+      "solana": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "evm": "0x1212121212121212121212121212121212121212"
+    },
+    "solanaGoal": "HeAeBKetKAXdB2f1at46PguJbwTSgAkJLa9oCVjWXije",
+    "solanaCash": "5Kh3QMSfX5Mjv5RxChcd6a8uo6MnS6eqJpPd7CRtv9U4",
+    "participants": [
+      {
+        "network": "base",
+        "domain": 2,
+        "eid": 40245,
+        "router": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+        "factory": "0x3c981d151ec6060fd3f2307801d764fecb22c688",
+        "asset": "0x036cbd53842c5426634e7929541ec2318f3dcf7e"
+      }
+    ]
+  },
+  "binding": {
+    "version": 2,
+    "profile": "nabungfi-v2-devnet-four-chain",
+    "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+    "targetRaw": "100000000",
+    "owner": {
+      "solana": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "evm": "0x1212121212121212121212121212121212121212"
+    },
+    "solanaGoal": "HeAeBKetKAXdB2f1at46PguJbwTSgAkJLa9oCVjWXije",
+    "solanaCash": "5Kh3QMSfX5Mjv5RxChcd6a8uo6MnS6eqJpPd7CRtv9U4",
+    "participants": [
+      {
+        "network": "base",
+        "domain": 2,
+        "eid": 40245,
+        "router": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+        "factory": "0x3c981d151ec6060fd3f2307801d764fecb22c688",
+        "asset": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+        "vault": "0x3434343434343434343434343434343434343434",
+        "configHash": "0x99d559331b3fdaf5b7633f595491794e79f2d592c6a2af0c8d765b09478376ba"
+      }
+    ]
+  },
+  "plans": {
+    "create-vault-base": {
+      "id": "golden-step-0",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "create-vault",
+      "network": "base",
+      "owner": "0x1212121212121212121212121212121212121212",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "transaction": {
+        "kind": "evm",
+        "chainId": 84532,
+        "to": "0xc3bf62a605f52a2ae238766a47b2f21623dfd1a1",
+        "data": "0x00f16bd112121212121212121212121212121212121212121212121212121212121212128b0d7083d2176fbea78cf169c9561eae9df655ca4533e6b411c4fbf7e0325943f74061c23c8998536d93e218d5d3f948729f48174f99ff3f1896e1e3f726e8ad0000000000000000000000000000000000000000000000000000000005f5e1000000000000000000000000000000000000000000000000000000000000000000",
+        "value": "0"
+      },
+      "fingerprint": "0xc536c98f7f9a65d84aa500bb2d00fa214cf7083b1fd6bbdce787149de6fc77fd"
+    },
+    "approve-base": {
+      "id": "golden-step-1",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "approve",
+      "network": "base",
+      "owner": "0x1212121212121212121212121212121212121212",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "amountRaw": "2000000",
+      "transaction": {
+        "kind": "evm",
+        "chainId": 84532,
+        "to": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+        "data": "0x095ea7b3000000000000000000000000343434343434343434343434343434343434343400000000000000000000000000000000000000000000000000000000001e8480",
+        "value": "0"
+      },
+      "fingerprint": "0x9993b8b36f49249da826c54cecf752783031032601ae063b4826c1baf73e6da4"
+    },
+    "deposit-base": {
+      "id": "golden-step-2",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "deposit",
+      "network": "base",
+      "owner": "0x1212121212121212121212121212121212121212",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "amountRaw": "2000000",
+      "transaction": {
+        "kind": "evm",
+        "chainId": 84532,
+        "to": "0x3434343434343434343434343434343434343434",
+        "data": "0xb6b55f2500000000000000000000000000000000000000000000000000000000001e8480",
+        "value": "0"
+      },
+      "fingerprint": "0xc3372f2237ff45d484c60222e94d4e7b8adb10fdeda549ffc8249dcece4926ad"
+    },
+    "claim-base": {
+      "id": "golden-step-3",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "claim",
+      "network": "base",
+      "owner": "0x1212121212121212121212121212121212121212",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "amountRaw": "2000000",
+      "transaction": {
+        "kind": "evm",
+        "chainId": 84532,
+        "to": "0x3434343434343434343434343434343434343434",
+        "data": "0x379607f500000000000000000000000000000000000000000000000000000000001e8480",
+        "value": "0"
+      },
+      "fingerprint": "0x343688c9275625e2225e4136f97bcc72d78a6b05b6f45b8bafeacbeee1ebfcf9"
+    },
+    "initialize-solana": {
+      "id": "golden-step-4",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "initialize",
+      "network": "solana",
+      "owner": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "transaction": {
+        "kind": "solana",
+        "chainId": "solana-devnet",
+        "base64": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAEB4sNcIPSF2++p4zxaclWHq6d9lXKRTPmtBHE+/fgMllD90BhwjyJmFNtk+IY1dP5SHKfSBdPmf8/GJbh4/cm6K1AOHotLrJJL4nVIhZWUqWgOxsWdHuhV4iBOXaRBmUiededQARNE+IsEeOgs/dPyK7hgo7c8QzdTWDLMKEPKlylO0Qss5EhV/E6kz0BNCgtAytf/s0Botvxt3kGCN8ALqcG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAO0Qss5EhV/E6kz0BNCgtAytf/s0Botvxt3kGCN8ALqcBAwYAAQQCBQa8Aa+vbR8NmJvtEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhIA4fUFAAAAAAEAAAACAAAANZ0AAAAAAAAAAAAAAAAAAANsvVOELFQmY055KVQewjGPPc9+AAAAAAAAAAAAAAAAw79ipgX1KiriOHZqR7LyFiPf0aEAAAAAAAAAAAAAAAA0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NAAAAAAAAAAAAAAAABISEhISEhISEhISEhISEhISEhISAA==",
+        "blockhash": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+        "lastValidBlockHeight": 1234
+      },
+      "fingerprint": "0x6943b427a000aa9cf39098f86d791b77825f7f00a5f2d6284f784a834573b51b"
+    },
+    "deposit-solana": {
+      "id": "golden-step-5",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "deposit",
+      "network": "solana",
+      "owner": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "amountRaw": "2000000",
+      "transaction": {
+        "kind": "solana",
+        "chainId": "solana-devnet",
+        "base64": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQADB4sNcIPSF2++p4zxaclWHq6d9lXKRTPmtBHE+/fgMllD90BhwjyJmFNtk+IY1dP5SHKfSBdPmf8/GJbh4/cm6K0YuqQxVNw62EHTGdS3HVYStwZiYimfwYvnrZ1LSK6S/UA4ei0uskkvidUiFlZSpaA7GxZ0e6FXiIE5dpEGZSJ5151ABE0T4iwR46Cz90/IruGCjtzxDN1NYMswoQ8qXKU7RCyzkSFX8TqTPQE0KC0DK1/+zQGi2/G3eQYI3wAupwbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpO0Qss5EhV/E6kz0BNCgtAytf/s0Botvxt3kGCN8ALqcBBAYAAQUCAwYQ8iPGiVLh8raAhB4AAAAAAAA=",
+        "blockhash": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+        "lastValidBlockHeight": 1234
+      },
+      "fingerprint": "0x17569902aae792e7a7e5356d750f2daf267f02098d7aba7a4f429e03457a1f4e"
+    },
+    "claim-solana": {
+      "id": "golden-step-6",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "claim",
+      "network": "solana",
+      "owner": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "amountRaw": "2000000",
+      "transaction": {
+        "kind": "solana",
+        "chainId": "solana-devnet",
+        "base64": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQADB4sNcIPSF2++p4zxaclWHq6d9lXKRTPmtBHE+/fgMllD90BhwjyJmFNtk+IY1dP5SHKfSBdPmf8/GJbh4/cm6K1AOHotLrJJL4nVIhZWUqWgOxsWdHuhV4iBOXaRBmUieRi6pDFU3DrYQdMZ1LcdVhK3BmJiKZ/Bi+etnUtIrpL9151ABE0T4iwR46Cz90/IruGCjtzxDN1NYMswoQ8qXKU7RCyzkSFX8TqTPQE0KC0DK1/+zQGi2/G3eQYI3wAupwbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpO0Qss5EhV/E6kz0BNCgtAytf/s0Botvxt3kGCN8ALqcBBAYAAQUCAwYQPsbWwdWfbNKAhB4AAAAAAAA=",
+        "blockhash": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+        "lastValidBlockHeight": 1234
+      },
+      "fingerprint": "0x34a805865fcb72f9cfb2b52feb7dd1b1b715215ce847c80b62ee8aad088258be"
+    },
+    "prepare-solana": {
+      "id": "golden-step-7",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "prepare",
+      "network": "solana",
+      "owner": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "transaction": {
+        "kind": "solana",
+        "chainId": "solana-devnet",
+        "base64": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQABA4sNcIPSF2++p4zxaclWHq6d9lXKRTPmtBHE+/fgMllD90BhwjyJmFNtk+IY1dP5SHKfSBdPmf8/GJbh4/cm6K3XnUAETRPiLBHjoLP3T8iu4YKO3PEM3U1gyzChDypcpTtELLORIVfxOpM9ATQoLQMrX/7NAaLb8bd5BgjfAC6nAQICAAEIMzlEUqPnII4A",
+        "blockhash": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+        "lastValidBlockHeight": 1234
+      },
+      "fingerprint": "0xdf132cc37c18486784ad50a4d9e03f119e8b47c1ad32221ea6ef4173aaeecf1a"
+    },
+    "abort-solana": {
+      "id": "golden-step-8",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "abort",
+      "network": "solana",
+      "owner": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "transaction": {
+        "kind": "solana",
+        "chainId": "solana-devnet",
+        "base64": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQABA4sNcIPSF2++p4zxaclWHq6d9lXKRTPmtBHE+/fgMllD90BhwjyJmFNtk+IY1dP5SHKfSBdPmf8/GJbh4/cm6K3XnUAETRPiLBHjoLP3T8iu4YKO3PEM3U1gyzChDypcpTtELLORIVfxOpM9ATQoLQMrX/7NAaLb8bd5BgjfAC6nAQICAAEI8TNDoe0t58MA",
+        "blockhash": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+        "lastValidBlockHeight": 1234
+      },
+      "fingerprint": "0x019c60bea9db1886e2bff65a883f950b92abdc1d84d5c88225572a0ebd5314b0"
+    },
+    "claim-solana-ata": {
+      "id": "golden-step-9",
+      "goalId": "0x1212121212121212121212121212121212121212121212121212121212121212",
+      "action": "claim",
+      "network": "solana",
+      "owner": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "createdAt": "2026-10-01T00:00:00Z",
+      "expiresAt": "2026-10-01T00:05:00Z",
+      "amountRaw": "2000000",
+      "transaction": {
+        "kind": "solana",
+        "chainId": "solana-devnet",
+        "base64": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAFCYsNcIPSF2++p4zxaclWHq6d9lXKRTPmtBHE+/fgMllDGLqkMVTcOthB0xnUtx1WErcGYmIpn8GL562dS0iukv33QGHCPImYU22T4hjV0/lIcp9IF0+Z/z8YluHj9yborUA4ei0uskkvidUiFlZSpaA7GxZ0e6FXiIE5dpEGZSJ5jJclj04kifG7PRApFI4NgwtaE5na/xCEBI572Nvp+Fk7RCyzkSFX8TqTPQE0KC0DK1/+zQGi2/G3eQYI3wAupwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKnXnUAETRPiLBHjoLP3T8iu4YKO3PEM3U1gyzChDypcpTtELLORIVfxOpM9ATQoLQMrX/7NAaLb8bd5BgjfAC6nAgQGAAEABQYHAQEIBgACBQMBBxA+xtbB1Z9s0oCEHgAAAAAAAA==",
+        "blockhash": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+        "lastValidBlockHeight": 1234
+      },
+      "fingerprint": "0xc2e44467e0d934a6692db6ff86f826f9d85414c059ac4309cd0acab3f3b3b542"
+    }
+  }
+}
