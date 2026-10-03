@@ -155,7 +155,7 @@ export function Logo() {
     <span className="brand">
       <img
         className="brand-mark"
-        src="/brand/nabungfi-mark-small.svg"
+        src="/brand/nabungfi-mark-small.svg?palette=blue-yellow-red"
         width={36}
         height={36}
         alt=""

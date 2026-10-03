@@ -24,7 +24,7 @@ Existing NabungFi typography, original models and the user-approved six-row logo
 | Line | `--line` | `#DFDFD4` | Dividers and panels |
 | Blue | `--brand-blue` | `#2D87D8` | Identity and model accents |
 | Yellow | `--brand-yellow` | `#FFD94E` | Build/open/create actions with ink text |
-| Green | `--brand-green` | `#47AE69` | Identity and model accents |
+| Red | `--brand-red` | `#E9473D` | Identity and block-icon accents |
 | Blue tint | `--blue-soft` | `#E7F0FB` | Active navigation, blue model backdrop |
 | Green tint | `--green-soft` | `#EAF3E7` | Goal progression and house backdrop |
 | Yellow tint | `--yellow-soft` | `#FFF4CC` | Build previews and commitment surfaces |
@@ -81,6 +81,10 @@ App URLs are `/app/goals`, `/app/activity`, `/app/wallets` and `/app/settings`. 
 Reuse existing 160ms transform/opacity press feedback and assembly sequence; do not add auto-playing ornament or scroll capture. Model preview and sound require an explicit user action. OS reduced motion and workshop controls remain supported. All four models retain keyboard orbit controls. The savings engine and wallet lifecycle are outside this visual change.
 
 Use semantic landmarks, a skip link, labelled fields, visible 3px focus, native FAQ disclosures, text alternatives for meaningful artwork and 4.5:1 normal-text contrast. A static poster remains useful if WebGL fails. Model failure must never hide savings actions. Pending wallet requests must reconcile before a PWA update.
+
+### 360-degree goal exploration
+
+The landing poster offers `Explore 360°` to load the completed original model without starting assembly, alongside `Try a build` for the silent assembly intro. Horizontal orbit is unrestricted through a full revolution. The workshop has manual drag, 22.5-degree arrow steps, reset and an explicit `Rotate 360°` control. A full turn takes 3.2s with linear angular speed; the control switches to Stop while running. Drag, arrow input, reset, reduced-motion changes and unmount cancel the turn. Reduced motion keeps manual drag/arrows and disables the automatic sweep. Touch keeps vertical page scrolling while allowing horizontal model drag. Camera movement never changes model geometry, funded pieces, balances or claim authority.
 
 ## Evidence and limits
 

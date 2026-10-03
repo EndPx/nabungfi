@@ -39,7 +39,7 @@ export default function DesignShowcase() {
           {[
             ["Blue", "blue"],
             ["Yellow", "yellow"],
-            ["Green", "green"],
+            ["Red", "red"],
           ].map(([name, color]) => (
             <div key={color}>
               <i className={`swatch-${color}`} />

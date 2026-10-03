@@ -490,7 +490,7 @@
     90deg,
     var(--brand-blue) 0% 34%,
     var(--brand-yellow) 34% 67%,
-    var(--brand-green) 67%
+    var(--brand-red) 67%
   );
 }
 .landing[data-motion="reduced"] .landing-reading-track {
@@ -571,7 +571,9 @@
   object-fit: contain;
   flex-shrink: 0;
 }
-.chain-node--arbitrum > img { transform:scale(2); }
+.chain-node--arbitrum > img {
+  transform: scale(2);
+}
 .chain-story-node small {
   display: block;
   font-size: var(--text-xs);
@@ -705,4 +707,10 @@
 
 .landing [id] {
   scroll-margin-block-start: calc(96px + var(--space-4));
+}
+
+.landing-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }

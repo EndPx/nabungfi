@@ -43,7 +43,7 @@ export function ChainStory() {
                 pathLength={1}
                 strokeDasharray="1 1"
                 strokeWidth={3}
-                stroke={i % 2 ? "var(--brand-green)" : "var(--brand-blue)"}
+                stroke={i % 2 ? "var(--brand-red)" : "var(--brand-blue)"}
               />
             </g>
           ))}

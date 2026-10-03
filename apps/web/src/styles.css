@@ -1922,3 +1922,26 @@ h1 {
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
+
+.stage-tools {
+  flex-wrap: wrap;
+  row-gap: var(--space-2);
+}
+.turn-button {
+  min-height: var(--touch-min);
+  font-size: var(--text-xs);
+  padding-inline: var(--space-3);
+}
+.car-stage canvas {
+  touch-action: pan-y !important;
+}
+@media (max-width: 599px) {
+  .stage-tools .rotate-tools,
+  .stage-tools .stage-tools-right {
+    width: 100%;
+    justify-content: center;
+  }
+  .stage-tools {
+    padding-block: var(--space-2);
+  }
+}

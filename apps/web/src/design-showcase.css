@@ -50,8 +50,8 @@
 .swatch-yellow {
   background: var(--brand-yellow);
 }
-.swatch-green {
-  background: var(--brand-green);
+.swatch-red {
+  background: var(--brand-red);
 }
 .system-icons > div {
   flex-direction: column;

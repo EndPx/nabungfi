@@ -1,6 +1,7 @@
 import {
   Component,
   memo,
+  useCallback,
   Suspense,
   useEffect,
   useRef,
@@ -314,17 +315,31 @@ function Car({
 function CameraControl({
   turn,
   reset,
+  spin,
+  onSpinning,
   reducedMotion,
   model,
 }: {
   turn: number;
   reset: number;
+  spin: { id: number; run: boolean };
+  onSpinning: (value: boolean) => void;
   reducedMotion: boolean;
   model: WorkshopModel;
 }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const previousTurn = useRef(turn);
+  const previousReset = useRef(reset);
+  const consumedSpin = useRef(0);
+  const spinTween = useRef<ReturnType<typeof gsap.to> | null>(null);
   const { camera, size, invalidate } = useThree();
+  const cancelSpin = useCallback(() => {
+    spinTween.current?.kill();
+    spinTween.current = null;
+    if (controls.current) controls.current.enableDamping = !reducedMotion;
+    onSpinning(false);
+    invalidate();
+  }, [reducedMotion, onSpinning, invalidate]);
   useEffect(() => {
     camera.zoom = Math.min(82, size.width / 8.2, size.height / 4.8);
     camera.updateProjectionMatrix();
@@ -333,6 +348,7 @@ function CameraControl({
   useEffect(() => {
     const control = controls.current;
     if (!control) return;
+    cancelSpin();
     const delta = turn - previousTurn.current;
     previousTurn.current = turn;
     if (delta)
@@ -340,10 +356,48 @@ function CameraControl({
         control.getAzimuthalAngle() + (delta * Math.PI) / 8,
       );
     control.update();
-  }, [turn]);
+  }, [turn, cancelSpin]);
   useEffect(() => {
-    controls.current?.reset();
-  }, [reset]);
+    if (reset === previousReset.current) return;
+    previousReset.current = reset;
+    cancelSpin();
+    const control = controls.current;
+    if (!control) return;
+    const fittedZoom = camera.zoom;
+    control.reset();
+    control.target.set(...MODEL_TARGETS[model]);
+    camera.zoom = fittedZoom;
+    camera.updateProjectionMatrix();
+    control.update();
+    invalidate();
+  }, [reset, cancelSpin, camera, model, invalidate]);
+  useEffect(() => {
+    const control = controls.current;
+    if (!control) return;
+    control.addEventListener("start", cancelSpin);
+    return () => control.removeEventListener("start", cancelSpin);
+  }, [cancelSpin]);
+  useEffect(() => {
+    if (spin.id === consumedSpin.current) return;
+    consumedSpin.current = spin.id;
+    cancelSpin();
+    const control = controls.current;
+    if (!control || !spin.run || reducedMotion) return;
+    const angle = { value: control.getAzimuthalAngle() };
+    control.enableDamping = false;
+    onSpinning(true);
+    spinTween.current = gsap.to(angle, {
+      value: angle.value + Math.PI * 2,
+      duration: 3.2,
+      ease: "none",
+      onUpdate: () => {
+        control.setAzimuthalAngle(angle.value);
+        invalidate();
+      },
+      onComplete: cancelSpin,
+    });
+    return cancelSpin;
+  }, [spin, reducedMotion, cancelSpin, onSpinning, invalidate]);
   return (
     <OrbitControls
       ref={controls}
@@ -351,6 +405,8 @@ function CameraControl({
       enablePan={false}
       enableZoom={false}
       enableDamping={!reducedMotion}
+      minAzimuthAngle={-Infinity}
+      maxAzimuthAngle={Infinity}
       minPolarAngle={0.3}
       maxPolarAngle={Math.PI / 2.2}
       makeDefault
@@ -394,7 +450,11 @@ export default function CarWorkshop({
 }: WorkshopProps) {
   const pieces = WORKSHOP_MODELS[model];
   const [built, setBuilt] = useState(() =>
-    preview && introBuild && !reducedMotion ? 0 : readBuilt(goalId, funded),
+    preview
+      ? introBuild && !reducedMotion
+        ? 0
+        : funded
+      : readBuilt(goalId, funded),
   );
   const [sequence, setSequence] = useState<BuildSequence | null>(() =>
     preview && introBuild && !reducedMotion
@@ -411,6 +471,8 @@ export default function CarWorkshop({
   });
   const [turn, setTurn] = useState(0);
   const [reset, setReset] = useState(0);
+  const [spin, setSpin] = useState({ id: 0, run: false });
+  const [spinning, setSpinning] = useState(false);
   const cursor = Math.min(built, funded);
   const unbuilt = Math.max(0, funded - cursor);
   const validSequence = sequence && sequence.to === funded ? sequence : null;
@@ -455,6 +517,7 @@ export default function CarWorkshop({
   return (
     <section
       className={`workshop ${achieved ? "workshop--complete" : ""}`}
+      data-spinning={spinning ? "true" : "false"}
       aria-label={
         preview
           ? "Interactive model preview, no savings or transactions"
@@ -544,6 +607,8 @@ export default function CarWorkshop({
               <CameraControl
                 turn={turn}
                 reset={reset}
+                spin={spin}
+                onSpinning={setSpinning}
                 reducedMotion={reducedMotion}
                 model={model}
               />
@@ -646,7 +711,7 @@ export default function CarWorkshop({
           </IconButton>
           <span>
             <Move size={13} />
-            Drag to explore
+            Drag to rotate 360°
           </span>
           <IconButton
             label="Rotate build right"
@@ -656,6 +721,22 @@ export default function CarWorkshop({
           </IconButton>
         </div>
         <div className="stage-tools-right">
+          <Button
+            variant="quiet"
+            className="turn-button"
+            disabled={reducedMotion}
+            title={
+              reducedMotion
+                ? "Use drag or rotation arrows with reduced motion."
+                : undefined
+            }
+            onClick={() =>
+              setSpin((value) => ({ id: value.id + 1, run: !spinning }))
+            }
+          >
+            <RotateCcw size={16} />
+            {spinning ? "Stop rotation" : "Rotate 360°"}
+          </Button>
           <IconButton
             label="Reset build view"
             onClick={() => setReset((value) => value + 1)}

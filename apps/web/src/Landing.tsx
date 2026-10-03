@@ -29,7 +29,9 @@ export default function Landing() {
     return () => media.removeEventListener("change", update);
   }, []);
   const [model, setModel] = useState<WorkshopModel>("car");
-  const [interactive, setInteractive] = useState(false);
+  const [previewMode, setPreviewMode] = useState<
+    "poster" | "explore" | "build"
+  >("poster");
   return (
     <div
       ref={root}
@@ -122,7 +124,7 @@ export default function Landing() {
                 </button>
               ))}
             </div>
-            {interactive ? (
+            {previewMode !== "poster" ? (
               <WorkshopBoundary>
                 <Suspense
                   fallback={
@@ -139,7 +141,7 @@ export default function Landing() {
                     funded={100}
                     achieved={false}
                     reducedMotion={motionDisabled}
-                    introBuild
+                    introBuild={previewMode === "build"}
                     preview
                   />
                 </Suspense>
@@ -154,13 +156,21 @@ export default function Landing() {
                     A goal becomes a 100-piece build.
                     <small>Example artwork. No funds are deposited.</small>
                   </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => setInteractive(true)}
-                  >
-                    Try a build
-                    <ArrowRight size={18} />
-                  </Button>
+                  <div className="landing-preview-actions">
+                    <Button
+                      variant="primary"
+                      onClick={() => setPreviewMode("explore")}
+                    >
+                      Explore 360°
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setPreviewMode("build")}
+                    >
+                      Try a build
+                      <ArrowRight size={18} />
+                    </Button>
+                  </div>
                 </div>
               </>
             )}

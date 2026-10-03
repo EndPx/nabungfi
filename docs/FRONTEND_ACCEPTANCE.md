@@ -99,3 +99,12 @@ Three Lighthouse runs per route/preset on isolated installed Chrome measured the
 | Guest app desktop | 100 | 100 | 100 | 100 |
 
 These local startup scores do not establish all animation frame rates, physical-device usability, signed browser settlement or deployed Vercel performance. The 100-in-every-category perfection target remains unmet on mobile. Existing React Doctor/controller debt and live release gates remain as recorded above. Private artifacts are under `.local/animated-landing-qa/`; no public deployment, API mutation, contract transaction or VPS change occurred.
+
+
+## 360-degree model control and red identity — 3 October 2026
+
+The landing now exposes `Explore 360°` separately from assembly. Exploration opens the completed original model even if an earlier marketing replay was interrupted. The actual account workshop retains its verified funded-piece cap and per-goal build persistence. The shared workshop supports unrestricted horizontal drag, arrow steps, reset and an explicit 3.2s full-turn control with Stop. Drag, arrow input and reset interrupt the automated turn. Reset retains the responsive fitted zoom and each model’s target instead of restoring a desktop zoom on mobile. Reduced motion keeps manual controls and disables the automated sweep; vertical touch scrolling remains available.
+
+Identity green was replaced with red `#E9473D` while blue and yellow were retained. The canonical mark's geometry/studs remain identical; small-use, favicon and PWA assets were regenerated from that master. Block icons and marketing identity accents follow the same palette. Original 3D materials, external chain PNGs and semantic success greens remain separate. The header mark uses a palette query to avoid serving an older green mark from an existing PWA cache while an update waits.
+
+Production build and 41 unit checks passed. The final isolated browser suite passed 24 checks, including actual view changes during a full turn, stop by drag/arrows/reset, all three landing models at 320px, reduced motion and stale-preview recovery. Earlier request/receipt/amount/goal-isolation checks remain included. XML comparison confirmed that only mark fill values changed. Private screenshots/video and frame checks are under `.local/goal-orbit-qa/`. These controls make no API call or financial mutation, and Vercel publication remains a separate step.

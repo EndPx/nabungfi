@@ -3,7 +3,7 @@ import type { ReactNode, SVGProps } from "react";
 type IconProps = SVGProps<SVGSVGElement> & { size?: number | string };
 const blue = "var(--brand-blue)";
 const yellow = "var(--brand-yellow)";
-const green = "var(--brand-green)";
+const red = "var(--brand-red)";
 
 function icon(name: string, shape: ReactNode) {
   function BlockIcon({ size = 24, ...props }: IconProps) {
@@ -36,14 +36,14 @@ export const Box = icon(
   <g stroke="none">
     <path d="M3 15h8v7H3zm2-2h2v2H5zm4 0h2v2H9" fill={blue} />
     <path d="M11 8h10v7H11zm2-2h2v2h-2zm4 0h2v2h-2" fill={yellow} />
-    <path d="M3 4h8v9H3zm2-2h2v2H5zm4 0h2v2H9m6 13h6v5h-6" fill={green} />
+    <path d="M3 4h8v9H3zm2-2h2v2H5zm4 0h2v2H9m6 13h6v5h-6" fill={red} />
   </g>,
 );
 export const History = icon(
   "Activity",
   <g stroke="none">
     <path d="M3 15h6v7H3zm1-2h2v2H4" fill={blue} />
-    <path d="M9 10h6v12H9zm1-2h2v2h-2" fill={green} />
+    <path d="M9 10h6v12H9zm1-2h2v2h-2" fill={red} />
     <path d="M15 5h6v17h-6zm1-2h2v2h-2" fill={yellow} />
   </g>,
 );
@@ -65,7 +65,7 @@ export const Settings2 = icon(
     <g stroke="none">
       <path d="M2 6h6v5H2" fill={blue} />
       <path d="M9 13h6v5H9" fill={yellow} />
-      <path d="M16 5h6v5h-6" fill={green} />
+      <path d="M16 5h6v5h-6" fill={red} />
     </g>
   </>,
 );
