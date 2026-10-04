@@ -1,13 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-test("the app's public build preview works without authentication or API traffic", async ({ page }) => {
+test("the app's public build preview works without authentication or application API traffic", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const apiCalls: string[] = [];
   page.on("request", request => {
-    if (new URL(request.url()).pathname.startsWith("/api/")) apiCalls.push(request.url());
+    const url = new URL(request.url());
+    const publicPrivyConfiguration = request.method() === "GET" && url.origin === "https://auth.privy.io" && /^\/api\/v1\/apps\/[^/]+$/.test(url.pathname);
+    if (url.pathname.startsWith("/api/") && !publicPrivyConfiguration) apiCalls.push(request.url());
   });
   await page.goto("/app");
-  await page.getByRole("link", { name: "Try a build", exact: true }).click();
+  await page.getByRole("link", { name: "Try the build without signing in", exact: false }).click();
   await expect(page.locator(".landing")).toBeVisible();
   await expect(page.locator(".car-stage")).toHaveAttribute("aria-label", /100 of 100/);
   await expect(page.getByRole("button", { name: "Try assembly", exact: true })).toBeEnabled();

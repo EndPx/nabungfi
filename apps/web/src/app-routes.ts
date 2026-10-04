@@ -11,6 +11,8 @@ const isDestination = (value: string): value is Destination =>
 
 export function isAppRoute(location: RouteLocation) {
   return (
+    location.pathname === "/login" ||
+    location.pathname === "/login/" ||
     location.pathname === "/app" ||
     location.pathname.startsWith("/app/") ||
     new URLSearchParams(location.search).get("source") === "pwa" ||
@@ -19,6 +21,9 @@ export function isAppRoute(location: RouteLocation) {
 }
 
 export function readAppRoute(location: RouteLocation) {
+  if (location.pathname.replace(/\/$/, "") === "/login") {
+    return readAppRoute(new URL(loginReturnTarget(location.search), "https://app.invalid"));
+  }
   const path = location.pathname.replace(/\/$/, "").split("/")[2] ?? "";
   const [legacy, legacySearch = ""] = location.hash.slice(1).split("?");
   const destination: Destination = isDestination(path)
@@ -37,6 +42,31 @@ export function readAppRoute(location: RouteLocation) {
 
 export function appHref(destination: Destination, goalId?: string) {
   return `/app/${destination}${destination === "goals" && goalId ? `?goal=${encodeURIComponent(goalId)}` : ""}`;
+}
+
+export function safeAppReturnTarget(value: string | null | undefined) {
+  const fallback = appHref("goals");
+  if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) return fallback;
+  try {
+    const url = new URL(value, "https://app.invalid");
+    if (url.origin !== "https://app.invalid" || !/^\/app(?:\/(goals|activity|wallets|settings))?\/?$/.test(url.pathname)) return fallback;
+    const route = readAppRoute(url);
+    return appHref(route.destination, route.goalId ?? undefined);
+  } catch { return fallback; }
+}
+
+export function loginReturnTarget(search: string) {
+  return safeAppReturnTarget(new URLSearchParams(search).get("next"));
+}
+
+export function loginHref(returnTo = appHref("goals")) {
+  return `/login?next=${encodeURIComponent(safeAppReturnTarget(returnTo))}`;
+}
+
+export function replaceAppLocation(href: string) {
+  if (location.pathname + location.search + location.hash === href) return;
+  history.replaceState(null, "", href);
+  window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
 export function navigateApp(destination: Destination, goalId?: string) {

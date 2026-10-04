@@ -18,6 +18,14 @@ Audience checks: a first visitor can understand the commitment before sign-in; a
 
 ## Direction and users
 
+## Sign-in before workspace — 4 October 2026
+
+The user requests Open app → Privy sign-in → workspace only after login. Inspect Axis Robotics `/login` in an isolated headless Chrome profile, never the user's browser. Runtime evidence is private under `.local/axis-login-reference/`: Axis uses a full-height 50/50 visual/login split, a compact approximately 400px panel, email/code entry, alternative login controls and Privy attribution. Adopt that composition and focus; retain NabungFi's accepted colors, Outfit/Work Sans, N mark and own procedural artwork. Do not copy Axis's logo, robot image, Borna font, green palette or social-provider list.
+
+`/login` is a separate authentication page with no app sidebar, bottom navigation, personal data or financial controls. Public Open app/Start a goal links lead to it. Email uses Privy's real `useLoginWithEmail` send-code/verify-code hooks with CAPTCHA support; wallet uses the configured Privy wallet authentication UI. Render only the existing email/wallet methods. Input, OTP, loading, resend, errors, offline/unconfigured states and server-verification states use the shared primitives. Credentials and codes stay transient; no fake login or localStorage authorization. A successful Privy session must also match the existing backend `/api/session` identity and app ID before displaying the workspace. Direct app/PWA links retain their intended destination in a validated same-origin `next` parameter. Unknown/external return targets fall back to `/app/goals`; account switching never renders another identity's session.
+
+The auth view uses document scrolling, `min-height:100dvh`, an equal two-column split above 900px and a compact single-column form below it. Right panel maximum 440px, padding 32px, shared 24px radius. Left visual uses original goal posters and a short savings headline, with the canonical brand at its top. On narrow screens it becomes a compact brand/context area. Controls remain 48px, fields labelled, OTP a single paste/autofill-friendly field, and focus visible. Form state changes do not mount a 3D renderer. No new palette/font tokens or third-party brand assets are introduced.
+
 A simple block-building workshop for grown-up savings goals. The accepted flat, three-color N is the identity; original dimensional models are the experience. Quiet warm surfaces give exact amounts and lock rules room to breathe. Avoid glossy toy logos, trading-terminal density, decorative motion, invented balances and yield promises.
 
 The visitor needs to understand the commitment before opening the app. The saver needs to manage several independent goals, choose a chain and review a wallet action. Keyboard and reduced-motion users need the same information and actions. Reviewers need clear separation between examples and deployed testnet state.

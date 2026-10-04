@@ -1,5 +1,5 @@
-import { PrivyProvider } from "@privy-io/react-auth";
-import { useEffect, useRef } from "react";
+import { Captcha, PrivyProvider, useLoginWithEmail, useModalStatus } from "@privy-io/react-auth";
+import { useEffect } from "react";
 import { createSolanaRpc, createSolanaRpcSubscriptions } from "@solana/kit";
 import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 import {
@@ -9,14 +9,15 @@ import {
   LogOut,
   Plus,
   TriangleAlert,
-  Wallet,
 } from "./icons";
 import { Button } from "./ui";
-import { InstallPanel, Shell } from "./Shell";
+import { Shell } from "./Shell";
+import { LoginPage } from "./LoginPage";
+import { hasVerifiedSession } from "./auth-gate";
+import { appHref, loginHref, loginReturnTarget, readAppRoute, replaceAppLocation } from "./app-routes";
 import { formatUsdc } from "./live-api";
 import { supportedChains } from "./live-config";
 import {
-  Welcome,
   GoalCard,
   PortfolioSummary,
   GoalDetail,
@@ -33,23 +34,10 @@ const solanaDevnet = {
   rpc: createSolanaRpc("https://api.devnet.solana.com"),
   rpcSubscriptions: createSolanaRpcSubscriptions("wss://api.devnet.solana.com"),
 };
-export default function LiveApp({
-  loginRequested = false,
-}: {
-  loginRequested?: boolean;
-}) {
+export default function LiveApp() {
   const appId = import.meta.env.VITE_PRIVY_APP_ID;
   if (!appId)
-    return (
-      <Shell
-        destination="goals"
-        onNavigate={() => undefined}
-        pending={false}
-        account={<a href="/?demo=1">Try a build</a>}
-      >
-        <Welcome configured={false} />
-      </Shell>
-    );
+    return <LoginPage status="unavailable" />;
   return (
     <PrivyProvider
       appId={appId}
@@ -70,12 +58,12 @@ export default function LiveApp({
         externalWallets: { solana: { connectors: solanaConnectors } },
       }}
     >
-      <AuthenticatedApp loginRequested={loginRequested} />
+      <AuthenticatedApp />
     </PrivyProvider>
   );
 }
 
-function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
+function AuthenticatedApp() {
   const {
     ready,
     authenticated,
@@ -119,7 +107,10 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
     resumeOriginal,
     createMissingWallet,
   } = useLiveController();
-  const attemptedLogin = useRef(false);
+  const emailLogin = useLoginWithEmail();
+  const { isOpen } = useModalStatus();
+  const verified = hasVerifiedSession({ ready, authenticated, userId: user?.id,
+    appId: import.meta.env.VITE_PRIVY_APP_ID, session });
   useEffect(() => {
     if (!ready) return;
     try {
@@ -128,17 +119,27 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
     } catch {
       /* Optional startup hint only. Authentication never uses it. */
     }
-    if (
-      loginRequested &&
-      !authenticated &&
-      !attemptedLogin.current &&
-      !pwa.offline
-    ) {
-      attemptedLogin.current = true;
-      login();
+    if (!authenticated && location.pathname.replace(/\/$/, "") !== "/login") {
+      const route = readAppRoute(location);
+      replaceAppLocation(loginHref(appHref(route.destination, route.goalId ?? undefined)));
+    } else if (verified && location.pathname.replace(/\/$/, "") === "/login") {
+      replaceAppLocation(loginReturnTarget(location.search));
     }
-  }, [ready, authenticated, loginRequested, login, pwa.offline]);
-  const account = authenticated ? (
+  }, [ready, authenticated, verified, destination]);
+  if (!verified) {
+    return <LoginPage
+      status={!ready ? "initializing" : authenticated ? "verifying" : "ready"}
+      offline={pwa.offline}
+      error={authenticated ? error : undefined}
+      retry={authenticated && error ? () => void load() : undefined}
+      signOut={authenticated ? () => void logout() : undefined}
+      sendCode={email => emailLogin.sendCode({ email })}
+      verifyCode={code => emailLogin.loginWithCode({ code })}
+      walletLogin={() => login({ loginMethods: ["wallet"] })}
+      captcha={!authenticated && !isOpen ? <Captcha /> : undefined}
+    />;
+  }
+  const account = (
     <>
       <span className="live-account-name">
         {user?.email?.address ?? "Your workshop"}
@@ -153,14 +154,6 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
         <span>Sign out</span>
       </Button>
     </>
-  ) : (
-    <Button
-      variant="secondary"
-      disabled={!ready || pwa.offline}
-      onClick={login}
-    >
-      Sign in
-    </Button>
   );
   return (
     <Shell
@@ -169,37 +162,7 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
       pending={hasPending}
       account={account}
     >
-      {!authenticated ? (
-        destination === "settings" ? (
-          <>
-            <div className="page-heading">
-              <div>
-                <h1>Your workshop, your way.</h1>
-                <p>Install NabungFi or sign in to personalize your goals.</p>
-              </div>
-            </div>
-            <InstallPanel />
-          </>
-        ) : destination !== "goals" ? (
-          <div className="empty-state">
-            <Wallet size={32} />
-            <h2>Sign in to your workshop.</h2>
-            <p>
-              Your wallets, goals and activity stay tied to your verified
-              account.
-            </p>
-            <Button
-              variant="build"
-              disabled={!ready || pwa.offline}
-              onClick={login}
-            >
-              Sign in
-            </Button>
-          </div>
-        ) : (
-          <Welcome login={login} ready={ready} offline={pwa.offline} />
-        )
-      ) : (
+      {(
         <>
           {error && (
             <div className="live-notice live-notice--error" role="alert">

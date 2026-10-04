@@ -1,24 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-test("app destinations use their own URLs and browser history", async ({
+test("direct app destinations require sign-in and retain their return target", async ({
   page,
 }) => {
-  await page.goto("/app");
-  await page.getByRole("button", { name: "Activity", exact: true }).click();
-  await expect(page).toHaveURL(/\/app\/activity$/);
-  await expect(
-    page.getByRole("button", { name: "Activity", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
-  await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await expect(page).toHaveURL(/\/app\/settings$/);
-  await page.goBack();
-  await expect(
-    page.getByRole("button", { name: "Activity", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
+  await page.goto("/app/activity");
+  await expect(page.getByRole("heading", { name: "Sign in to your workshop" })).toBeVisible();
+  await expect(page).toHaveURL(/\/login\?next=%2Fapp%2Factivity$/);
   await page.reload();
   await expect(
     page.getByRole("navigation", { name: "Main navigation" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await expect(page.locator(".chain-story")).toHaveCount(0);
 });
 

@@ -11,7 +11,7 @@ test("the brand remains visible in marketing and app layouts at narrow widths", 
     await expect(
       page.locator(
         path === "/app"
-          ? ".mobile-brand .brand"
+          ? ".login-brand .brand"
           : path === "/"
             ? ".landing-header .brand"
             : ".system-header .brand",
@@ -37,13 +37,13 @@ test("landing stays separate from a returning account and opens the task app", a
   await expect(page.locator("canvas")).toHaveCount(0);
   await page.evaluate(() => localStorage.removeItem("nabungfi:session-hint"));
   await page.getByRole("link", { name: "Start a goal" }).click();
-  await expect(page).toHaveURL(/\/app$/);
+  await expect(page).toHaveURL(/\/login$/);
   await expect(
-    page.getByRole("heading", { name: "Open your workshop." }),
+    page.getByRole("heading", { name: "Sign in to your workshop" }),
   ).toBeVisible();
   await expect(
     page.getByRole("navigation", { name: "Main navigation" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
 });
 
 test("landing model choices and native FAQ disclose the actual commitment", async ({

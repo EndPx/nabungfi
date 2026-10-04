@@ -42,14 +42,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </div>
       }
     >
-      {parameters.get("showcase") === "models" ? (
+      {appRoute ? (
+        <Entry />
+      ) : parameters.get("showcase") === "models" ? (
         <ModelShowcase />
       ) : parameters.has("showcase") ? (
         <Showcase />
       ) : import.meta.env.DEV && parameters.get("legacy-demo") === "1" ? (
         <DemoApp />
-      ) : appRoute ? (
-        <Entry />
       ) : (
         <Landing initialPreviewMode={parameters.get("demo") === "1" ? "build" : "poster"} />
       )}

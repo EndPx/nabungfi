@@ -71,7 +71,7 @@ export default function Landing({ initialPreviewMode = "poster" }: {
           <Box size={20} />
           <span>{motionDisabled ? "Motion off" : "Motion on"}</span>
         </Button>
-        <a className="button button--build" href="/app">
+        <a className="button button--build" href="/login">
           Open app
           <ArrowRight size={18} />
         </a>
@@ -99,7 +99,7 @@ export default function Landing({ initialPreviewMode = "poster" }: {
               a time.
             </p>
             <div className="landing-actions">
-              <a className="button button--build" href="/app">
+              <a className="button button--build" href="/login">
                 Start a goal
                 <Plus size={18} />
               </a>
@@ -211,7 +211,7 @@ export default function Landing({ initialPreviewMode = "poster" }: {
               Give each goal its own target. Your savings can stay on multiple
               chains while their progress contributes to the same build.
             </p>
-            <a className="landing-text-link" href="/app">
+            <a className="landing-text-link" href="/login">
               Make room for your next goal
               <ArrowRight size={18} />
             </a>
@@ -336,7 +336,7 @@ export default function Landing({ initialPreviewMode = "poster" }: {
         <section className="landing-finish">
           <BuildingMark />
           <h2>What will you build next?</h2>
-          <a className="button button--build" href="/app">
+          <a className="button button--build" href="/login">
             Open your workshop
             <ArrowRight size={18} />
           </a>
