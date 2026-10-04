@@ -69,7 +69,7 @@ export function Shell({
           <p>Independent USDC goals.</p>
         </div>
         <a className="sidebar-demo" href="/?demo=1">
-          Explore the demo <ChevronRight size={16} />
+          Try a build <ChevronRight size={16} />
         </a>
       </aside>
       <div className="live-content">
@@ -147,7 +147,9 @@ export function InstallPanel() {
             ? "NabungFi is running as an installed app."
             : pwa.ios
               ? "In Safari, tap Share, then Add to Home Screen. Your wallet opens when you confirm a transaction."
-              : "Install NabungFi for a focused app experience. You can also keep using this browser."}
+              : pwa.canInstall
+                ? "Install NabungFi for a focused app experience. You can also keep using this browser."
+                : "Installation has not been offered in this window. Keep using the web app, or open NabungFi in a browser that supports app installation and use its install option."}
         </p>
       </div>
       {pwa.canInstall && (

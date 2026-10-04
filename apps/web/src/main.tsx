@@ -37,7 +37,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <div className="app" style={{ padding: 32 }}>
           <Logo />
           <p role="status" style={{ marginTop: 24 }}>
-            Opening your workshop…
+            Opening NabungFi…
           </p>
         </div>
       }
@@ -46,12 +46,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <ModelShowcase />
       ) : parameters.has("showcase") ? (
         <Showcase />
-      ) : parameters.get("demo") === "1" ? (
+      ) : import.meta.env.DEV && parameters.get("legacy-demo") === "1" ? (
         <DemoApp />
       ) : appRoute ? (
         <Entry />
       ) : (
-        <Landing />
+        <Landing initialPreviewMode={parameters.get("demo") === "1" ? "build" : "poster"} />
       )}
     </Suspense>
   </React.StrictMode>,

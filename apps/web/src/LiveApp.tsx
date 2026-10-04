@@ -45,7 +45,7 @@ export default function LiveApp({
         destination="goals"
         onNavigate={() => undefined}
         pending={false}
-        account={<a href="/?demo=1">Explore demo</a>}
+        account={<a href="/?demo=1">Try a build</a>}
       >
         <Welcome configured={false} />
       </Shell>

@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ArrowRight, Box, Car, Laptop, Home, LockKeyhole, Check, Plus } from "./icons";
-import { Button, IconButton, Logo, WorkshopBoundary } from "./ui";
+import { Button, Logo, WorkshopBoundary } from "./ui";
 import { GoalIllustration } from "./GoalIllustration";
 import type { WorkshopModel } from "./goal-models";
 import { BuildingMark } from "./BuildingMark";
@@ -14,7 +14,9 @@ const models = [
   { id: "laptop", label: "A better laptop", Icon: Laptop },
   { id: "house", label: "A home", Icon: Home },
 ] as const;
-export default function Landing() {
+export default function Landing({ initialPreviewMode = "poster" }: {
+  initialPreviewMode?: "poster" | "explore" | "build";
+}) {
   const root = useRef<HTMLDivElement>(null);
   const [reducedMotion, setReducedMotion] = useState(
     () => matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -31,7 +33,7 @@ export default function Landing() {
   const [model, setModel] = useState<WorkshopModel>("car");
   const [previewMode, setPreviewMode] = useState<
     "poster" | "explore" | "build"
-  >("poster");
+  >(initialPreviewMode);
   return (
     <div
       ref={root}
@@ -52,8 +54,10 @@ export default function Landing() {
           <a href="#how-it-works">How it works</a>
           <a href="#questions">Questions</a>
         </nav>
-        <IconButton
-          label={
+        <Button
+          variant="quiet"
+          className="landing-motion-button"
+          aria-label={
             reducedMotion
               ? "Motion reduced by your device setting"
               : paused
@@ -65,7 +69,8 @@ export default function Landing() {
           onClick={() => setPaused((value) => !value)}
         >
           <Box size={20} />
-        </IconButton>
+          <span>{motionDisabled ? "Motion off" : "Motion on"}</span>
+        </Button>
         <a className="button button--build" href="/app">
           Open app
           <ArrowRight size={18} />
@@ -74,6 +79,10 @@ export default function Landing() {
       <main id="main-content" tabIndex={-1}>
         <section className="landing-hero">
           <div className="landing-hero-copy">
+            <p className="landing-release">
+              <Box size={18} />
+              Multichain USDC savings · Available on testnet
+            </p>
             <h1 aria-label="Build what you’re saving for.">
               {["Build", "what", "you’re", "saving", "for."].map((word, i) => (
                 <span className="hero-word-frame" key={word}>
@@ -94,15 +103,14 @@ export default function Landing() {
                 Start a goal
                 <Plus size={18} />
               </a>
-              <a className="landing-text-link" href="#how-it-works">
-                See how it works
-                <ArrowRight size={18} />
-              </a>
+              <div className="landing-guest-action">
+                <a className="landing-text-link" href="/?demo=1">
+                  Try the build
+                  <ArrowRight size={18} />
+                </a>
+                <small>No wallet needed</small>
+              </div>
             </div>
-            <p className="landing-release">
-              <Box size={18} />
-              Multichain USDC savings · Available on testnet
-            </p>
           </div>
           <div className="landing-preview">
             <div className="landing-preview-heading">
@@ -232,7 +240,7 @@ export default function Landing() {
             <li>
               <span className="step-number">3</span>
               <div>
-                <h3>Reach the target. Finish the build.</h3>
+                <h3>Reach the target. Claim your savings.</h3>
                 <p>
                   Once completion is verified across your vaults, claim the
                   savings on each chain. Another goal’s balance never unlocks
@@ -283,6 +291,25 @@ export default function Landing() {
               </p>
             </details>
             <details onToggle={refreshMotion}>
+              <summary>Does building the model unlock my savings?</summary>
+              <p>
+                No. The model visualizes your verified savings progress.
+                Playing or replaying the assembly never changes your balances
+                or claim eligibility. You can reduce motion without affecting
+                the savings rules.
+              </p>
+            </details>
+            <details onToggle={refreshMotion}>
+              <summary>What happens when I reach the target?</summary>
+              <p>
+                Completion checks the balances across that goal’s vaults. The
+                app can show Preparing funds while this finishes. Claim becomes
+                available for each vault after its completion message arrives.
+                A delayed chain stays pending until its own vault is unlocked;
+                Refresh shows the latest status.
+              </p>
+            </details>
+            <details onToggle={refreshMotion}>
               <summary>Do my savings earn yield?</summary>
               <p>
                 Yield integrations are planned. Yield is not active in the
@@ -325,7 +352,7 @@ export default function Landing() {
         >
           View source
         </a>
-        <a href="/?demo=1">Local demo</a>
+        <a href="/?demo=1">Try a build</a>
       </footer>
     </div>
   );
