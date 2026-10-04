@@ -7,6 +7,12 @@
   --muted: #62655c;
   --quiet: #85887e;
   --line: #dfdfd4;
+  --line-strong: #c8cbbf;
+  --ink-hover: #343a2f;
+  --red-soft: #fcebe7;
+  --surface-shadow: 0 1px 2px rgba(34, 37, 30, 0.04), 0 16px 48px rgba(34, 37, 30, 0.06);
+  --control-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 0 rgba(34, 37, 30, 0.08);
+  --overlay-shadow: 0 24px 80px rgba(34, 37, 30, 0.16);
   --brand-blue: #2d87d8;
   --brand-yellow: #ffd94e;
   --brand-red: #e9473d;
@@ -41,6 +47,7 @@
   --text-heading: 40px;
   --text-balance: 48px;
   --text-hero: 64px;
+  --text-hero-large: 80px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -51,18 +58,20 @@
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
+  --space-20: 80px;
   --space-24: 96px;
   --radius-small: 8px;
   --radius-control: 12px;
   --radius-surface: 16px;
   --radius-card: 20px;
   --radius-stage: 24px;
+  --radius-hero: 32px;
   --radius-pill: 999px;
   --control-height: 48px;
   --touch-min: 44px;
   --content-width: 1280px;
   --app-width: 1440px;
-  --sidebar-width: 224px;
+  --sidebar-width: 248px;
   --duration: 160ms;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }

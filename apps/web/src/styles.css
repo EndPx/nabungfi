@@ -473,6 +473,7 @@ h1 {
   min-height: 48px;
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-control);
+  box-shadow: var(--control-shadow);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -484,14 +485,15 @@ h1 {
     background var(--duration),
     color var(--duration),
     transform var(--duration) var(--ease),
-    border-color var(--duration);
+    border-color var(--duration),
+    box-shadow var(--duration);
 }
 .button--primary {
   background: var(--ink);
   color: var(--paper);
 }
 .button--primary:hover {
-  background: var(--lime-dark);
+  background: var(--ink-hover);
 }
 .button--build {
   background: var(--lime);
@@ -502,7 +504,7 @@ h1 {
 }
 .button--secondary {
   background: var(--paper);
-  border-color: var(--line);
+  border-color: var(--line-strong);
   color: var(--ink);
 }
 .button--secondary:hover {
@@ -513,19 +515,27 @@ h1 {
   background: transparent;
   color: var(--muted);
   padding-inline: 8px;
+  box-shadow: none;
 }
 .button--quiet:hover {
   color: var(--ink);
   background: var(--studio);
 }
 .button:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: translateY(1px) scale(0.99);
+  box-shadow: none;
 }
 .button:disabled {
   background: var(--studio);
   color: var(--muted);
   border-color: var(--line);
   opacity: 0.8;
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .button:active:not(:disabled) {
+    transform: none;
+  }
 }
 .build-button {
   min-height: 44px;
