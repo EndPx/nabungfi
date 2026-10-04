@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { validateVercelBuild } from "./src/deployment-config.ts";
+import { MODEL_POSTER_REVISION } from "./src/brick-details.ts";
 
 validateVercelBuild({
   vercel: process.env.VERCEL,
@@ -73,9 +74,11 @@ export default defineConfig({
         ];
         const precache = [
           ...assets.filter((asset) => !asset.startsWith("/assets/")),
+          ...assets.filter((asset) => asset.startsWith("/models/"))
+            .map((asset) => `${asset}?revision=${MODEL_POSTER_REVISION}`),
           ...[...shellFiles].map((file) => `/${file}`),
         ];
-        const versionHash = createHash("sha256").update(assets.join("\n"));
+        const versionHash = createHash("sha256").update(assets.join("\n")).update(precache.join("\n"));
         for (const file of assets.filter(
           (asset) => !asset.startsWith("/assets/"),
         ))

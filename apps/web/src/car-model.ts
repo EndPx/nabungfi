@@ -7,6 +7,7 @@ export interface CarPiece {
   rotation?: Point3;
   color: string;
   studs?: boolean;
+  attachment?: "front-gable" | "back-gable" | "laptop-lid";
   label: string;
 }
 
@@ -64,7 +65,13 @@ for (const x of [-1.45, 1.45])
     add("hub", [x, 0.46, z], [0.285, 0.285, 0.08], colors.rim, "Wheel hubs");
 for (const x of [-2.34, 2.34])
   for (const z of [-0.46, 0.46])
-    add("brick", [x, 0.49, z], [0.18, 0.22, 0.9], colors.cream, "Bumpers");
+    add(
+      "brick",
+      [x < 0 ? -2.3 : x, x < 0 ? 0.73 : 0.49, z],
+      [x < 0 ? 0.3 : 0.18, x < 0 ? 0.48 : 0.22, 0.9],
+      colors.cream,
+      "Bumpers",
+    );
 for (const z of [-0.94, 0.94])
   for (let x = 0; x < 4; x++)
     add(
@@ -174,13 +181,13 @@ for (const z of [-0.65, 0.65])
     "Headlights",
   );
 for (const z of [-0.7, 0.7])
-  add("detail", [-2.285, 0.88, z], [0.08, 0.2, 0.22], colors.red, "Taillights");
+  add("detail", [-2.47, 0.88, z], [0.08, 0.2, 0.22], colors.red, "Taillights");
 for (const z of [-1.0, 1.0])
   add("brick", [0.62, 1.38, z], [0.24, 0.13, 0.23], colors.cream, "Mirrors");
 add(
   "detail",
-  [2.316, 0.69, 0],
-  [0.08, 0.12, 0.76],
+  [2.22, 0.78, 0],
+  [0.18, 0.35, 1.7],
   colors.chassis,
   "Front grille",
 );

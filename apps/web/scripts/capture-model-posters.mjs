@@ -36,7 +36,7 @@ try {
         type: "jpeg",
         quality: 90,
       });
-    process.stdout.write(`Captured original ${model} model\n`);
+    process.stdout.write(`Captured current ${model} model\n`);
   }
 } finally {
   await browser.close();

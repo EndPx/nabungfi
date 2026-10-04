@@ -56,7 +56,7 @@ A server marker is required before calling the wallet SDK. A direct numeric EIP-
 
 ## Marketing and app routes
 
-The landing page at `/` uses scoped GSAP intro/scroll timelines, the canonical N mark and native scrolling. Motion can be paused and follows the device's reduced-motion setting. Original 3D models keep their existing geometry, colors and lighting; the interactive landing intro starts silently after an explicit click.
+The landing page at `/` uses scoped GSAP intro/scroll timelines, the canonical N mark and native scrolling. Motion can be paused and follows the device's reduced-motion setting. The 3D models retain their lime/cream palette and 100 primary components; the current renderer refines studs, bevels, tire tread, structural joints and studio lighting. The interactive landing intro starts silently after an explicit click.
 
 The app has independent routes: `/app/goals`, `/app/activity`, `/app/wallets` and `/app/settings`. `/app` remains the default goal entry. A goal can be selected with `/app/goals?goal=<metadata-id>`; this UI identifier grants no account or vault access. Previous hash links and the installed PWA entry remain supported. Back/Forward update the selected page through the same route parser.
 

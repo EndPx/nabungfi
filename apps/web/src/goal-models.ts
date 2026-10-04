@@ -47,7 +47,7 @@ function laptop() {
         "Laptop base",
         undefined,
         "brick",
-        true,
+        col === 0 || col === 7 || (row === 3 && (col <= 1 || col >= 6)),
       );
   for (let row = 0; row < 4; row++)
     for (let col = 0; col < 6; col++)
@@ -65,13 +65,17 @@ function laptop() {
       "Screen hinges",
     );
   for (const y of [0.5, 2.62])
-    for (let col = 0; col < 8; col++)
+    for (let col = 0; col < 8; col++) {
       add(
         [-1.75 + col * 0.5, y, -1],
         [0.49, 0.15, 0.16],
         palette.deep,
         "Screen frame",
       );
+      if (y === 2.62 && col === 7) {
+        pieces[pieces.length - 1].attachment = "laptop-lid";
+      }
+    }
   for (const x of [-1.95, 1.95])
     for (let row = 0; row < 4; row++)
       add(
@@ -127,8 +131,8 @@ function house() {
       );
     for (let col = 0; col < 4; col++)
       add(
-        [-1.125 + col * 0.75, y, -1.27],
-        [0.74, 0.59, 0.22],
+        [-1.35 + col * 0.9, y, -1.27],
+        [0.89, 0.59, 0.22],
         palette.lime,
         "Back walls",
         undefined,
@@ -136,10 +140,10 @@ function house() {
         true,
       );
     for (const x of [-1.88, 1.88])
-      for (const z of [-0.55, 0.55])
+      for (const z of [-0.585, 0.585])
         add(
           [x, y, z],
-          [0.22, 0.59, 1.07],
+          [0.22, 0.59, 1.16],
           palette.light,
           "Side walls",
           undefined,
@@ -161,7 +165,7 @@ function house() {
     add([0, y, 1.3], [0.67, 0.69, 0.2], palette.cream, "Front door");
   for (const side of [-1, 1])
     for (let row = 0; row < 3; row++)
-      for (let col = 0; col < 5; col++)
+      for (let col = 0; col < 5; col++) {
         add(
           [side * (0.32 + row * 0.64), 2.94 - row * 0.29, -1.28 + col * 0.64],
           [0.75, 0.16, 0.63],
@@ -171,6 +175,11 @@ function house() {
           "brick",
           true,
         );
+        // End caps belong to their roof piece, not an extra savings step.
+        if (side === -1 && row === 0 && (col === 0 || col === 4)) {
+          pieces[pieces.length - 1].attachment = col === 0 ? "back-gable" : "front-gable";
+        }
+      }
   for (let row = 0; row < 4; row++)
     add(
       [1.05, 2.48 + row * 0.22, -0.68],
@@ -203,27 +212,18 @@ function house() {
 }
 function custom() {
   const { add, pieces } = builder();
-  for (let row = 0; row < 10; row++)
-    for (let col = 0; col < 10; col++)
-      add(
-        [
-          -1.575 + col * 0.35,
-          0.2 + Math.floor(row / 2) * 0.28,
-          -1.575 + row * 0.35,
-        ],
-        [0.34, 0.27, 0.34],
-        [
-          palette.lime,
-          palette.light,
-          palette.cream,
-          palette.deep,
-          palette.lime,
-        ][Math.floor(row / 2)],
-        "Goal sculpture",
-        undefined,
-        "brick",
-        true,
-      );
+  for (let level = 0; level < 5; level++)
+    for (let row = 0; row < 4; row++)
+      for (let col = 0; col < 7 - level; col++)
+        add(
+          [(col - (6 - level) / 2) * .35, .2 + level * .28, (row - 1.5) * .35],
+          [.34, .27, .34],
+          [palette.lime, palette.light, palette.cream, palette.deep, palette.lime][level],
+          "Goal sculpture",
+          undefined,
+          "brick",
+          true,
+        );
   return pieces;
 }
 export const WORKSHOP_MODELS: Readonly<

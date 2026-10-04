@@ -2,6 +2,8 @@ import {
   Component,
   memo,
   useCallback,
+  useLayoutEffect,
+  useMemo,
   Suspense,
   useEffect,
   useRef,
@@ -25,10 +27,21 @@ import {
 import {
   PCFShadowMap,
   CylinderGeometry,
+  LatheGeometry,
+  Matrix4,
+  Vector2,
+  BoxGeometry,
+  ExtrudeGeometry,
+  Shape,
+  MeshPhysicalMaterial,
+  PMREMGenerator,
+  type InstancedMesh,
   MeshStandardMaterial,
   type BufferGeometry,
   type Group,
 } from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { brickBevel, studLayout, STUD_RADIUS, STUD_HEIGHT } from "./brick-details";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { type CarPiece } from "./car-model";
 import { WORKSHOP_MODELS, type WorkshopModel } from "./goal-models";
@@ -89,26 +102,70 @@ function readBuilt(goalId: string, funded: number) {
 // Creating the same bevel geometry twice per piece stalled initial mobile rendering.
 const geometryCache = new Map<string, BufferGeometry>();
 const materialCache = new Map<string, MeshStandardMaterial>();
-const studGeometry = new CylinderGeometry(0.076, 0.078, 0.048, 12);
+const studGeometry = new LatheGeometry(
+  [
+    new Vector2(0, -STUD_HEIGHT / 2),
+    new Vector2(STUD_RADIUS * 0.88, -STUD_HEIGHT / 2),
+    new Vector2(STUD_RADIUS, -STUD_HEIGHT / 2 + 0.005),
+    new Vector2(STUD_RADIUS, STUD_HEIGHT / 2 - 0.007),
+    new Vector2(STUD_RADIUS - 0.006, STUD_HEIGHT / 2 - 0.001),
+    new Vector2(STUD_RADIUS - 0.009, STUD_HEIGHT / 2),
+    new Vector2(0, STUD_HEIGHT / 2),
+  ],
+  24,
+);
+const hubCapGeometry = new CylinderGeometry(0.063, 0.063, 0.008, 20);
+const hubCapMaterial = new MeshStandardMaterial({
+  color: "#41483b",
+  roughness: 0.5,
+  metalness: 0,
+});
+const gableOutline = new Shape();
+gableOutline.moveTo(-1.96, 2.02);
+gableOutline.lineTo(-0.38, 2.02);
+gableOutline.lineTo(-0.38, 1.71);
+gableOutline.lineTo(0.38, 1.71);
+gableOutline.lineTo(0.38, 2.02);
+gableOutline.lineTo(1.96, 2.02);
+gableOutline.lineTo(1.96, 2.11);
+gableOutline.lineTo(0, 3);
+gableOutline.lineTo(-1.96, 2.11);
+gableOutline.closePath();
+const gableGeometry = new ExtrudeGeometry(gableOutline, {
+  depth: 0.2,
+  bevelEnabled: true,
+  bevelThickness: 0.006,
+  bevelSize: 0.006,
+  bevelSegments: 2,
+  steps: 1,
+});
+gableGeometry.translate(0, 0, -0.1);
+const laptopLidGeometry = new RoundedBoxGeometry(3.98, 2.26, 0.08, 3, 0.015);
+
 function geometryFor(piece: CarPiece) {
   const key = `${piece.kind}:${piece.size.join(":")}`;
   let geometry = geometryCache.get(key);
   if (!geometry) {
-    geometry =
-      piece.kind === "tire" || piece.kind === "hub"
-        ? new CylinderGeometry(
-            piece.size[0],
-            piece.size[1],
-            piece.size[2],
-            piece.kind === "tire" ? 28 : 16,
-          )
-        : new RoundedBoxGeometry(
-            piece.size[0],
-            piece.size[1],
-            piece.size[2],
-            2,
-            0.035,
-          );
+    if (piece.kind === "tire") {
+      const radius = piece.size[0];
+      const half = piece.size[2] / 2;
+      geometry = new LatheGeometry(
+        [
+          new Vector2(radius * 0.49, -half),
+          new Vector2(radius * 0.87, -half),
+          new Vector2(radius * 0.965, -half * 0.72),
+          new Vector2(radius * 0.965, half * 0.72),
+          new Vector2(radius * 0.87, half),
+          new Vector2(radius * 0.49, half),
+          new Vector2(radius * 0.49, -half),
+        ],
+        32,
+      );
+    } else if (piece.kind === "hub") {
+      geometry = new CylinderGeometry(...piece.size, 32);
+    } else {
+      geometry = new RoundedBoxGeometry(...piece.size, 3, brickBevel(piece.size));
+    }
     geometryCache.set(key, geometry);
   }
   return geometry;
@@ -117,14 +174,21 @@ function materialFor(piece: CarPiece, ghost: boolean) {
   const key = `${piece.color}:${piece.kind}:${ghost}`;
   let material = materialCache.get(key);
   if (!material) {
-    material = new MeshStandardMaterial({
+    const settings = {
       color: ghost ? "#c8ccba" : piece.color,
       transparent: ghost || piece.kind === "glass",
-      opacity: ghost ? 0.09 : piece.kind === "glass" ? 0.72 : 1,
-      roughness: piece.kind === "glass" ? 0.15 : 0.3,
-      metalness: piece.kind === "hub" ? 0.35 : 0.04,
-      depthWrite: !ghost,
-    });
+      opacity: ghost ? 0.09 : piece.kind === "glass" ? 0.6 : 1,
+      roughness: piece.kind === "tire" ? 0.84 : piece.kind === "glass" ? 0.12 : 0.28,
+      metalness: piece.kind === "hub" ? 0.12 : 0,
+      depthWrite: !ghost && piece.kind !== "glass",
+    };
+    material = ghost || piece.kind === "tire"
+      ? new MeshStandardMaterial(settings)
+      : new MeshPhysicalMaterial({
+          ...settings,
+          clearcoat: piece.kind === "glass" ? 0.85 : 0.36,
+          clearcoatRoughness: 0.2,
+        });
     materialCache.set(key, material);
   }
   return material;
@@ -140,14 +204,18 @@ const PieceGeometry = memo(function PieceGeometry({
   const geometry = geometryFor(piece);
   if (piece.kind === "tire" || piece.kind === "hub")
     return (
-      <mesh
-        geometry={geometry}
-        material={material}
-        dispose={null}
-        rotation={[Math.PI / 2, 0, 0]}
-        castShadow={!ghost}
-        receiveShadow
-      />
+      <group rotation={[Math.PI / 2, 0, 0]}>
+        <mesh geometry={geometry} material={material} dispose={null} castShadow={!ghost} receiveShadow />
+        {!ghost && piece.kind === "tire" && <TireTread piece={piece} material={material} />}
+        {!ghost && piece.kind === "hub" && (
+          <mesh
+            geometry={hubCapGeometry}
+            material={hubCapMaterial}
+            position={[0, Math.sign(piece.position[2]) * (piece.size[2] / 2 + 0.005), 0]}
+            dispose={null}
+          />
+        )}
+      </group>
     );
   return (
     <>
@@ -158,23 +226,98 @@ const PieceGeometry = memo(function PieceGeometry({
         castShadow={!ghost}
         receiveShadow
       />
-      {piece.studs &&
-        !ghost &&
-        [-0.22, 0.22]
-          .filter((value) => Math.abs(value) < piece.size[2] / 2)
-          .map((z) => (
-            <mesh
-              key={z}
-              position={[0, piece.size[1] / 2 + 0.022, z]}
-              castShadow
-              geometry={studGeometry}
-              material={material}
-              dispose={null}
-            ></mesh>
-          ))}
+      {piece.studs && !ghost && <BrickStuds piece={piece} material={material} />}
+      {piece.attachment && (
+        <group rotation={[0, 0, -(piece.rotation?.[2] ?? 0)]}>
+          <mesh
+            geometry={piece.attachment === "laptop-lid" ? laptopLidGeometry : gableGeometry}
+            material={material}
+            dispose={null}
+            position={[
+              -piece.position[0],
+              (piece.attachment === "laptop-lid" ? 1.56 : 0) - piece.position[1],
+              (piece.attachment === "laptop-lid" ? -1.1 : piece.attachment === "front-gable" ? 1.27 : -1.27) - piece.position[2],
+            ]}
+            castShadow={!ghost}
+            receiveShadow
+          />
+        </group>
+      )}
     </>
   );
 });
+
+function BrickStuds({ piece, material }: { piece: CarPiece; material: MeshStandardMaterial }) {
+  const ref = useRef<InstancedMesh>(null);
+  const points = useMemo(() => studLayout(piece.size[0], piece.size[2]), [piece]);
+  useLayoutEffect(() => {
+    const mesh = ref.current;
+    if (!mesh) return;
+    const matrix = new Matrix4();
+    points.forEach(([x, z], i) => {
+      matrix.makeTranslation(x, piece.size[1] / 2 + STUD_HEIGHT / 2 - 0.001, z);
+      mesh.setMatrixAt(i, matrix);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingSphere();
+  }, [points, piece]);
+  return points.length ? (
+    <instancedMesh ref={ref} args={[studGeometry, material, points.length]} dispose={null} castShadow receiveShadow />
+  ) : null;
+}
+
+function TireTread({ piece, material }: { piece: CarPiece; material: MeshStandardMaterial }) {
+  const ref = useRef<InstancedMesh>(null);
+  const tread = useMemo(() => {
+    const key = `tread:${piece.size.join(":")}`;
+    let geometry = geometryCache.get(key);
+    if (!geometry) {
+      geometry = new BoxGeometry(piece.size[0] * 0.19, piece.size[2] * 0.8, 0.024);
+      geometryCache.set(key, geometry);
+    }
+    return geometry;
+  }, [piece]);
+  useLayoutEffect(() => {
+    const mesh = ref.current;
+    if (!mesh) return;
+    const matrix = new Matrix4();
+    for (let i = 0; i < 24; i++) {
+      const angle = i * Math.PI * 2 / 24;
+      matrix.makeRotationY(angle);
+      matrix.setPosition(
+        Math.sin(angle) * piece.size[0] * 0.97,
+        0,
+        Math.cos(angle) * piece.size[0] * 0.97,
+      );
+      mesh.setMatrixAt(i, matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingSphere();
+  }, [piece]);
+  return <instancedMesh ref={ref} args={[tread, material, 24]} dispose={null} castShadow receiveShadow />;
+}
+
+function StudioReflection() {
+  const { gl, scene, invalidate } = useThree();
+  useEffect(() => {
+    const oldEnvironment = scene.environment;
+    const oldIntensity = scene.environmentIntensity;
+    const room = new RoomEnvironment();
+    const generator = new PMREMGenerator(gl);
+    const map = generator.fromScene(room, 0.04);
+    scene.environment = map.texture;
+    scene.environmentIntensity = 0.45;
+    invalidate();
+    return () => {
+      scene.environment = oldEnvironment;
+      scene.environmentIntensity = oldIntensity;
+      map.dispose();
+      room.dispose();
+      generator.dispose();
+    };
+  }, [gl, scene, invalidate]);
+  return null;
+}
 
 function Car({
   pieces,
@@ -566,18 +709,19 @@ export default function CarWorkshop({
               frameloop="demand"
               gl={{ antialias: true, alpha: true }}
             >
-              <ambientLight intensity={1.35} />
-              <hemisphereLight args={["#ffffff", "#b7ba9f", 1]} />
+              <StudioReflection />
+              <ambientLight intensity={0.8} />
+              <hemisphereLight args={["#ffffff", "#b7ba9f", 0.65]} />
               <directionalLight
                 position={[3, 8, 5]}
-                intensity={3.2}
+                intensity={2.5}
                 castShadow
                 shadow-mapSize={[1024, 1024]}
                 shadow-normalBias={0.035}
               />
               <directionalLight
                 position={[-5, 3, -3]}
-                intensity={1.8}
+                intensity={1.2}
                 color="#f6f0dc"
               />
               <Car
