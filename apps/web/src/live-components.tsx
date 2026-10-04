@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Box,
+  Check,
   ChevronRight,
   ExternalLink,
   LockKeyhole,
@@ -22,7 +23,7 @@ import type {
   SessionDTO,
 } from "@nabungfi/shared/application";
 import { EVM_DEPLOYMENTS } from "@nabungfi/shared/chain";
-import { Button, Dialog, WorkshopBoundary } from "./ui";
+import { Button, Dialog, NetworkMark, WorkshopBoundary } from "./ui";
 import { GoalIllustration } from "./Shell";
 import {
   decimalAmount,
@@ -35,6 +36,25 @@ import {
 import { actions, networks, phases, short } from "./live-config";
 import { nextPieceProgress, formatNativeGas } from "./savings-progress";
 const CarWorkshop = lazy(() => import("./CarWorkshop"));
+
+export function PortfolioSummary({ balance, scope }: { balance: string; scope: string }) {
+  return (
+    <section className="portfolio-summary" aria-label="Savings across goals">
+      <div className="portfolio-balance">
+        <h2>Total saved</h2>
+        <strong>{balance}</strong>
+        <p>{scope}</p>
+      </div>
+      <div className="portfolio-caption">
+        <Box size={40} />
+        <div>
+          <strong>Each goal has its own finish line.</strong>
+          <p>A goal unlocks when its own target is reached and completion is verified.</p>
+        </div>
+      </div>
+    </section>
+  );
+}
 export function Welcome({
   configured = true,
   login,
@@ -96,12 +116,16 @@ export function GoalCard({
     state?.phase === "achieved" || state?.phase === "claimed",
   );
   return (
-    <button type="button" className="goal-card" onClick={onOpen}>
+    <button type="button" className="goal-card" data-model={goal.model} data-state={state?.phase ?? "unprovisioned"} data-read={goal.chainStatus} onClick={onOpen}>
       <GoalIllustration model={goal.model} />
       <div className="goal-card-body">
-        <h2>{goal.name}</h2>
+        <div className="goal-card-title">
+          <h2>{goal.name}</h2>
+          <span className="goal-card-open" aria-hidden="true"><ChevronRight size={18} /></span>
+        </div>
         <span className="goal-card-status">
-          <LockKeyhole size={14} />
+          {goal.chainStatus === "unavailable" ? <TriangleAlert size={14} /> :
+            state?.phase === "achieved" || state?.phase === "claimed" ? <Check size={14} /> : <LockKeyhole size={14} />}
           {goal.chainStatus === "unavailable"
             ? "Balance unavailable"
             : phases[state?.phase ?? "unprovisioned"]}
@@ -377,9 +401,7 @@ export function GoalDetail({
                 return (
                   <div key={network} className="network-row">
                     <div className="network-row-name">
-                      <span className="network-monogram">
-                        {networks[network][0]}
-                      </span>
+                      <NetworkMark network={network} />
                       <div>
                         <strong>{networks[network]}</strong>
                         <small>

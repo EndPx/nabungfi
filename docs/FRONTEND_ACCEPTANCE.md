@@ -118,3 +118,26 @@ Car front/rear fascia close the earlier exposed gaps. House back/side corners me
 Production build and 46 unit checks passed, including stud footprint/pitch/symmetry, bevel thickness, supported construction and house corners. The 24-test isolated browser suite passed during this refinement; the seven orbit/marketing-motion tests were repeated after the final model geometry changes and passed. Four models were rendered and inspected at front, side and back angles. A 390px, 50-piece workshop remained partial with no horizontal overflow or uncaught page errors. All four poster JPEGs were regenerated from the actual renderer. The final production preview precached all four revisioned poster URLs and displayed car/laptop/house posters after an offline reload, without API entries in Cache Storage or uncaught page errors.
 
 Private visual and offline evidence is under `.local/brick-detail-qa/`. These are local procedural rendering, control and cache checks, not physical-device frame-rate measurements, signed financial execution or Vercel publication. The existing release gates above remain separate.
+
+## Landing and app interface refinement — 4 October 2026
+
+The accepted blue/yellow/red block identity and dimensional goal models remain. Shared controls now have restrained inset highlights, clear surface hierarchy and reduced-motion-safe press feedback. The landing uses a larger studio preview, block model-selector icons, original network PNGs, refined type/spacing, native FAQ chevrons and a blue closing action. Preview actions keep a stable stacked layout as fonts/images load; its eager hero image has high fetch priority. Noncritical model thumbnails use native lazy loading.
+
+The app has a 248px sidebar, compact workspace context and a four-destination mobile dock with safe-area spacing. Its portfolio summary consumes the existing exact balance/availability labels without adding financial aggregation. Goal cards show a larger model, exact amounts, text/icon status and a 20×5 decorative block grid with the original funded-component count. A single New goal action replaces the duplicate add-card tile. Settings use a continuous grouped surface; detail rows use original network PNGs. No API authorization, unsigned transaction contents, balances, receipt reconciliation, goal locks or claim predicates changed.
+
+Production build, 46 unit checks and the 24-test isolated browser suite passed. Seven motion/orbit checks were repeated after the final image/motion-layout changes and passed. The visual matrix covers landing, primitives, goals, detail, wallets and settings at 1440px, with landing/goals/detail/settings at 390px; no horizontal overflow or uncaught page errors were observed. Existing browser checks additionally cover goal/detail reflow at 320/768/1280px, native dialogs, keyboard focus, unavailable reads and automated WCAG A/AA. Fixtures are explicitly labelled examples and do not establish authenticated financial execution.
+
+Lighthouse used the Node API attached to isolated installed Chrome, with three fresh runs per route and preset. Final local production medians:
+
+| Route/preset | Performance | Accessibility | Best practices | SEO |
+| --- | ---: | ---: | ---: | ---: |
+| Landing mobile | 96 | 100 | 100 | 100 |
+| Landing desktop | 100 | 100 | 100 | 100 |
+| Guest app mobile | 97 | 100 | 100 | 100 |
+| Guest app desktop | 100 | 100 | 100 | 100 |
+
+The first refinement audit had landing desktop performance 99 and a 0.063 CLS; stabilizing preview controls restored 100. Mobile FCP/LCP remain optimization debt; no all-100 perfection or deployed-Vercel performance claim is made. React Scan Lite was injected before production React initialization in an isolated context: both guest routes recorded two startup commits, no commit/page errors and no unchanged-input fibers in this bounded startup check. This is not a full authenticated-runtime or 3D frame-rate profile.
+
+React Doctor produced a report with one observer-cleanup error and eleven warnings in existing motion/controller/large-component paths; the CLI wrapper also returned nonzero. Its cleanup finding remains unsuppressed. Source ownership was made explicit and a real-browser probe measured active resize subscriptions 1 → 0 → 1 → 0 across pause/resume/pause, confirming that this effect disconnects instead of accumulating observers. Broader static maintainability/response-parsing findings remain review debt; this pass does not certify the static audit as clean.
+
+Private artifacts are under `.local/premium-ui-qa/`, including screenshots, Lighthouse reports, `render-scan.json` and `motion-cleanup.json`. [Solana goal storage](SOLANA_GOAL_STORAGE.md) separately records the inspected shared-program/PDA model and current RPC rent reserve; no backend or onchain rent-reclaim code was changed. Genuine wallet execution, physical mobile/PWA acceptance and Vercel publication remain separate release gates.

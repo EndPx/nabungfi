@@ -4,9 +4,11 @@ import { MODEL_POSTER_REVISION } from "./brick-details";
 export function GoalIllustration({
   model,
   compact = false,
+  priority = false,
 }: {
   model: string;
   compact?: boolean;
+  priority?: boolean;
 }) {
   const key = ["car", "laptop", "house", "custom"].includes(model)
     ? model
@@ -20,6 +22,9 @@ export function GoalIllustration({
         src={`/models/${key}.jpg?revision=${MODEL_POSTER_REVISION}`}
         width={640}
         height={520}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
         alt=""
       />
     </div>

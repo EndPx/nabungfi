@@ -7,6 +7,15 @@ import {
   type ReactNode,
 } from "react";
 import { Box, LoaderCircle, X } from "./icons";
+import type { AppNetwork } from "@nabungfi/shared/application";
+
+export function NetworkMark({ network }: { network: AppNetwork }) {
+  return (
+    <span className={`network-mark network-mark--${network}`} aria-hidden="true">
+      <img src={`/chains/${network}.png`} width={24} height={24} alt="" />
+    </span>
+  );
+}
 
 export class WorkshopBoundary extends Component<
   { children: ReactNode },

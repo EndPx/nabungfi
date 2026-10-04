@@ -53,9 +53,9 @@ Semantic warning and error colors stay separate from identity colors, always pai
 
 ## Typography and spacing
 
-Outfit 500/600 for headings, amounts and one-piece NabungFi wordmark. Work Sans 400/500/600 for body, fields and controls. Both are self-hosted. Amounts use tabular figures. Type scale: 12 caption, 14 supporting text, 16 body/controls, 18 lead, 20 compact title, 24 section, 32 mobile title, 40 page title, 48 prominent amount, 64 desktop marketing heading. Marketing heading scales from 40 to 64. Prose measure is at most 65ch.
+Outfit 500/600 for headings, amounts and one-piece NabungFi wordmark. Work Sans 400/500/600 for body, fields and controls. Both are self-hosted. Amounts use tabular figures. Type scale: 12 caption, 14 supporting text, 16 body/controls, 18 lead, 20 compact title, 24 section, 32 mobile title, 40 page title, 48 prominent amount, 64 desktop marketing heading. Marketing heading scales from 40 to 80; mobile caps at 64. Prose measure is at most 65ch.
 
-Spacing follows a 4px base: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64 and 96. Decorative studs and 3D geometry are proportional artwork, not spacing exceptions for interface components. Controls are at least 44px. Radii: 8 small indicator, 12 controls, 16 compact surfaces, 20 cards, 24 stage/dialog, full pill for status. Borders and tonal surfaces provide separation; elevation belongs to dialogs and model controls.
+Spacing follows a 4px base: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80 and 96. Decorative studs and 3D geometry are proportional artwork, not spacing exceptions for interface components. Controls are at least 44px. Radii: 8 small indicator, 12 controls, 16 compact surfaces, 20 cards, 24 stage/dialog, 32 hero frame, full pill for status. Borders and tonal surfaces provide separation; restrained elevation belongs to the hero frame, raised controls, dialogs and hover feedback. Landing stages measure 400px on desktop and 320px on mobile; goal-card posters measure 224px. Progress cells use 3px gutters and a 2:1 shape as proportional block artwork.
 
 ## Layout and routes
 
@@ -65,7 +65,7 @@ Spacing follows a 4px base: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64 and 96. Decorat
 - `/?demo=1`: explicit local ledger demonstration; it keeps its nonfinancial label and shared primitives.
 - `/?showcase=1`: shared palette, typography, controls, fields and status-state review. `/?showcase=models` remains a nonfinancial original-model harness.
 
-The document owns scrolling. Desktop sidebar is 224px. Below 900px, the app uses four labelled bottom destinations and safe-area padding. Landing navigation remains a compact top bar. Gutter: 16 at 320, 20 at 390, 24 at 768, 40 at 1024+. Content maximum 1280px, application maximum 1440px. Intrinsic grids use `minmax(min(...,100%),1fr)`. Long names and addresses wrap; no horizontal page scrolling. Native dialogs may own scrolling when taller than the viewport.
+The document owns scrolling. Desktop sidebar is 248px. Below 900px, the app uses four labelled bottom destinations in a dock with a 12px outer inset and safe-area spacing. Landing navigation remains a compact top bar. Gutter: 16 at 320, 20 at 390, 24 at 768, 40 at 1024+. Content maximum 1280px, application maximum 1440px. Intrinsic grids use `minmax(min(...,100%),1fr)`. Long names and addresses wrap; no horizontal page scrolling. Native dialogs may own scrolling when taller than the viewport.
 
 ## Shared primitives and states
 

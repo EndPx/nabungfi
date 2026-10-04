@@ -12,6 +12,7 @@ import fixtures from "../fixtures/unsigned-plans.json";
 import { Shell, type Destination } from "../../src/Shell";
 import {
   GoalCard,
+  PortfolioSummary,
   GoalDetail,
   CreateGoalModal,
   DepositModal,
@@ -23,6 +24,7 @@ import {
   SettingsPage,
 } from "../../src/account-pages";
 import { Button } from "../../src/ui";
+import { formatUsdc } from "../../src/live-api";
 import "@fontsource/outfit/latin-500.css";
 import "@fontsource/work-sans/latin-400.css";
 import "../../src/styles.css";
@@ -31,7 +33,7 @@ import "../../src/live.css";
 const params = new URLSearchParams(location.search);
 const phase = params.get("phase") ?? "saving";
 const amount = params.get("amount") ?? "250000";
-const targetRaw = "10000000";
+const targetRaw = params.get("target") ?? "10000000";
 const positions = ["solana", "base"].map((network) => ({
   network,
   assetsRaw: network === "solana" ? amount : "0",
@@ -98,7 +100,7 @@ function Harness() {
       pending={false}
       account={<span>QA fixture</span>}
     >
-      <p role="status">
+      <p role="status" className="fixture-note">
         Component acceptance fixture. All balances are examples; no API or
         wallet is connected.
       </p>
@@ -122,6 +124,10 @@ function Harness() {
                 New goal
               </Button>
             </div>
+            <PortfolioSummary
+              balance={`$${formatUsdc((BigInt(amount) * 3n).toString())}`}
+              scope="Across 3 example goals"
+            />
             <div className="goal-grid">
               {(["car", "laptop", "house"] as const).map((model) => (
                 <GoalCard

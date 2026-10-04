@@ -81,7 +81,7 @@ html {
 }
 .live-shell {
   min-height: 100dvh;
-  padding-inline-start: 224px;
+  padding-inline-start: var(--sidebar-width);
 }
 .skip-link {
   position: fixed;
@@ -98,8 +98,8 @@ html {
 .live-sidebar {
   position: fixed;
   inset: 0 auto 0 0;
-  width: 224px;
-  padding: 32px 20px;
+  width: var(--sidebar-width);
+  padding: var(--space-8) var(--space-6);
   background: var(--paper);
   border-inline-end: 1px solid var(--line);
   display: flex;
@@ -124,7 +124,7 @@ html {
   gap: 8px;
 }
 .live-navigation button {
-  border: 0;
+  border: 1px solid transparent;
   min-height: 52px;
   background: transparent;
   color: var(--muted);
@@ -150,28 +150,33 @@ html {
 .live-navigation button.is-active {
   background: var(--blue-soft);
   color: var(--blue-ink);
+  border-color: var(--line);
+  box-shadow: inset 3px 0 0 var(--brand-blue), var(--control-shadow);
 }
 .sidebar-note {
   margin-block-start: auto;
-  padding: 32px 16px;
+  padding: var(--space-6) var(--space-4);
+  border-block-start: 1px solid var(--line);
 }
 .sidebar-note strong {
-  font:
-    500 20px/1.25 "Outfit",
-    sans-serif;
+  font: 500 var(--text-base) / 1.25 var(--font-display);
 }
 .sidebar-note p {
   font-size: var(--text-sm);
   color: var(--muted);
   line-height: 1.5;
-  margin-top: 12px;
+  margin-top: var(--space-2);
 }
 .sidebar-mini-blocks {
   display: flex;
   align-items: end;
   gap: 4px;
-  margin-bottom: 20px;
-  height: 44px;
+  margin-bottom: var(--space-3);
+  height: var(--space-8);
+}
+.sidebar-mini-blocks svg {
+  width: var(--space-8);
+  height: var(--space-8);
 }
 .sidebar-mini-blocks i {
   width: 24px;
@@ -199,6 +204,25 @@ html {
 .live-content {
   min-width: 0;
 }
+.live-location,
+.live-header-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.live-location {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.live-location strong {
+  font-weight: 500;
+  color: var(--ink);
+}
+.live-header-tools {
+  gap: var(--space-6);
+  margin-inline-start: auto;
+}
 .live-header {
   min-height: 88px;
   display: flex;
@@ -224,6 +248,10 @@ html {
   font-size: var(--text-sm);
   color: var(--lime-dark);
   white-space: nowrap;
+  background: var(--green-soft);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
 }
 .environment-badge > span {
   width: 8px;
@@ -284,44 +312,53 @@ html {
   background: var(--success-light);
   color: var(--success);
 }
-.overview-banner {
+.portfolio-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 32px;
-  background: var(--ink);
-  color: var(--paper);
-  padding: 32px;
+  gap: var(--space-8);
+  padding: var(--space-8);
+  border: 1px solid var(--line);
+  background: linear-gradient(130deg, var(--paper), var(--studio-light));
   border-radius: var(--radius-stage);
-  margin-bottom: 32px;
+  margin-bottom: var(--space-8);
   overflow: hidden;
 }
-.overview-banner h2 {
-  font-size: var(--text-mobile-heading);
-  max-width: 14ch;
+.portfolio-balance {
+  min-width: 0;
 }
-.overview-banner p {
+.portfolio-balance h2 {
+  font: 500 var(--text-sm) / 1.5 var(--font-body);
+  color: var(--muted);
+}
+.portfolio-balance > strong {
+  display: block;
+  font: 500 var(--text-balance) / 1.1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+  margin-block: var(--space-2);
+  overflow-wrap: anywhere;
+}
+.portfolio-balance p,
+.portfolio-caption p {
+  color: var(--muted);
+  font-size: var(--text-sm);
   line-height: 1.5;
-  margin-top: 12px;
-  max-width: 44ch;
-  color: var(--paper);
-  opacity: 0.85;
 }
-.overview-banner .banner-summary {
-  text-align: end;
+.portfolio-caption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 38ch;
+}
+.portfolio-caption > svg {
   flex-shrink: 0;
 }
-.banner-summary strong {
-  display: block;
-  font:
-    500 40px/1.1 "Outfit",
-    sans-serif;
-  font-variant-numeric: tabular-nums;
+.portfolio-caption strong {
+  font: 500 var(--text-lead) / 1.3 var(--font-display);
 }
-.banner-summary span {
-  display: block;
-  margin-top: 8px;
-  color: var(--lime);
+.portfolio-caption p {
+  margin-top: var(--space-2);
 }
 .goal-grid {
   display: grid;
@@ -338,18 +375,43 @@ html {
   color: var(--ink);
   transition:
     transform var(--duration),
-    border-color var(--duration);
+    border-color var(--duration), box-shadow var(--duration);
   min-width: 0;
 }
 .goal-card:hover {
-  border-color: var(--lime-dark);
-  transform: translateY(-4px);
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--surface-shadow);
 }
 .goal-card:active {
   transform: scale(0.99);
 }
 .goal-card-body {
-  padding: 24px;
+  padding: var(--space-6);
+}
+.goal-card-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.goal-card-open {
+  width: var(--space-8);
+  height: var(--space-8);
+  display: grid;
+  place-items: center;
+  background: var(--studio);
+  border-radius: var(--radius-small);
+  flex-shrink: 0;
+}
+.goal-card .goal-illustration {
+  height: 224px;
+  margin: var(--space-3) var(--space-3) 0;
+  border-radius: var(--radius-surface);
+  overflow: hidden;
+}
+.goal-card .goal-illustration img {
+  object-fit: cover;
 }
 .goal-card h2 {
   font-size: var(--text-section);
@@ -362,18 +424,32 @@ html {
   align-items: center;
   gap: 8px;
   margin: 8px 0 20px;
+  width: fit-content;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--studio);
+}
+.goal-card[data-state="achieved"] .goal-card-status,
+.goal-card[data-state="claimed"] .goal-card-status {
+  background: var(--green-soft);
+  color: var(--green-ink);
+}
+.goal-card[data-read="unavailable"] .goal-card-status {
+  background: var(--warning-light);
+  color: var(--warning);
 }
 .goal-card-total {
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  align-items: baseline;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: flex-start;
+  overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
 }
 .goal-card-total strong {
   font:
-    500 24px "Outfit",
-    sans-serif;
+    500 var(--text-mobile-heading) / 1.2 var(--font-display);
+  letter-spacing: -0.02em;
 }
 .goal-card-total span {
   font-size: var(--text-sm);
@@ -403,17 +479,18 @@ html {
 }
 .goal-progress {
   display: grid;
-  grid-template-columns: repeat(100, 1fr);
-  gap: 2px;
-  margin: 16px 0 12px;
-  height: 8px;
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  gap: 3px;
+  margin: var(--space-5) 0 var(--space-4);
 }
 .goal-progress i {
   background: var(--line);
-  border-radius: 2px;
+  border-radius: 1px;
+  aspect-ratio: 2 / 1;
 }
 .goal-progress i.is-filled {
   background: var(--lime-dark);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 .goal-card-foot {
   display: flex;
@@ -483,6 +560,28 @@ html {
   padding: 24px;
   background: var(--paper);
   min-width: 0;
+}
+.live-panel .network-mark {
+  background: var(--studio-light);
+}
+.network-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-10);
+  height: var(--space-10);
+  padding: var(--space-2);
+  flex-shrink: 0;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--line);
+}
+.network-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.network-mark--arbitrum img {
+  transform: scale(2);
 }
 .live-panel h2 {
   font-size: var(--text-section);
@@ -886,7 +985,7 @@ html {
 @media (max-width: 899px) {
   .live-shell {
     padding-inline-start: 0;
-    padding-block-end: calc(88px + env(safe-area-inset-bottom));
+    padding-block-end: calc(108px + env(safe-area-inset-bottom));
   }
   .live-sidebar {
     display: contents;
@@ -898,14 +997,16 @@ html {
   }
   .live-navigation {
     position: fixed;
-    inset: auto 0 0;
+    inset: auto var(--space-3) calc(var(--space-3) + env(safe-area-inset-bottom));
     z-index: 30;
     flex-direction: row;
     justify-content: space-around;
-    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    padding: var(--space-2);
     background: var(--paper);
-    border-top: 1px solid var(--line);
-    gap: 8px;
+    border: 1px solid var(--line);
+    gap: var(--space-1);
+    border-radius: var(--radius-stage);
+    box-shadow: var(--surface-shadow);
   }
   .live-navigation button {
     flex: 1;
@@ -916,6 +1017,9 @@ html {
     padding: 8px 4px;
     font-size: var(--text-xs);
     border-radius: var(--radius-control);
+  }
+  .live-navigation button.is-active {
+    box-shadow: inset 0 -3px 0 var(--brand-blue);
   }
   .live-header {
     min-height: 80px;
@@ -932,6 +1036,9 @@ html {
     width: 28px;
   }
   .environment-badge {
+    display: none;
+  }
+  .live-location {
     display: none;
   }
   .live-detail-grid {
@@ -973,27 +1080,14 @@ html {
   .page-heading > .button {
     min-height: 44px;
   }
-  .overview-banner {
-    padding: 24px;
-    gap: 24px;
+  .portfolio-summary {
+    padding: var(--space-6);
+    gap: var(--space-6);
     align-items: flex-start;
     flex-direction: column;
   }
-  .overview-banner h2 {
-    font-size: var(--text-section);
-    max-width: 20ch;
-  }
-  .overview-banner p {
-    font-size: var(--text-sm);
-  }
-  .overview-banner .banner-summary {
-    text-align: start;
-  }
-  .banner-summary strong {
-    font-size: var(--text-mobile-heading);
-  }
-  .banner-summary span {
-    font-size: var(--text-sm);
+  .portfolio-balance > strong {
+    font-size: var(--text-heading);
   }
   .goal-grid {
     gap: 20px;
@@ -1115,6 +1209,37 @@ html {
   align-items: center;
   text-align: center;
   gap: var(--space-6);
+  box-shadow: var(--surface-shadow);
+}
+.fixture-note {
+  border-inline-start: 3px solid var(--line-strong);
+  padding: var(--space-3) var(--space-4);
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin-bottom: var(--space-6);
+}
+.settings-stack {
+  gap: 0;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-stage);
+  overflow: hidden;
+}
+.settings-stack > .settings-panel {
+  border: 0;
+  border-radius: 0;
+  border-block-end: 1px solid var(--line);
+  padding: var(--space-6);
+}
+.settings-stack > .settings-panel:last-child {
+  border-block-end: 0;
+}
+.settings-panel h2 {
+  font-size: var(--text-title);
+}
+.dialog {
+  box-shadow: var(--overlay-shadow);
 }
 .account-gate h1 {
   font-size: var(--text-heading);

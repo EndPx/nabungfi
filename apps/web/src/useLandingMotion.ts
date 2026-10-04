@@ -9,7 +9,9 @@ export function useLandingMotion(
     if (disabled || !root.current) return;
     let active = true;
     let context: { revert(): void } | undefined;
-    let observer: ResizeObserver | undefined;
+    const observer = typeof ResizeObserver === "undefined"
+      ? null
+      : new ResizeObserver(() => refresh.current());
     let frame = 0;
     void Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
       .then(([{ gsap }, { ScrollTrigger }]) => {
@@ -185,9 +187,8 @@ export function useLandingMotion(
             if (active) ScrollTrigger.refresh();
           });
         };
-        observer = new ResizeObserver(refresh.current);
         const preview = page.querySelector(".landing-preview");
-        if (preview) observer.observe(preview);
+        if (preview && observer) observer.observe(preview);
         void document.fonts.ready.then(() => {
           if (active) refresh.current();
         });
@@ -198,7 +199,7 @@ export function useLandingMotion(
     return () => {
       active = false;
       cancelAnimationFrame(frame);
-      observer?.disconnect();
+      if (observer) observer.disconnect();
       context?.revert();
       refresh.current = () => undefined;
     };

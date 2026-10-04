@@ -18,6 +18,7 @@ import { supportedChains } from "./live-config";
 import {
   Welcome,
   GoalCard,
+  PortfolioSummary,
   GoalDetail,
   CreateGoalModal,
   DepositModal,
@@ -279,27 +280,13 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
                     New goal
                   </Button>
                 </div>
-                <section className="overview-banner">
-                  <div>
-                    <h2>Every little piece counts.</h2>
-                    <p>
-                      Your savings stay assigned to their own goal. Finishing
-                      one build never unlocks another.
-                    </p>
-                  </div>
-                  <div className="banner-summary">
-                    <strong>
-                      {goals.length > 0 && unavailableCount === goals.length
-                        ? "—"
-                        : `$${formatUsdc(total)}`}
-                    </strong>
-                    <span>
-                      {unavailableCount
-                        ? `Verified balances · ${unavailableCount} unavailable`
-                        : `Across ${goals.length} goal${goals.length === 1 ? "" : "s"}`}
-                    </span>
-                  </div>
-                </section>
+                <PortfolioSummary
+                  balance={goals.length > 0 && unavailableCount === goals.length
+                    ? "—" : `$${formatUsdc(total)}`}
+                  scope={unavailableCount
+                    ? `Verified balances · ${unavailableCount} unavailable`
+                    : `Across ${goals.length} goal${goals.length === 1 ? "" : "s"}`}
+                />
                 {goals.length ? (
                   <div className="goal-grid">
                     {goals.map((goal) => (
@@ -309,20 +296,6 @@ function AuthenticatedApp({ loginRequested }: { loginRequested: boolean }) {
                         onOpen={() => navigate("goals", goal.id)}
                       />
                     ))}
-                    <button
-                      type="button"
-                      className="goal-card goal-card-add"
-                      disabled={hasPending || pwa.offline}
-                      onClick={() => setCreating(true)}
-                    >
-                      <span className="section-icon">
-                        <Plus />
-                      </span>
-                      <strong>Make room for a new goal</strong>
-                      <span className="live-help">
-                        What are you building toward?
-                      </span>
-                    </button>
                   </div>
                 ) : (
                   <div className="empty-state">

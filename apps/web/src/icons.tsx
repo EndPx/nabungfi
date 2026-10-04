@@ -31,6 +31,31 @@ function icon(name: string, shape: ReactNode) {
 
 // Identity icons use the same solid blocks and exposed studs as the N mark.
 // Action glyphs use currentColor so warnings, disabled controls and focus stay legible.
+export const Car = icon(
+  "Car",
+  <>
+    <path d="M3 11h18v7H3Z" stroke="none" fill={blue} />
+    <path d="M7 5h10v6H7Zm2-2h2v2H9m4-2h2v2h-2" stroke="none" fill={yellow} />
+    <path d="M3 11h3v3H3m15-3h3v3h-3" stroke="none" fill={red} />
+    <path d="M6 18v3m12-3v3" strokeWidth={4} />
+  </>,
+);
+export const Laptop = icon(
+  "Laptop",
+  <>
+    <path d="M4 4h16v12H4Z" stroke="none" fill={blue} />
+    <path d="M7 7h10v6H7Z" stroke="none" fill={yellow} />
+    <path d="M2 17h20v4H2Zm3-2h2v2H5m12-2h2v2h-2" stroke="none" fill={red} />
+  </>,
+);
+export const Home = icon(
+  "Home",
+  <g stroke="none">
+    <path d="M4 11h16v11H4Z" fill={blue} />
+    <path d="M2 8h5V5h10v3h5v3H2Zm7-5h2v2H9m4-2h2v2h-2" fill={red} />
+    <path d="M9 15h6v7H9ZM6 13h2v3H6m10-3h2v3h-2" fill={yellow} />
+  </g>,
+);
 export const Box = icon(
   "Goals",
   <g stroke="none">

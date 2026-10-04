@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { ArrowRight, Box, LockKeyhole, Check, Plus } from "./icons";
+import { ArrowRight, Box, Car, Laptop, Home, LockKeyhole, Check, Plus } from "./icons";
 import { Button, IconButton, Logo, WorkshopBoundary } from "./ui";
 import { GoalIllustration } from "./GoalIllustration";
 import type { WorkshopModel } from "./goal-models";
@@ -10,9 +10,9 @@ import "./landing.css";
 
 const Workshop = lazy(() => import("./CarWorkshop"));
 const models = [
-  { id: "car", label: "A new car" },
-  { id: "laptop", label: "A better laptop" },
-  { id: "house", label: "A home" },
+  { id: "car", label: "A new car", Icon: Car },
+  { id: "laptop", label: "A better laptop", Icon: Laptop },
+  { id: "house", label: "A home", Icon: Home },
 ] as const;
 export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
@@ -120,7 +120,8 @@ export default function Landing() {
                   aria-pressed={model === choice.id}
                   onClick={() => setModel(choice.id)}
                 >
-                  {choice.label}
+                  <choice.Icon size={20} />
+                  <span>{choice.label}</span>
                 </button>
               ))}
             </div>
@@ -149,7 +150,7 @@ export default function Landing() {
             ) : (
               <>
                 <div className="landing-poster">
-                  <GoalIllustration model={model} />
+                  <GoalIllustration model={model} priority />
                 </div>
                 <div className="landing-preview-bottom">
                   <p>
@@ -182,10 +183,12 @@ export default function Landing() {
         >
           <span>Available on testnet</span>
           <div>
-            <span>Solana Devnet</span>
-            <span>Base Sepolia</span>
-            <span>Arbitrum Sepolia</span>
-            <span>Ethereum Sepolia</span>
+            {(["solana", "base", "arbitrum", "ethereum"] as const).map((chain) => (
+              <span className={`landing-chain landing-chain--${chain}`} key={chain}>
+                <img src={`/chains/${chain}.png`} width={24} height={24} alt="" />
+                {chain === "solana" ? "Solana Devnet" : chain === "base" ? "Base Sepolia" : chain === "arbitrum" ? "Arbitrum Sepolia" : "Ethereum Sepolia"}
+              </span>
+            ))}
           </div>
         </section>
         <ChainStory />

@@ -65,12 +65,8 @@ export function Shell({
           <div className="sidebar-mini-blocks" aria-hidden="true">
             <Box size={44} />
           </div>
-          <strong>
-            Little deposits.
-            <br />
-            Something big.
-          </strong>
-          <p>Build a goal one piece at a time.</p>
+          <strong>Your workshop</strong>
+          <p>Independent USDC goals.</p>
         </div>
         <a className="sidebar-demo" href="/?demo=1">
           Explore the demo <ChevronRight size={16} />
@@ -81,11 +77,17 @@ export function Shell({
           <a href="/" className="mobile-brand" aria-label="NabungFi home">
             <Logo />
           </a>
-          <span className="environment-badge">
-            <span />
-            Testnet savings
+          <span className="live-location">
+            Your workshop <ChevronRight size={14} />
+            <strong>{destinations.find((item) => item.id === destination)?.label}</strong>
           </span>
-          <div className="live-account">{account}</div>
+          <div className="live-header-tools">
+            <span className="environment-badge">
+              <span />
+              Testnet savings
+            </span>
+            <div className="live-account">{account}</div>
+          </div>
         </header>
         <main id="main-content" className="live-main" tabIndex={-1}>
           {pwa.offline && (
