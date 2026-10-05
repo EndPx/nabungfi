@@ -1,6 +1,6 @@
 # Native VPS backend deployment
 
-The testnet backend is live at **https://nabungfi-api.endpx.cloud**. Frontend hosting remains Vercel and its publication is deferred. The currently planned production frontend origin is `https://nabungfi.endpx.cloud`; update the exact API allowlist when the actual Vercel/custom domain is connected. [Sanitized deployment evidence](../contracts/deployments/backend/vps-runtime.json).
+The testnet backend is live at **https://nabungfi-api.endpx.cloud**. The frontend was published on Vercel at **https://nabungfi.vercel.app** on 5 October 2026. The API now permits that exact HTTPS origin and retains the previously planned `https://nabungfi.endpx.cloud` origin; the custom frontend domain has not been connected. [Sanitized backend deployment evidence](../contracts/deployments/backend/vps-runtime.json) · [Frontend deployment evidence](../apps/web/DEPLOYMENT.md).
 
 ## Isolation and preservation
 
@@ -26,4 +26,4 @@ Certificate renewal was simulated successfully. The initial private-parent ACME 
 
 The live coordinator reports six active-goal capacity, zero active registrations and one retained completed goal. Actual VPS checks passed 41 server tests, 48 Linux keeper tests and server typecheck. The current backend socket-IP throttle remains an aggregate 180 requests/minute behind nginx; forwarded-IP trust was not silently enabled.
 
-This is a cash-only testnet release. Earning, mainnet security, long-term uptime, browser-wallet financial signing and frontend publication remain separate acceptance work. Operational commands, permissions and rollback are documented in [native deployment](../ops/native/README.md) and [keeper cutover](KEEPER_CUTOVER.md).
+This is a cash-only testnet release. Earning, mainnet security, long-term uptime and browser-wallet financial signing remain separate acceptance work. Frontend publication is now verified separately. Its API-origin change restarted only `nabungfi-api`; the keeper's PID remained unchanged and both services were active afterward. Operational commands, permissions and rollback are documented in [native deployment](../ops/native/README.md) and [keeper cutover](KEEPER_CUTOVER.md).

@@ -1,0 +1,40 @@
+{
+  "environment": "testnet",
+  "deployedAt": "2026-10-05T06:27:10.193Z",
+  "frontendOrigin": "https://nabungfi.vercel.app",
+  "apiOrigin": "https://nabungfi-api.endpx.cloud",
+  "projectName": "nabungfi",
+  "projectId": "prj_SABEWoLaQ6OP1UUlLhCbfetvWXea",
+  "deploymentId": "dpl_EmTxEFBU74U6FE1XKwBmaFqQSUQt",
+  "deploymentUrl": "https://nabungfi-fcn7m24pj-openclaws-projects-4eb1d9c1.vercel.app",
+  "sourceCommit": "10f75f78b934e86f1a8b270b42877f3f39ef3b50",
+  "readyState": "READY",
+  "deploymentMethod": "official-cli-from-tracked-source-archive",
+  "gitAutoDeployment": false,
+  "rootDirectory": "apps/web",
+  "framework": "vite",
+  "nodeVersion": "24.x",
+  "pnpmVersion": "10.21.0",
+  "publicBuildVariableNames": [
+    "VITE_PRIVY_APP_ID",
+    "VITE_API_ORIGIN",
+    "VITE_DISABLE_REACT_DEVTOOLS"
+  ],
+  "verification": {
+    "liveHttpChecksPassed": 21,
+    "publicProductionAlias": true,
+    "privySdkInitialized": true,
+    "privyWalletPickerOpened": true,
+    "originalGoalDeepLinkPreserved": true,
+    "exactApiOriginAccepted": true,
+    "unknownAndHttpOriginsRejected": true,
+    "protectedEndpointsUnauthenticatedStatus": 401,
+    "landingLoginReflowWidths": [320, 390, 768, 1440],
+    "publicPreviewAssembledPieces": 100,
+    "apiAndKeeperActive": true,
+    "keeperPidUnchangedDuringApiConfiguration": true,
+    "completedLiveAuthenticationTested": false,
+    "financialTransactionsSubmitted": 0,
+    "physicalDevicePwaInstallationTested": false
+  }
+}

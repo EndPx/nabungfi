@@ -1,5 +1,7 @@
 # Vercel frontend deployment
 
+The testnet frontend is live at **https://nabungfi.vercel.app**. Landing: `/`; sign-in: `/login`; protected workspace: `/app/goals`. The Vercel production deployment is `dpl_EmTxEFBU74U6FE1XKwBmaFqQSUQt`, built from pushed commit `10f75f78b934e86f1a8b270b42877f3f39ef3b50` on 5 October 2026. [Sanitized release record](deployments/vercel-testnet.json).
+
 Use the NabungFi monorepo with **Root Directory `apps/web`**, framework **Vite**, Node **24.x**, install command `pnpm install --filter @nabungfi/web... --frozen-lockfile`, build command `pnpm build`, and output directory `dist`. Include files outside the root directory so the workspace package `shared` and root pnpm lockfile are available. The filtered install selects the frontend and its workspace dependencies. The committed `vercel.json` defines SPA navigation, public static asset caching and basic browser security headers. It does not host the API or keeper.
 
 Set these public build variables in each approved deployment environment:
@@ -25,6 +27,22 @@ Verify the deployed build, not only localhost:
 5. Install on a supported browser or use Safari's Share → Add to Home Screen. Offline mode may serve the public shell but cannot send or replay financial actions.
 6. Leave an unresolved wallet request and confirm an update cannot interrupt it. Reconcile or owner-attest a recognized wallet rejection before choosing Update.
 
-The release remains a testnet app with cash USDC and goal locks. The API and operator have a separate native VPS deployment; see [VPS evidence](../../docs/VPS_DEPLOYMENT.md). Mainnet deployment and strategy yield require separate verification. Vercel publication and its exact Privy/API origin checks remain pending. Builds in a Vercel environment fail early if the public Privy app ID or a valid HTTPS API origin is missing. Local production previews can still use an explicit same-origin API proxy.
+The release remains a testnet app with cash USDC and goal locks. The API and operator have a separate native VPS deployment; see [VPS evidence](../../docs/VPS_DEPLOYMENT.md). Mainnet deployment and strategy yield require separate verification. Builds in a Vercel environment fail early if the public Privy app ID or a valid HTTPS API origin is missing. Local production previews can still use an explicit same-origin API proxy.
+
+## Observed live release — 5 October 2026
+
+Vercel's cloud build completed and the production alias returned public HTTP 200 without a Vercel account. Deployment used the official CLI with a clean `git archive` of the pushed source commit, containing tracked files only. No local `.env`, research, private runtime state or credentials were uploaded. The project contains only the three public build variables listed above; its API origin is `https://nabungfi-api.endpx.cloud`.
+
+Twenty-one live HTTP checks passed: SPA entry paths, manifest and four network PNGs, 192/512/maskable icons, service-worker content type and no-store policy, immutable hashed JavaScript, exact API CORS, authenticated endpoint denial, authorization preflight, preserved planned origin and rejected unknown/HTTP origins. The API allowlist change affected only `nabungfi-api`; both API and keeper were active afterward and the keeper PID was unchanged.
+
+The live browser exercised landing → Open app → `/login`, initialized the real Privy SDK and opened its MetaMask/Coinbase/Rainbow/Other wallets picker. `/app/goals?goal=car-example` redirected to sign-in with its original internal destination retained and no workspace navigation. Landing and login DOM reflow checks passed at 320/390/768/1440px. The public preview rendered the 100-piece car and exposed assembly/orbit controls. No console errors were recorded during these checks.
+
+The public Privy application configuration currently reports an empty `allowed_domains` list. No Privy dashboard settings or credentials were changed for this deployment. SDK initialization and the wallet picker establish availability from the live origin; they do not establish a completed authenticated user session. Genuine email/OTP or owner-wallet sign-in, matching backend redirect, financial actions and physical-device PWA installation remain separate acceptance steps. Private HTTP, browser and screenshot evidence is under `.local/vercel-qa/`.
+
+## Subsequent releases
+
+The Vercel project is `nabungfi` under `openclaws-projects-4eb1d9c1`. Its GitHub connection was rejected because the signed-in Vercel account lacks repository write/admin access. This release is published through CLI; pushing GitHub alone does not trigger a new deployment until the Git integration is authorized. Do not claim automatic deployment is enabled. Link an approved clean source checkout to this project, deploy from its monorepo root with `vercel deploy --prod`, and verify the resulting alias and source revision. Follow [Vercel's monorepo CLI instructions](https://vercel.com/docs/monorepos#add-a-monorepo-through-vercel-cli).
+
+The custom frontend origin `https://nabungfi.endpx.cloud` remains reserved in the API allowlist but no frontend DNS/domain change was made. Additional preview origins must be approved individually before authenticating against the live API.
 
 Primary references: [Vite on Vercel](https://vercel.com/docs/frameworks/frontend/vite), [Vercel configuration](https://vercel.com/docs/project-configuration/vercel-json), [Privy React installation](https://docs.privy.io/basics/react/installation), and [Privy Solana transaction flow](https://docs.privy.io/wallets/using-wallets/solana/send-a-transaction).
