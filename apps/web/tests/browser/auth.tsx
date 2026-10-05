@@ -1,5 +1,5 @@
 // Isolated state fixture. No Privy, API, wallet, credentials or transactions.
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import type { SessionDTO } from "@nabungfi/shared/application";
 import { LoginPage } from "../../src/LoginPage";
@@ -16,7 +16,11 @@ function AuthFixture() {
   const [session, setSession] = useState<SessionDTO | null>(null);
   const [wallet, setWallet] = useState(false);
   const [sent, setSent] = useState(0);
+  const [googlePending, setGooglePending] = useState(false);
+  const [googleCalls, setGoogleCalls] = useState(0);
+  const googleResult = useRef<{ resolve: () => void; reject: (error: Error) => void } | null>(null);
   const unavailable = new URLSearchParams(location.search).has("unavailable");
+  const offline = new URLSearchParams(location.search).has("offline");
   const returnTo = loginReturnTarget(location.search);
   const grant = (subject: string) => setSession({ user: { id: "db-example", privySubject: subject, wallets: [] }, privyAppId: "fixture", profile: "testnet", chains: ["solana", "base"] });
   const verified = hasVerifiedSession({ ready: true, authenticated, userId: "did:privy:example", appId: "fixture", session });
@@ -25,12 +29,24 @@ function AuthFixture() {
       <p className="fixture-note" role="status">Authentication state fixture. All codes and sessions are synthetic; no external sign-in occurs.</p>
       {!verified ? <LoginPage
         status={unavailable ? "unavailable" : authenticated ? "verifying" : "ready"}
+        offline={offline}
         sendCode={async () => { await new Promise(resolve => setTimeout(resolve, 150)); setSent(value => value + 1); }}
         verifyCode={async code => { if (code !== "123456") throw new Error("The example code is incorrect."); setAuthenticated(true); }}
         walletLogin={() => setWallet(true)}
+        googleLogin={() => {
+          setGoogleCalls(value => value + 1);
+          setGooglePending(true);
+          return new Promise<void>((resolve, reject) => { googleResult.current = { resolve, reject }; });
+        }}
+        googleBusy={googlePending}
       /> : <Shell destination="goals" onNavigate={() => undefined} pending={false} account="Example account"><h1>Example verified workspace</h1><p data-testid="return-target">{returnTo}</p></Shell>}
       <div className="fixture-controls">
         <span data-testid="codes-sent">{sent}</span>
+        <span data-testid="google-login-requests">{googleCalls}</span>
+        {googlePending && <>
+          <button onClick={() => { setGooglePending(false); googleResult.current?.reject(new Error("Google sign-in was cancelled. Try again or use email.")); }}>Cancel example Google sign-in</button>
+          <button onClick={() => { setGooglePending(false); setAuthenticated(true); googleResult.current?.resolve(); }}>Complete example Google sign-in</button>
+        </>}
         {wallet && <p role="status">Example wallet login requested.</p>}
         {authenticated && !verified && <>
           <button onClick={() => grant("did:privy:another")}>Return mismatched example session</button>

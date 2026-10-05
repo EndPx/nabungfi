@@ -1,4 +1,4 @@
-import { Captcha, PrivyProvider, useLoginWithEmail, useModalStatus } from "@privy-io/react-auth";
+import { Captcha, PrivyProvider, useLoginWithEmail, useLoginWithOAuth, useModalStatus } from "@privy-io/react-auth";
 import { useEffect } from "react";
 import { createSolanaRpc, createSolanaRpcSubscriptions } from "@solana/kit";
 import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
@@ -42,7 +42,7 @@ export default function LiveApp() {
     <PrivyProvider
       appId={appId}
       config={{
-        loginMethods: ["email", "wallet"],
+        loginMethods: ["google", "email", "wallet"],
         appearance: {
           theme: "light",
           accentColor: "#215a92",
@@ -108,6 +108,7 @@ function AuthenticatedApp() {
     createMissingWallet,
   } = useLiveController();
   const emailLogin = useLoginWithEmail();
+  const googleLogin = useLoginWithOAuth();
   const { isOpen } = useModalStatus();
   const verified = hasVerifiedSession({ ready, authenticated, userId: user?.id,
     appId: import.meta.env.VITE_PRIVY_APP_ID, session });
@@ -136,6 +137,12 @@ function AuthenticatedApp() {
       sendCode={email => emailLogin.sendCode({ email })}
       verifyCode={code => emailLogin.loginWithCode({ code })}
       walletLogin={() => login({ loginMethods: ["wallet"] })}
+      googleLogin={async () => {
+        try { await googleLogin.initOAuth({ provider: "google" }); }
+        catch { throw new Error("Google sign-in could not finish. Try again or use email."); }
+      }}
+      googleBusy={googleLogin.state.status === "loading"}
+      googleError={googleLogin.state.status === "error" ? "Google sign-in could not finish. Try again or use email." : undefined}
       captcha={!authenticated && !isOpen ? <Captcha /> : undefined}
     />;
   }

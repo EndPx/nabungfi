@@ -64,6 +64,7 @@ export default defineConfig({
           "/chains/base.png",
           "/chains/arbitrum.png",
           "/chains/ethereum.png",
+          "/providers/google.png",
           "/models/car.jpg",
           "/models/laptop.jpg",
           "/models/house.jpg",

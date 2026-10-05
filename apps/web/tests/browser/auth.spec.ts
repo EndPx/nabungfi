@@ -45,3 +45,44 @@ test("sign-in layout reflows and retains labelled keyboard controls", async ({ p
     expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
   }
 });
+
+test("Google failure restores login choices without opening the workspace", async ({ page }) => {
+  await page.goto("/tests/browser/auth.html");
+  await page.getByRole("button", { name: "Continue with Google", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Connecting to Google…", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Continue with a wallet", exact: true })).toBeDisabled();
+  await expect(page.getByLabel("Email address", { exact: true })).toBeDisabled();
+  await expect(page.getByTestId("google-login-requests")).toHaveText("1");
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Cancel example Google sign-in" }).click();
+  await expect(page.getByRole("alert")).toContainText("cancelled");
+  await expect(page.getByRole("button", { name: "Continue with Google", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Continue with a wallet", exact: true })).toBeEnabled();
+  await page.getByLabel("Email address", { exact: true }).fill("visitor@example.test");
+  await page.getByRole("button", { name: "Send code", exact: true }).click();
+  await expect(page.getByLabel("Verification code", { exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
+});
+
+test("Google authentication still requires a matching backend identity and retains the goal", async ({ page }) => {
+  await page.goto("/tests/browser/auth.html?next=%2Fapp%2Fgoals%3Fgoal%3Dcar");
+  await page.getByRole("button", { name: "Continue with Google", exact: true }).click();
+  await page.getByRole("button", { name: "Complete example Google sign-in" }).click();
+  await expect(page.getByRole("heading", { name: "Verifying your account" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Return mismatched example session" }).click();
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Verify matching example session" }).click();
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
+  await expect(page.getByTestId("return-target")).toHaveText("/app/goals?goal=car");
+});
+
+test("Google sign-in remains disabled when offline or unconfigured", async ({ page }) => {
+  for (const query of ["offline", "unavailable"]) {
+    await page.goto("/tests/browser/auth.html?" + query);
+    await expect(page.getByRole("button", { name: "Continue with Google", exact: true })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Continue with a wallet", exact: true })).toBeDisabled();
+    await expect(page.getByTestId("google-login-requests")).toHaveText("0");
+    await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
+  }
+});

@@ -18,6 +18,14 @@ After the frontend URL and API host are chosen, authorize the exact frontend URL
 
 The Privy provider offers email and wallet login, requests embedded EVM/Solana wallets for users without wallets, and keeps external wallet connections available. A missing wallet family can be created explicitly from Wallets. Owner choices remain unavailable until the API verifies the updated Privy user. New wallets have no invented gas or USDC balance; fund testnet gas and Circle test USDC before signing setup or deposits.
 
+## Google sign-in
+
+The frontend now includes a direct `Continue with Google` action using the installed Privy `useLoginWithOAuth` hook, alongside email and wallet. Loading blocks overlapping methods; errors do not echo OAuth responses, and a successful provider session still requires the same matching backend identity before workspace access. The original Google G PNG is served locally at `/providers/google.png`, sourced from [Google's sign-in branding page](https://developers.google.com/identity/branding-guidelines) and included in the public PWA asset cache.
+
+Enable Google for the exact NabungFi application on Privy's Authentication → Login methods page before promoting this source build. The development app can use Privy's existing default credentials, so Google Cloud Client ID/secret setup is optional at this stage. Leave Return OAuth tokens off and additional scopes empty; the basic provider scopes are `openid`, `email`, `profile`. Google Cloud currently requests account MFA for console access; no Google Cloud security or OAuth credentials were changed during this implementation. Custom credentials and branding can be configured separately after the account owner completes that requirement. [Privy provider configuration](https://docs.privy.io/basics/get-started/dashboard/configure-login-methods#default-vs-custom-credentials) · [Privy OAuth hook](https://docs.privy.io/authentication/user-authentication/login-methods/oauth).
+
+Source verification: the production build, 48 unit checks and 32 isolated browser checks passed, including Google failure recovery, loading isolation, offline/unconfigured denial, matching/mismatched backend identities, original goal destination and responsive/accessibility checks. These fixtures use synthetic sessions and do not constitute a completed Google authentication. Provider activation and a refreshed Vercel deployment must be verified separately.
+
 Verify the deployed build, not only localhost:
 
 1. Confirm `/manifest.webmanifest`, the 192/512/maskable icons and `/sw.js` return their proper content types. SW/index must revalidate; hashed assets can be immutable.
