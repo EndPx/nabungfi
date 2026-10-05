@@ -1,6 +1,6 @@
 # Vercel frontend deployment
 
-Use the NabungFi monorepo with **Root Directory `apps/web`**, framework **Vite**, install command `pnpm install --frozen-lockfile`, build command `pnpm build`, and output directory `dist`. Include files outside the root directory so the workspace package `shared` and root pnpm lockfile are available. The committed `vercel.json` defines SPA navigation, public static asset caching and basic browser security headers. It does not host the API or keeper.
+Use the NabungFi monorepo with **Root Directory `apps/web`**, framework **Vite**, Node **24.x**, install command `pnpm install --filter @nabungfi/web... --frozen-lockfile`, build command `pnpm build`, and output directory `dist`. Include files outside the root directory so the workspace package `shared` and root pnpm lockfile are available. The filtered install selects the frontend and its workspace dependencies. The committed `vercel.json` defines SPA navigation, public static asset caching and basic browser security headers. It does not host the API or keeper.
 
 Set these public build variables in each approved deployment environment:
 
