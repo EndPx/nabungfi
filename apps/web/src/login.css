@@ -7,7 +7,6 @@
 .login-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .login-story h2 { margin-top: var(--space-8); font: 500 var(--text-balance)/1.12 var(--font-display); letter-spacing: -.035em; }
 .login-story-content > p { color: var(--muted); line-height: 1.6; margin-top: var(--space-4); }
-.login-release { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--muted); }
 .login-side { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; padding: var(--space-20) var(--space-10); }
 .login-back { position: absolute; top: var(--space-6); right: var(--space-8); display: inline-flex; gap: var(--space-2); align-items: center; min-height: var(--touch-min); color: var(--muted); font-size: var(--text-sm); text-decoration: none; }
 .login-card { width: 100%; max-width: 440px; padding: var(--space-8); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-stage); box-shadow: var(--surface-shadow); }
@@ -27,14 +26,13 @@
 .login-divider { display: flex; align-items: center; gap: var(--space-4); color: var(--muted); font-size: var(--text-xs); margin-block: var(--space-6); }
 .login-divider::before, .login-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .login-wallet, .login-google { width: 100%; }
+.login-methods { display: grid; gap: var(--space-3); }
 .login-google img { flex: none; object-fit: contain; }
 .login-privy { display: flex; align-items: center; justify-content: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--muted); margin-top: var(--space-6); }
-.login-footnote { max-width: 440px; font-size: var(--text-xs); color: var(--muted); line-height: 1.6; text-align: center; margin-block: var(--space-6) var(--space-2); }
 @media(max-width: 899px) {
   .login-page { grid-template-columns: 1fr; }
   .login-story { padding: var(--space-6); background: var(--canvas); }
   .login-story-content { display: none; }
-  .login-release { margin-top: var(--space-4); font-size: var(--text-xs); }
   .login-side { padding: var(--space-6) var(--space-5) var(--space-10); }
   .login-back { position: static; align-self: flex-start; margin-bottom: var(--space-4); }
   .login-card { padding: var(--space-6); }

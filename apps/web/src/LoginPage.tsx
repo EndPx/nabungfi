@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import { ArrowLeft, ArrowRight, LockKeyhole, Wallet, Box } from "./icons";
+import { ArrowLeft, ArrowRight, LockKeyhole, Wallet } from "./icons";
 import { Button, Logo } from "./ui";
 import { GoalIllustration } from "./GoalIllustration";
 import "./login.css";
@@ -29,7 +29,6 @@ export function LoginPage({ status = "initializing", offline = false, error, ret
           <h2>Little by little.<br />Something worth building.</h2>
           <p>Your goals, taking shape with every deposit.</p>
         </div>
-        <span className="login-release"><Box size={18} />Multichain USDC · Testnet</span>
       </section>
       <section className="login-side" aria-label="Account sign-in">
         <a className="login-back" href="/"><ArrowLeft size={16} />Back to NabungFi</a>
@@ -54,8 +53,6 @@ export function LoginPage({ status = "initializing", offline = false, error, ret
           {status === "unavailable" && <p className="login-error" role="alert">Sign-in is unavailable for this deployment.</p>}
           <p className="login-privy"><LockKeyhole size={14} />Authentication by Privy</p>
         </div>
-        <p className="login-footnote">Test tokens only. Each goal remains locked until its target is reached and completion is verified.</p>
-        <a className="landing-text-link" href="/?demo=1">Try the build without signing in<ArrowRight size={16} /></a>
       </section>
     </main>
   );
@@ -90,11 +87,16 @@ function EmailLoginForm({ disabled, sendCode, verifyCode, walletLogin, googleLog
   };
   return (
     <>
-      <Button variant="secondary" className="login-google" busy={googleBusy}
-        disabled={blocked || busy || !googleLogin} onClick={() => googleLogin && void act(googleLogin)}>
-        <img src="/providers/google.png" width="20" height="20" alt="" aria-hidden="true" />
-        {googleBusy ? "Connecting to Google…" : "Continue with Google"}
-      </Button>
+      <div className="login-methods" role="group" aria-label="Sign-in options">
+        <Button variant="secondary" className="login-google" busy={googleBusy}
+          disabled={blocked || busy || !googleLogin} onClick={() => googleLogin && void act(googleLogin)}>
+          <img src="/providers/google.png" width="20" height="20" alt="" aria-hidden="true" />
+          {googleBusy ? "Connecting to Google…" : "Continue with Google"}
+        </Button>
+        <Button variant="secondary" className="login-wallet" disabled={blocked || busy || !walletLogin} onClick={walletLogin}>
+          <Wallet size={20} />Continue with a wallet
+        </Button>
+      </div>
       <div className="login-divider"><span>or use email</span></div>
       <form className="login-form" onSubmit={submit}>
         {emailStage ? (
@@ -123,10 +125,6 @@ function EmailLoginForm({ disabled, sendCode, verifyCode, walletLogin, googleLog
           </div>
         )}
       </form>
-      <div className="login-divider"><span>or</span></div>
-      <Button variant="secondary" className="login-wallet" disabled={blocked || busy || !walletLogin} onClick={walletLogin}>
-        <Wallet size={20} />Continue with a wallet
-      </Button>
     </>
   );
 }

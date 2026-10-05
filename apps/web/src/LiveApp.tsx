@@ -275,7 +275,7 @@ function AuthenticatedApp() {
                     <h2>Your first build starts here.</h2>
                     <p>
                       Choose a goal and its target. Set up your vaults, then add
-                      testnet USDC at your own pace.
+                      USDC at your own pace.
                     </p>
                     <Button
                       variant="build"

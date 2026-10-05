@@ -81,10 +81,6 @@ export function Welcome({
         {offline ? "Reconnect to sign in" : ready ? "Sign in" : "Connecting…"}
         <ArrowRight size={18} />
       </Button>
-      <p className="live-help">
-        Test tokens only. Each goal’s deposits remain locked until its own
-        target is reached.
-      </p>
       {!configured && (
         <p className="live-error" role="alert">
           Sign-in is unavailable for this deployment.
@@ -647,8 +643,7 @@ export function CreateGoalModal({
             onChange={(event) => setAccepted(event.target.checked)}
           />
           I understand deposits stay locked until this goal reaches its target,
-          even if that takes indefinitely. This testnet release does not earn
-          yield.
+          even if that takes indefinitely. Earning is currently inactive.
         </label>
         {error && (
           <p className="live-error" role="alert">

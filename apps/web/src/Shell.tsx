@@ -82,10 +82,6 @@ export function Shell({
             <strong>{destinations.find((item) => item.id === destination)?.label}</strong>
           </span>
           <div className="live-header-tools">
-            <span className="environment-badge">
-              <span />
-              Testnet savings
-            </span>
             <div className="live-account">{account}</div>
           </div>
         </header>
@@ -123,10 +119,6 @@ export function Shell({
             </div>
           )}
           {children}
-          <footer className="live-footer">
-            <span>Built for the things you’re building toward.</span>
-            <span>Test tokens only · Yield is not active</span>
-          </footer>
         </main>
       </div>
     </div>

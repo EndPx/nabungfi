@@ -241,24 +241,6 @@ html {
   gap: 12px;
   align-items: center;
 }
-.environment-badge {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  font-size: var(--text-sm);
-  color: var(--lime-dark);
-  white-space: nowrap;
-  background: var(--green-soft);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-pill);
-  font-size: var(--text-xs);
-}
-.environment-badge > span {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--lime-dark);
-}
 .live-main {
   max-width: 1440px;
   padding: 40px;
@@ -543,16 +525,6 @@ html {
   max-width: 44ch;
   line-height: 1.5;
   color: var(--muted);
-}
-.live-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding-top: 40px;
-  font-size: var(--text-xs);
-  color: var(--muted);
-  line-height: 1.5;
 }
 .live-panel {
   border: 1px solid var(--line);
@@ -1035,9 +1007,6 @@ html {
   .mobile-brand .brand-mark {
     width: 28px;
   }
-  .environment-badge {
-    display: none;
-  }
   .live-location {
     display: none;
   }
@@ -1046,9 +1015,6 @@ html {
   }
   .live-main {
     min-height: calc(100dvh - 168px);
-  }
-  .live-footer {
-    padding-top: 32px;
   }
   .welcome-grid {
     padding-block: 24px;
