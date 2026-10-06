@@ -1,7 +1,7 @@
 // Actual production entry, separate from the component fixture lifecycle test.
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { readFile, stat, mkdir, writeFile } from "node:fs/promises";
+import { readFile, readdir, stat, mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { chromium } from "@playwright/test";
@@ -30,6 +30,25 @@ try {
   const errors = [], accountRequests = [];
   page.on("pageerror", error => errors.push(error.message));
   page.on("request", request => { if (new URL(request.url()).pathname.startsWith("/api/")) accountRequests.push(request.url()); });
+  const css = (await readdir(path.join(root, "assets"))).filter(file => /^(index|LiveApp|live)-.*\.css$/.test(file));
+  const mainCss = css.find(file => file.startsWith("index-"));
+  const appCss = css.find(file => file.startsWith("LiveApp-"));
+  const baseCss = css.find(file => file.startsWith("live-"));
+  assert.ok(mainCss && appCss && baseCss, "Actual normal-build CSS chunks are present");
+  let cssOrdersChecked = 0;
+  for (const width of [375, 768, 1280]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const order of [[appCss, baseCss], [baseCss, appCss]]) {
+      await page.setContent(`<html><head>${[mainCss, ...order].map(file => `<link rel="stylesheet" href="${origin}/assets/${file}">`).join("")}</head><body><div class="live-shell"><nav class="live-navigation"><button class="is-active" aria-current="page">Goals</button></nav><section class="portfolio-summary"><h2>Total saved</h2></section></div></body></html>`, { waitUntil: "networkidle" });
+      const skin = await page.evaluate(() => ({ active: getComputedStyle(document.querySelector(".live-navigation button")).backgroundColor, pocket: getComputedStyle(document.querySelector(".portfolio-summary")).backgroundColor, pocketImage: getComputedStyle(document.querySelector(".portfolio-summary")).backgroundImage, dockRadius: getComputedStyle(document.querySelector(".live-navigation")).borderRadius }));
+      assert.equal(skin.active, "rgb(255, 244, 204)", "App selection color wins independently of CSS loading order");
+      assert.equal(skin.pocket, "rgb(244, 244, 235)");
+      assert.equal(skin.pocketImage, "none");
+      if (width < 900) assert.equal(skin.dockRadius, "0px");
+      cssOrdersChecked++;
+    }
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(origin + "/");
   await page.evaluate(async () => { await navigator.serviceWorker.ready; });
   await page.reload();
@@ -49,7 +68,7 @@ try {
   assert.equal(errors.length, 0);
   assert.equal(accountRequests.length, 0);
   await page.screenshot({ path: path.join(out, "cold-offline-app.png") });
-  const result = { actualProductionEntry: true, checks: ["Manifest has standalone mobile/desktop icons, screenshots and scoped shortcuts", "Cold offline app launch remains readable without loading the uncached authentication SDK", "Offline Google/signing controls are disabled and the intended goal URL is preserved", "No private account API requests, page errors or financial transactions"], accountRequests, errors, financialTransactions: 0 };
+  const result = { actualProductionEntry: true, cssOrdersChecked, checks: ["Emitted app CSS keeps the approved skin at three widths in both chunk-loading orders", "Manifest has standalone mobile/desktop icons, screenshots and scoped shortcuts", "Cold offline app launch remains readable without loading the uncached authentication SDK", "Offline Google/signing controls are disabled and the intended goal URL is preserved", "No private account API requests, page errors or financial transactions"], accountRequests, errors, financialTransactions: 0 };
   await writeFile(path.join(out, "result.json"), JSON.stringify(result, null, 2));
   process.stdout.write(JSON.stringify(result, null, 2) + "\n");
 } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }

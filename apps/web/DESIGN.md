@@ -20,6 +20,8 @@ Installation completion in a browser tab is separate from running in a standalon
 
 A cold offline entry shows the cached login shell and retains its deep link, without attempting an uncached Privy SDK chunk. Once SDK loading has begun, a connectivity change cannot unmount a running wallet session. This is an entry/loading boundary, never an authentication shortcut.
 
+Refinement selectors are rooted under `.live-shell`, with higher specificity than the shared base stylesheet. Vite may load shared and route CSS chunks in either order; the normal-build acceptance test renders both orders at 375/768/1280px. A fixture that bundles all CSS into one file cannot establish this production cascade behavior.
+
 ## High-end UI refinement — 4 October 2026
 
 The visual direction is a crafted savings workshop: confident Outfit typography, warm paper, precise financial labels and a dimensional construction object. Blue/yellow/red remain the identity; color is spent on actions, navigation and small block details. Depth belongs to the hero object, raised controls and focused overlays, rather than identical shadows on every section. The memorable interaction remains assembling a savings goal, not a new decorative cursor or chart.

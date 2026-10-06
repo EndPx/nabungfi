@@ -15,6 +15,7 @@ A new worker waits. The user can activate it through Update after the current un
 - Unit coverage includes authenticated/API/mutation bypass, original financial intent, amount precision and independent goal eligibility.
 - The production fixture test installs the actual generated worker, reloads offline, rejects an offline mutation, finds no private API responses in its cache, blocks Update while the fixture has a pending wallet operation, and activates only after explicit consent.
 - The actual normal production build test launches the protected app route offline after visiting only the public landing. It retains a readable login page and target URL with zero account API requests and zero page errors.
+- The same release test renders the actual emitted CSS in both route/base loading orders at three widths. Scoped app styles keep the approved yellow selection, warm pocket surface and full-width mobile dock even when a shared stylesheet arrives later.
 - Browser tests cover goal filters without changing the portfolio, correct selected identity, balance hiding, install cancellation/completion, standalone presentation and unobscured form errors at 375/768/1280px.
 - An independent visitor understood the product and indefinite per-goal commitment from the UI alone. Its gas-label and form-error findings were repaired and independently rechecked. Its separate production probe confirmed the update-store race and three corrected fresh navigations.
 
