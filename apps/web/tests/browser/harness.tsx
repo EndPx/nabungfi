@@ -1,5 +1,6 @@
 // Isolated component fixture, not imported by the application or built into dist.
 // No API calls, Privy session, wallet SDK, signatures or chain transactions.
+import "../../src/wallet-compat";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import type {

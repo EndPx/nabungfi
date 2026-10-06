@@ -1,6 +1,15 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test("the browser can encode and decode Solana transaction bytes for its wallet SDK", async ({page}) => {
+  await page.goto("/tests/browser/harness.html");
+  const bytes = await page.evaluate(() => {
+    const buffer = (globalThis as any).Buffer;
+    return {encoded:buffer.from(new Uint8Array([0,255,128,17])).toString("base64"),decoded:[...buffer.from("AP+AEQ==","base64")]};
+  });
+  expect(bytes).toEqual({encoded:"AP+AEQ==",decoded:[0,255,128,17]});
+});
+
 test("native review releases the top layer for the wallet confirmation portal", async ({page}) => {
   await page.goto("/tests/browser/harness.html?view=wallet&wallet-handoff=1");
   await page.getByRole("button", {name:"Confirm in wallet"}).click();

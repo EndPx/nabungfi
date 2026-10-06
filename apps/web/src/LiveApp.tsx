@@ -1,3 +1,4 @@
+import "./wallet-compat";
 import { Captcha, PrivyProvider, useLoginWithEmail, useLoginWithOAuth, useModalStatus } from "@privy-io/react-auth";
 import { useEffect } from "react";
 import { createSolanaRpc, createSolanaRpcSubscriptions } from "@solana/kit";

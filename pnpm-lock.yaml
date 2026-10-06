@@ -71,6 +71,9 @@ importers:
       '@solana/kit':
         specifier: 8.4.0
         version: 8.4.0(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)
+      buffer:
+        specifier: 6.0.3
+        version: 6.0.3
       gsap:
         specifier: 3.15.0
         version: 3.15.0
