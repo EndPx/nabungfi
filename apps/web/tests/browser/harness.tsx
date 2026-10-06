@@ -93,8 +93,9 @@ function Harness() {
     params.get("view") === "wallet" ? "wallet" : null,
   );
   const [walletExpiry] = useState(() =>
-    new Date(Date.now() + 2000).toISOString(),
+    new Date(Date.now() + (params.get("wallet-handoff") === "1" ? 60000 : 2000)).toISOString(),
   );
+  const [walletBusy, setWalletBusy] = useState(false);
   const [action, setAction] = useState("");
   const recordStep = (
     action: GoalStepAction,
@@ -222,13 +223,17 @@ function Harness() {
             state: "planned",
             createdAt: walletExpiry,
           }}
-          busy={false}
+          busy={walletBusy}
           offline={false}
           onClose={() => setModal(null)}
-          confirm={() => setAction("confirm-wallet")}
+          confirm={() => {
+            setAction("confirm-wallet");
+            if (params.get("wallet-handoff") === "1") setWalletBusy(true);
+          }}
           refreshPlan={() => setAction("refresh-original")}
         />
       )}
+      {walletBusy && <div role="dialog" aria-label="Example wallet confirmation"><p>Synthetic wallet portal. No transaction is signed.</p><button onClick={() => setAction("wallet-portal-approved")}>Example wallet approve</button></div>}
       <output aria-label="Fixture requested action">{action}</output>
     </Shell>
   );

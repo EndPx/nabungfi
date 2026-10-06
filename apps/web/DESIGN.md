@@ -115,6 +115,7 @@ The document owns scrolling. Desktop sidebar is 248px. Below 900px, the app uses
 - Fields: visible label, helper, focus, entered value, validation error. Exact six-decimal USDC input and immutable wallet review remain unchanged.
 - Panels: warm paper, 1px border and card radius. Empty states point to the next valid action; unavailable reads show unavailable, never fabricated zero.
 - Dialog: native focus containment, Escape, labelled title, focus restoration, narrow-screen reflow. Lock consent and explicit wallet confirmation remain required.
+- Wallet handoff: remove the native review dialog while a wallet request is busy, so its top-layer focus containment cannot cover the Privy confirmation portal. Keep the original request and recovery state; a closed review never authorizes a replacement transaction.
 - Navigation: icon plus visible text, blue tint and `aria-current` for selection. Settings and install controls retain touch-sized targets.
 - Status: distinct text/icon for pending, failed, offline, unavailable and achieved. An example illustration never establishes a claimable savings goal.
 

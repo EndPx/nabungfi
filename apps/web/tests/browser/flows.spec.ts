@@ -1,6 +1,15 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test("native review releases the top layer for the wallet confirmation portal", async ({page}) => {
+  await page.goto("/tests/browser/harness.html?view=wallet&wallet-handoff=1");
+  await page.getByRole("button", {name:"Confirm in wallet"}).click();
+  await expect(page.locator("dialog[open]")).toHaveCount(0);
+  await expect(page.getByRole("dialog", {name:"Example wallet confirmation"})).toBeVisible();
+  await page.getByRole("button", {name:"Example wallet approve"}).click();
+  await expect(page.getByLabel("Fixture requested action")).toHaveText("wallet-portal-approved");
+});
+
 test("wallet review expires visibly and only requests a refresh of its unsigned original", async ({
   page,
 }) => {

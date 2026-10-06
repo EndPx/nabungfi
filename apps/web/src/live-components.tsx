@@ -833,6 +833,9 @@ export function WalletStepModal({
     recovery?.state === "planned" &&
     plan &&
     new Date(plan.expiresAt).getTime() > Math.max(clock, Date.now());
+  // A native modal makes the SDK's body portal inert and covers it in the top layer.
+  // Release the review during handoff; the controller retains the original request.
+  if (busy) return null;
   return (
     <Dialog
       title={actions[step.action]}
