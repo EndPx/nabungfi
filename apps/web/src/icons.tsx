@@ -110,6 +110,11 @@ export const ShieldCheck = icon(
   </>,
 );
 export const Plus = icon("Plus", <path d="M12 4v16M4 12h16" />);
+export const Faucet = icon("Faucets", <>
+  <path d="M4 4h12v5h5v5h-5V9H4ZM8 1v3m-3-3h6" />
+  <path d="M17 17h4v5h-4Z" stroke="none" fill={blue} />
+  <path d="M3 16h8v6H3Zm1-2h2v2H4m4-2h2v2H8" stroke="none" fill={yellow} />
+</>);
 export const Search = icon("Search", <path d="M3 3h11v11H3ZM14 14l7 7" />);
 export const Eye = icon("Show balance", <>
   <path d="M2 9l5-5h10l5 5v6l-5 5H7l-5-5Z" />

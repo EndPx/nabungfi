@@ -22,6 +22,7 @@ import {
   SettingsPage,
 } from "../../src/account-pages";
 import { GoalsOverview } from "../../src/GoalsOverview";
+import { FaucetsPage } from "../../src/FaucetsPage";
 import { registerPwa } from "../../src/pwa";
 import { formatUsdc } from "../../src/live-api";
 import "@fontsource/outfit/latin-500.css";
@@ -165,6 +166,7 @@ function Harness() {
           setReducedMotion={setReducedMotion}
         />
       )}
+      {destination === "faucets" && <FaucetsPage wallets={params.get("missing-wallets") === "1" ? [] : [{chainType:"solana",address:goal.binding.owner.solana},{chainType:"ethereum",address:goal.binding.owner.evm}]} openWallets={() => setDestination("wallets")} />}
       {modal === "create" && (
         <CreateGoalModal
           wallets={[

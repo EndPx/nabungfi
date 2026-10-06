@@ -2,6 +2,7 @@ export const APP_DESTINATIONS = [
   "goals",
   "activity",
   "wallets",
+  "faucets",
   "settings",
 ] as const;
 export type Destination = (typeof APP_DESTINATIONS)[number];
@@ -49,7 +50,7 @@ export function safeAppReturnTarget(value: string | null | undefined) {
   if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) return fallback;
   try {
     const url = new URL(value, "https://app.invalid");
-    if (url.origin !== "https://app.invalid" || !/^\/app(?:\/(goals|activity|wallets|settings))?\/?$/.test(url.pathname)) return fallback;
+    if (url.origin !== "https://app.invalid" || !/^\/app(?:\/(goals|activity|wallets|faucets|settings))?\/?$/.test(url.pathname)) return fallback;
     const route = readAppRoute(url);
     return appHref(route.destination, route.goalId ?? undefined);
   } catch { return fallback; }

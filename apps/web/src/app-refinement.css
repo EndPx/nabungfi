@@ -95,6 +95,17 @@
 .live-shell .wallet-copy { margin-block-start: auto; align-self: flex-start; }
 .live-shell .wallet-network-marks { display: flex; gap: var(--space-2); align-items: center; }
 .live-shell .wallet-network-marks .network-mark { background: var(--app-paper); }
+.live-shell .faucet-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+.live-shell .faucet-card { display: flex; flex-direction: column; gap: var(--space-4); }
+.live-shell .faucet-heading { display: flex; align-items: center; gap: var(--space-3); }
+.live-shell .faucet-heading h2 { margin: 0 0 var(--space-1); }
+.live-shell .faucet-wallet { padding: var(--space-4); background: var(--app-pocket); border-radius: var(--radius-surface); }
+.live-shell .faucet-wallet .live-address { margin-block: var(--space-2); }
+.live-shell .faucet-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.live-shell .faucet-actions .button { flex: 1; }
+.live-shell .faucet-source { display: inline-flex; gap: var(--space-2); align-items: center; min-height: var(--touch-min); font-size: var(--text-sm); margin-block-start: auto; }
+.live-shell .faucet-note { margin-block-start: var(--space-6); }
+@media (max-width: 599px) { .live-shell .faucet-grid { grid-template-columns: minmax(0, 1fr); } }
 .live-shell .settings-install-details { font-size: var(--text-sm); width: 100%; color: var(--muted); }
 .live-shell .settings-install-details summary { min-height: var(--touch-min); display: flex; align-items: center; cursor: pointer; color: var(--ink); }
 .live-shell .settings-install-details p { padding-block-end: var(--space-2); max-width: 60ch; }
@@ -107,6 +118,8 @@
   .live-shell { padding-block-end: calc(var(--app-dock-height) + env(safe-area-inset-bottom)); }
   .live-shell .live-navigation { inset: auto 0 0; border: 0; border-block-start: 1px solid var(--app-line); border-radius: 0; box-shadow: none; background: var(--app-paper); padding: var(--space-2) var(--space-3) calc(var(--space-2) + env(safe-area-inset-bottom)); gap: var(--space-2); }
   .live-shell .live-navigation button { min-height: 64px; background: transparent; border: 0; gap: var(--space-2); border-radius: var(--radius-control); }
+  .live-shell .live-navigation { gap: var(--space-1); padding-inline: var(--space-2); }
+  .live-shell .live-navigation button { min-width: 0; padding-inline: 0; }
   .live-shell .live-navigation button svg { width: 24px; height: 24px; }
   .live-shell .live-navigation button.is-active { box-shadow: none; background: var(--yellow-soft); font-weight: 600; }
   .live-shell .live-header { padding-inline: var(--space-6); padding-block-start: max(var(--space-4), env(safe-area-inset-top)); }

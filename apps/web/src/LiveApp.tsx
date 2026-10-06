@@ -26,6 +26,7 @@ import {
 import { useLiveController } from "./useLiveController";
 import { ActivityPage, WalletsPage, SettingsPage } from "./account-pages";
 import { GoalsOverview } from "./GoalsOverview";
+import { FaucetsPage } from "./FaucetsPage";
 import "./live.css";
 import "./app-refinement.css";
 const solanaConnectors = toSolanaWalletConnectors();
@@ -258,6 +259,8 @@ function AuthenticatedApp() {
               connect={() => connectWallet()}
               link={() => linkWallet()}
             />
+          ) : destination === "faucets" ? (
+            <FaucetsPage wallets={session?.user.wallets ?? []} openWallets={() => navigate("wallets")} />
           ) : destination === "activity" ? (
             <ActivityPage
               goals={goals}

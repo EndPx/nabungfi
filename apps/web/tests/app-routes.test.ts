@@ -14,6 +14,7 @@ test("named app pages and the installed entry preserve their destinations", () =
     "goals",
     "activity",
     "wallets",
+    "faucets",
     "settings",
   ] as const) {
     const url = new URL(`https://example.test/app/${destination}`);

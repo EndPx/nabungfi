@@ -1,5 +1,11 @@
 # NabungFi interface system
 
+## Faucet navigation — 7 October 2026
+
+The user requests a dedicated Faucets menu. It is the fifth app destination, at `/app/faucets`, with the same sidebar/bottom navigation, block icon family, page heading and scoped card styles. Each of the four network cards names the actual testnet, distinguishes USDC from its native gas token, displays the verified destination wallet and offers explicit copy feedback. Links open the provider page; the app does not imply that opening a faucet sends funds or moves money between chains. Missing owner wallets lead back to Wallets. The provider's eligibility and rate limits remain visible through concise helper text and source links. Existing tokens and 44px+ touch targets are reused; the five-item dock must reflow at 320px without hiding labels.
+
+Provider sources: Circle's [public faucet](https://faucet.circle.com/) lists all four networks; Solana Foundation operates [Devnet SOL](https://faucet.solana.com/); Coinbase documents its [Base Sepolia faucet portal](https://docs.cdp.coinbase.com/wallets/demos/demo-app-tutorial); Google provides [Ethereum Sepolia ETH](https://cloud.google.com/application/web3/faucet/ethereum/sepolia); [Arbitrum's chain information](https://docs.arbitrum.io/chain-info#faucet-list) lists provider faucets. Alchemy's [Arbitrum Sepolia faucet](https://www.alchemy.com/faucets/arbitrum-sepolia) has mainnet eligibility requirements, so it is a link with an accurate note, not a promised source of funds for every fresh wallet.
+
 This is the current shared contract for the landing page, savings application, local demo and component showcase. Logo geometry and exports are specified in [BRAND.md](BRAND.md). CSS values live in `src/tokens.css`; screen styles consume those tokens.
 
 ## Pocket-based app refinement — 7 October 2026

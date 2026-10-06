@@ -3,6 +3,7 @@ import {
   History,
   Wallet,
   Settings2,
+  Faucet,
   ChevronRight,
   Download,
   WifiOff,
@@ -18,6 +19,7 @@ const destinations = [
   { id: "goals", label: "Goals", Icon: Box },
   { id: "activity", label: "Activity", Icon: History },
   { id: "wallets", label: "Wallets", Icon: Wallet },
+  { id: "faucets", label: "Faucets", Icon: Faucet },
   { id: "settings", label: "Settings", Icon: Settings2 },
 ] as const;
 

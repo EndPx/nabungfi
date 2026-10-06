@@ -23,6 +23,7 @@ test("login preserves internal destinations and goal identity without retaining 
   assert.equal(loginReturnTarget(login.search), target);
   assert.deepEqual(readAppRoute(login), { destination: "goals", goalId: "car / & laptop" });
   assert.equal(safeAppReturnTarget("/app/wallets?access_token=secret&goal=car"), "/app/wallets");
+  assert.equal(safeAppReturnTarget("/app/faucets?access_token=secret"), "/app/faucets");
   for (const value of ["https://evil.test/app", "//evil.test/app", "/\\evil.test/app", "/login?next=/login", "/app/unknown", "/app%2Fwallets", "javascript:alert(1)"])
     assert.equal(safeAppReturnTarget(value), "/app/goals");
 });
