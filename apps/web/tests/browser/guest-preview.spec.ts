@@ -9,7 +9,10 @@ test("the app's public build preview works without authentication or application
     if (url.pathname.startsWith("/api/") && !publicPrivyConfiguration) apiCalls.push(request.url());
   });
   await page.goto("/app");
-  await page.getByRole("link", { name: "Try the build without signing in", exact: false }).click();
+  await expect(page.getByRole("heading", { name: "Sign in to your workshop" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Try the build without signing in", exact: false })).toHaveCount(0);
+  await page.getByRole("link", { name: "Back to NabungFi", exact: true }).click();
+  await page.getByRole("link", { name: "Try the build", exact: true }).click();
   await expect(page.locator(".landing")).toBeVisible();
   await expect(page.locator(".car-stage")).toHaveAttribute("aria-label", /100 of 100/);
   await expect(page.getByRole("button", { name: "Try assembly", exact: true })).toBeEnabled();

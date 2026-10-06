@@ -72,6 +72,16 @@
   --content-width: 1280px;
   --app-width: 1440px;
   --sidebar-width: 248px;
+  --app-canvas: #fcfcf9;
+  --app-paper: #ffffff;
+  --app-pocket: #f4f4eb;
+  --app-line: #e5e6df;
+  --app-search: #f0f1ec;
+  --app-shadow: 0 8px 24px rgba(34, 37, 30, 0.055);
+  --app-heading: 32px;
+  --app-balance: 48px;
+  --app-content-width: 1136px;
+  --app-dock-height: 80px;
   --duration: 160ms;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }

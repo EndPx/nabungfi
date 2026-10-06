@@ -30,6 +30,7 @@ for (const width of [320, 390, 768, 1280]) {
       ),
     ).toBe(true);
     await page.getByRole("button", { name: /My car/ }).click();
+    await page.locator(".car-stage").waitFor({ state: "visible", timeout: 30000 });
     await expect(
       page.getByText("Your next piece is taking shape"),
     ).toBeVisible();
@@ -90,6 +91,7 @@ test("funded target waits for completion and claim stays isolated to achieved st
   page,
 }) => {
   await page.goto("/tests/browser/harness.html?view=detail&amount=10000000");
+  await page.locator(".car-stage").waitFor({ state: "visible", timeout: 30000 });
   await expect(page.getByText("Your target is funded")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Claim", exact: true }),

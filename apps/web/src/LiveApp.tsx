@@ -7,7 +7,6 @@ import {
   Check,
   LoaderCircle,
   LogOut,
-  Plus,
   TriangleAlert,
 } from "./icons";
 import { Button } from "./ui";
@@ -18,8 +17,6 @@ import { appHref, loginHref, loginReturnTarget, readAppRoute, replaceAppLocation
 import { formatUsdc } from "./live-api";
 import { supportedChains } from "./live-config";
 import {
-  GoalCard,
-  PortfolioSummary,
   GoalDetail,
   CreateGoalModal,
   DepositModal,
@@ -28,7 +25,9 @@ import {
 } from "./live-components";
 import { useLiveController } from "./useLiveController";
 import { ActivityPage, WalletsPage, SettingsPage } from "./account-pages";
+import { GoalsOverview } from "./GoalsOverview";
 import "./live.css";
+import "./app-refinement.css";
 const solanaConnectors = toSolanaWalletConnectors();
 const solanaDevnet = {
   rpc: createSolanaRpc("https://api.devnet.solana.com"),
@@ -235,59 +234,19 @@ function AuthenticatedApp() {
                 }
               />
             ) : (
-              <>
-                <div className="page-heading">
-                  <div>
-                    <h1>Your goals</h1>
-                    <p>Separate goals. Separate vaults. One workshop.</p>
-                  </div>
-                  <Button
-                    variant="build"
-                    onClick={() => setCreating(true)}
-                    disabled={hasPending || pwa.offline || !session}
-                  >
-                    <Plus size={18} />
-                    New goal
-                  </Button>
-                </div>
-                <PortfolioSummary
+                <GoalsOverview
+                  goals={goals}
                   balance={goals.length > 0 && unavailableCount === goals.length
                     ? "—" : `$${formatUsdc(total)}`}
                   scope={unavailableCount
                     ? `Verified balances · ${unavailableCount} unavailable`
                     : `Across ${goals.length} goal${goals.length === 1 ? "" : "s"}`}
+                  blocked={hasPending || pwa.offline || !session}
+                  create={() => setCreating(true)}
+                  open={id => navigate("goals", id)}
+                  activity={() => navigate("activity")}
+                  wallets={() => navigate("wallets")}
                 />
-                {goals.length ? (
-                  <div className="goal-grid">
-                    {goals.map((goal) => (
-                      <GoalCard
-                        key={goal.id}
-                        goal={goal}
-                        onOpen={() => navigate("goals", goal.id)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="empty-state">
-                    <span className="section-icon">
-                      <Box />
-                    </span>
-                    <h2>Your first build starts here.</h2>
-                    <p>
-                      Choose a goal and its target. Set up your vaults, then add
-                      USDC at your own pace.
-                    </p>
-                    <Button
-                      variant="build"
-                      onClick={() => setCreating(true)}
-                      disabled={hasPending || pwa.offline || !session}
-                    >
-                      <Plus size={18} />
-                      Create your first goal
-                    </Button>
-                  </div>
-                )}
-              </>
             )
           ) : destination === "wallets" ? (
             <WalletsPage

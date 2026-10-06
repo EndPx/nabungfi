@@ -11,8 +11,6 @@ import type { GoalChainState, GoalPositionState } from "@nabungfi/shared/chain";
 import fixtures from "../fixtures/unsigned-plans.json";
 import { Shell, type Destination } from "../../src/Shell";
 import {
-  GoalCard,
-  PortfolioSummary,
   GoalDetail,
   CreateGoalModal,
   DepositModal,
@@ -23,14 +21,20 @@ import {
   WalletsPage,
   SettingsPage,
 } from "../../src/account-pages";
-import { Button } from "../../src/ui";
+import { GoalsOverview } from "../../src/GoalsOverview";
+import { registerPwa } from "../../src/pwa";
 import { formatUsdc } from "../../src/live-api";
 import "@fontsource/outfit/latin-500.css";
+import "@fontsource/outfit/latin-600.css";
 import "@fontsource/work-sans/latin-400.css";
+import "@fontsource/work-sans/latin-500.css";
+import "@fontsource/work-sans/latin-600.css";
 import "../../src/styles.css";
 import "../../src/live.css";
+import "../../src/app-refinement.css";
 
 const params = new URLSearchParams(location.search);
+registerPwa();
 const phase = params.get("phase") ?? "saving";
 const amount = params.get("amount") ?? "250000";
 const targetRaw = params.get("target") ?? "10000000";
@@ -76,6 +80,9 @@ const goal = {
 } as GoalDTO;
 
 function Harness() {
+  const [selectedGoal, setSelectedGoal] = useState(goal);
+  const exampleGoals: GoalDTO[] = params.get("empty") === "1" ? [] : (["car", "laptop", "house"] as const).map(model => ({ ...goal, id: model, name: `My ${model}`, model,
+    chainState: model === "house" && params.get("mixed") === "1" ? { ...goal.chainState!, phase: "achieved", achievedTotalRaw: targetRaw } : goal.chainState }));
   const [destination, setDestination] = useState<Destination>(
     (params.get("page") as Destination) || "goals",
   );
@@ -97,17 +104,16 @@ function Harness() {
     <Shell
       destination={destination}
       onNavigate={setDestination}
-      pending={false}
-      account={<span>QA fixture</span>}
+      pending={params.get("pending") === "1"}
+      account={<span>{params.get("presentation") === "1" ? "Example account" : "QA fixture"}</span>}
     >
       <p role="status" className="fixture-note">
-        Component acceptance fixture. All balances are examples; no API or
-        wallet is connected.
+        {params.get("presentation") === "1" ? "Example savings goals · For illustration" : "Component acceptance fixture. All balances are examples; no API or wallet is connected."}
       </p>
       {destination === "goals" &&
         (detail ? (
           <GoalDetail
-            goal={goal}
+            goal={selectedGoal}
             history={[]}
             reducedMotion={params.get("motion") !== "on"}
             back={() => setDetail(false)}
@@ -117,27 +123,16 @@ function Harness() {
             step={recordStep}
           />
         ) : (
-          <>
-            <div className="page-heading">
-              <h1>Your goals</h1>
-              <Button variant="build" onClick={() => setModal("create")}>
-                New goal
-              </Button>
-            </div>
-            <PortfolioSummary
+            <GoalsOverview
+              goals={exampleGoals}
               balance={`$${formatUsdc((BigInt(amount) * 3n).toString())}`}
               scope="Across 3 example goals"
+              blocked={false}
+              create={() => setModal("create")}
+              open={id => { setSelectedGoal(exampleGoals.find(item => item.id === id)!); setDetail(true); }}
+              activity={() => setDestination("activity")}
+              wallets={() => setDestination("wallets")}
             />
-            <div className="goal-grid">
-              {(["car", "laptop", "house"] as const).map((model) => (
-                <GoalCard
-                  key={model}
-                  goal={{ ...goal, id: model, name: `My ${model}`, model }}
-                  onOpen={() => setDetail(true)}
-                />
-              ))}
-            </div>
-          </>
         ))}
       {destination === "activity" && (
         <ActivityPage
@@ -186,7 +181,7 @@ function Harness() {
       )}
       {modal === "deposit" && (
         <DepositModal
-          goal={goal}
+          goal={selectedGoal}
           onClose={() => setModal(null)}
           plan={(network, amount, approve) => {
             recordStep(approve ? "approve" : "deposit", network, amount);

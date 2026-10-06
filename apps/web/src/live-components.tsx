@@ -6,6 +6,8 @@ import {
   Check,
   ChevronRight,
   ExternalLink,
+  Eye,
+  EyeOff,
   LockKeyhole,
   Plus,
   RefreshCw,
@@ -23,7 +25,7 @@ import type {
   SessionDTO,
 } from "@nabungfi/shared/application";
 import { EVM_DEPLOYMENTS } from "@nabungfi/shared/chain";
-import { Button, Dialog, NetworkMark, WorkshopBoundary } from "./ui";
+import { Button, Dialog, FormError, IconButton, NetworkMark, WorkshopBoundary } from "./ui";
 import { GoalIllustration } from "./Shell";
 import {
   decimalAmount,
@@ -38,18 +40,24 @@ import { nextPieceProgress, formatNativeGas } from "./savings-progress";
 const CarWorkshop = lazy(() => import("./CarWorkshop"));
 
 export function PortfolioSummary({ balance, scope }: { balance: string; scope: string }) {
+  const [hidden, setHidden] = useState(false);
   return (
     <section className="portfolio-summary" aria-label="Savings across goals">
       <div className="portfolio-balance">
-        <h2>Total saved</h2>
-        <strong>{balance}</strong>
+        <div className="portfolio-label">
+          <h2>Total saved</h2>
+          <IconButton label={hidden ? "Show total saved" : "Hide total saved"} aria-pressed={hidden} onClick={() => setHidden(value => !value)}>
+            {hidden ? <Eye size={19} /> : <EyeOff size={19} />}
+          </IconButton>
+        </div>
+        <strong aria-label={hidden ? "Balance hidden" : undefined}>{hidden ? "••••••" : balance}<span className="portfolio-currency">USDC</span></strong>
         <p>{scope}</p>
       </div>
       <div className="portfolio-caption">
         <Box size={40} />
         <div>
-          <strong>Each goal has its own finish line.</strong>
-          <p>A goal unlocks when its own target is reached and completion is verified.</p>
+          <strong>Little by little. Goal by goal.</strong>
+          <p>Each goal unlocks at its own target, after completion is verified.</p>
         </div>
       </div>
     </section>
@@ -209,7 +217,7 @@ export function GoalDetail({
         </Button>
       </div>
       <div className="live-detail-grid">
-        <div>
+        <div className="goal-workshop-column">
           {available ? (
             <WorkshopBoundary>
               <Suspense
@@ -244,13 +252,13 @@ export function GoalDetail({
               </Button>
             </div>
           )}
-          <div className="live-panel" style={{ marginTop: 24 }}>
+          <div className="live-panel goal-history-panel">
             <h2>Goal activity</h2>
             <HistoryList history={history} />
           </div>
         </div>
         <aside className="live-financial-rail">
-          <section className="live-panel">
+          <section className="live-panel goal-financial-summary">
             <span className="live-state-badge">
               <LockKeyhole size={14} />
               {goal.chainStatus === "unavailable"
@@ -382,7 +390,7 @@ export function GoalDetail({
               </p>
             )}
           </section>
-          <section className="live-panel">
+          <section className="live-panel goal-chain-panel">
             <h2>Where your pieces are</h2>
             <div className="network-list">
               {(
@@ -431,7 +439,7 @@ export function GoalDetail({
               })}
             </div>
           </section>
-          <section className="live-panel">
+          <section className="live-panel goal-commitment-panel">
             <div className="live-actions">
               <LockKeyhole size={20} />
               <strong>A commitment to this goal</strong>
@@ -613,6 +621,7 @@ export function CreateGoalModal({
         </label>
         <fieldset className="live-field">
           <legend>Goal chains</legend>
+          <small>Solana keeps this goal’s progress in sync. Choose at least one other chain for your deposits.</small>
           <div className="network-choices">
             {Object.keys(networks).map((key) => {
               const network = key as AppNetwork;
@@ -645,11 +654,7 @@ export function CreateGoalModal({
           I understand deposits stay locked until this goal reaches its target,
           even if that takes indefinitely. Earning is currently inactive.
         </label>
-        {error && (
-          <p className="live-error" role="alert">
-            {error}
-          </p>
-        )}
+        {error && <FormError>{error}</FormError>}
         <Button
           type="submit"
           variant="build"
@@ -743,7 +748,7 @@ export function DepositModal({
             : "Read unavailable"}
         </p>
         <p className="live-help">
-          Transaction gas:{" "}
+          Gas token balance:{" "}
           {position
             ? formatNativeGas(position.nativeBalanceRaw, network)
             : "Read unavailable"}
@@ -767,11 +772,7 @@ export function DepositModal({
           This deposit belongs only to {goal.name} and stays locked until its
           target is reached.
         </label>
-        {error && (
-          <p className="live-error" role="alert">
-            {error}
-          </p>
-        )}
+        {error && <FormError>{error}</FormError>}
         {network !== "solana" && (
           <>
             <p className="live-help">

@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type HtmlTagDescriptor } from "vite";
 import react from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
@@ -15,6 +15,20 @@ validateVercelBuild({
 export default defineConfig({
   plugins: [
     react(),
+    {
+      name: "nabungfi-critical-preloads",
+      transformIndexHtml: {
+        order: "post",
+        handler(_html, context) {
+          const tags: HtmlTagDescriptor[] = [{ tag: "link", attrs: { rel: "preload", as: "image", href: `/models/car.jpg?revision=${MODEL_POSTER_REVISION}`, fetchpriority: "high" } }];
+          for (const font of Object.keys(context.bundle ?? {}).filter(file =>
+            /\/(outfit-latin-500|work-sans-latin-400)-normal-.*\.woff2$/.test(file))) {
+            tags.push({ tag: "link", attrs: { rel: "preload", as: "font", href: `/${font}`, type: "font/woff2", crossorigin: "anonymous" } });
+          }
+          return tags;
+        },
+      },
+    },
     {
       name: "nabungfi-canonical-inline-mark",
       resolveId(id) {

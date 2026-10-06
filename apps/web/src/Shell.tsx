@@ -82,10 +82,12 @@ export function Shell({
             <strong>{destinations.find((item) => item.id === destination)?.label}</strong>
           </span>
           <div className="live-header-tools">
+            {pwa.canInstall && <Button className="live-header-install" variant="secondary" busy={pwa.installing} disabled={pending} onClick={() => void pwa.install()}><Download size={18} />Install app</Button>}
             <div className="live-account">{account}</div>
           </div>
         </header>
         <main id="main-content" className="live-main" tabIndex={-1}>
+          {pwa.installError && <p className="live-notice" role="alert">{pwa.installError}</p>}
           {pwa.offline && (
             <div className="live-notice" role="status">
               <WifiOff size={20} />
@@ -133,23 +135,26 @@ export function InstallPanel() {
         <Download size={22} />
       </div>
       <div>
-        <h2>Keep your workshop close</h2>
+        <h2>Install NabungFi</h2>
         <p>
           {pwa.standalone
             ? "NabungFi is running as an installed app."
+            : pwa.installed
+              ? "NabungFi is installed. Open it from your apps to use its own window."
             : pwa.ios
               ? "In Safari, tap Share, then Add to Home Screen. Your wallet opens when you confirm a transaction."
-              : pwa.canInstall
-                ? "Install NabungFi for a focused app experience. You can also keep using this browser."
-                : "Installation has not been offered in this window. Keep using the web app, or open NabungFi in a browser that supports app installation and use its install option."}
+              : "Keep your goals a tap away, in their own app window on your phone or desktop."}
         </p>
       </div>
       {pwa.canInstall && (
-        <Button variant="build" onClick={() => void pwa.install()}>
+        <Button variant="build" busy={pwa.installing} onClick={() => void pwa.install()}>
           Install app
         </Button>
       )}
       {pwa.installError && <p role="alert">{pwa.installError}</p>}
+      {pwa.installOutcome === "dismissed" && <p className="install-feedback" role="status">No problem. Keep using NabungFi here, or install it later from your browser menu.</p>}
+      {pwa.installOutcome === "accepted" && !pwa.standalone && <p className="install-feedback" role="status">Installation requested. Your browser will finish setting up the app.</p>}
+      {!pwa.standalone && !pwa.installed && <details className="settings-install-details"><summary>How to add the app</summary><p>{pwa.ios ? "Open NabungFi in Safari, tap Share, choose Add to Home Screen, then tap Add." : "In Chrome or Edge, use the install icon in the address bar or the browser menu’s install option. In Safari on a Mac, choose File, then Add to Dock."}</p><p>Open the NabungFi icon to return to your goals. Wallet confirmations still open when you make a financial action.</p></details>}
     </section>
   );
 }

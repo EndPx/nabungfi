@@ -1,15 +1,18 @@
 import type { GoalDTO, SessionDTO } from "@nabungfi/shared/application";
+import { useId, useState } from "react";
 import {
   Box,
   ChevronRight,
+  Copy,
   ExternalLink,
   History,
   LockKeyhole,
   RefreshCw,
+  Search,
   ShieldCheck,
   Wallet,
 } from "./icons";
-import { Button, PageHeading } from "./ui";
+import { Button, NetworkMark, PageHeading } from "./ui";
 import { InstallPanel } from "./Shell";
 import { phases } from "./live-config";
 
@@ -26,11 +29,14 @@ export function ActivityPage({
   refresh: () => void;
   openGoal: (id: string) => void;
 }) {
+  const [query, setQuery] = useState("");
+  const searchId = useId();
+  const visible = goals.filter(goal => goal.name.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
   return (
     <>
       <PageHeading
         title="Activity"
-        description="Confirmed and pending steps, kept separate for every goal."
+        description="Open a goal to see its confirmed, pending and failed wallet steps."
       >
         <Button
           variant="secondary"
@@ -41,18 +47,21 @@ export function ActivityPage({
           Refresh
         </Button>
       </PageHeading>
+      {goals.length > 0 && <label className="app-search activity-search" htmlFor={searchId}><Search size={19} /><span className="sr-only">Search goal histories</span><input id={searchId} type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Find a goal’s history" /></label>}
       {goals.length ? (
-        <div className="live-panel live-timeline">
-          {goals.map((goal) => (
+        <section className="live-panel live-timeline" aria-label="Goal histories">
+          {visible.map((goal) => (
             <div className="live-timeline-row" key={goal.id}>
-              <div>
+              <div className="activity-goal-identity">
+                <span className="section-icon"><History size={24} /></span><div>
                 <strong>{goal.name}</strong>
                 <p>
                   {phases[goal.chainState?.phase ?? "unprovisioned"]} ·{" "}
                   {goal.chainStatus === "unavailable"
                     ? "Read unavailable"
-                    : "Testnet"}
+                    : `${goal.binding.participants.length + 1} chains`}
                 </p>
+                </div>
               </div>
               <Button variant="quiet" onClick={() => openGoal(goal.id)}>
                 View history
@@ -60,7 +69,8 @@ export function ActivityPage({
               </Button>
             </div>
           ))}
-        </div>
+          {visible.length === 0 && <p className="live-help" role="status">No goal histories match that name.</p>}
+        </section>
       ) : (
         <div className="empty-state">
           <History size={40} />
@@ -89,6 +99,13 @@ export function WalletsPage({
   connect: () => void;
   link: () => void;
 }) {
+  const [copied, setCopied] = useState("");
+  const [copyError, setCopyError] = useState("");
+  const copyAddress = async (address: string) => {
+    setCopyError(""); setCopied("");
+    try { await navigator.clipboard.writeText(address); setCopied(address); }
+    catch { setCopyError("Your browser could not copy the address. Select the address above to copy it manually."); }
+  };
   return (
     <>
       <PageHeading
@@ -151,6 +168,10 @@ export function WalletsPage({
                 ? "Solana Devnet"
                 : "Base, Arbitrum and Ethereum Sepolia"}
             </p>
+            <div className="wallet-network-marks" role="img" aria-label={wallet.chainType === "solana" ? "Solana" : "Base, Arbitrum and Ethereum"}>
+              {wallet.chainType === "solana" ? <NetworkMark network="solana" /> : <><NetworkMark network="base" /><NetworkMark network="arbitrum" /><NetworkMark network="ethereum" /></>}
+            </div>
+            <Button className="wallet-copy" variant="secondary" onClick={() => void copyAddress(wallet.address)} aria-label={`Copy ${wallet.chainType === "solana" ? "Solana" : "EVM"} wallet address`}><Copy size={18} />{copied === wallet.address ? "Copied" : "Copy address"}</Button>
           </section>
         ))}
       </div>
@@ -164,6 +185,8 @@ export function WalletsPage({
           </p>
         </div>
       </div>
+      <p className="sr-only" role="status">{copied ? "Wallet address copied" : ""}</p>
+      {copyError && <p className="live-error" role="alert">{copyError}</p>}
     </>
   );
 }
@@ -182,6 +205,7 @@ export function SettingsPage({
         description="Make the workshop your own, and keep the savings rules close."
       />
       <div className="settings-stack">
+        <section className="settings-group" aria-labelledby="settings-app"><h2 id="settings-app">APP & WORKSHOP</h2>
         <InstallPanel />
         <section className="settings-panel">
           <span className="section-icon">
@@ -203,6 +227,8 @@ export function SettingsPage({
             Reduce motion
           </label>
         </section>
+        </section>
+        <section className="settings-group" aria-labelledby="settings-savings"><h2 id="settings-savings">YOUR SAVINGS</h2>
         <section className="settings-panel">
           <span className="section-icon">
             <LockKeyhole size={24} />
@@ -237,6 +263,7 @@ export function SettingsPage({
             View source
             <ExternalLink size={16} />
           </a>
+        </section>
         </section>
       </div>
     </>

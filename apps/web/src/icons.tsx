@@ -110,6 +110,15 @@ export const ShieldCheck = icon(
   </>,
 );
 export const Plus = icon("Plus", <path d="M12 4v16M4 12h16" />);
+export const Search = icon("Search", <path d="M3 3h11v11H3ZM14 14l7 7" />);
+export const Eye = icon("Show balance", <>
+  <path d="M2 9l5-5h10l5 5v6l-5 5H7l-5-5Z" />
+  <path d="M9 9h6v6H9Z" />
+</>);
+export const EyeOff = icon("Hide balance", <>
+  <path d="m3 3 18 18M10 4h7l5 5v6l-2 2M6 5 2 9v6l5 5h10m-8-9v4h4" />
+</>);
+export const Copy = icon("Copy", <path d="M8 8h13v13H8ZM3 16V3h13" />);
 export const X = icon("Close", <path d="m5 5 14 14M19 5 5 19" />);
 export const Check = icon("Check", <path d="m4 12 5 5L20 6" />);
 export const ArrowRight = icon(

@@ -83,6 +83,12 @@ export function IconButton({
   );
 }
 
+export function FormError({ children }: { children: string }) {
+  const alert = useRef<HTMLParagraphElement>(null);
+  useEffect(() => { alert.current?.focus(); }, [children]);
+  return <p ref={alert} className="live-error" role="alert" tabIndex={-1}>{children}</p>;
+}
+
 export function Dialog({
   title,
   description,
