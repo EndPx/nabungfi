@@ -10,6 +10,7 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "test:browser": "playwright test",
     "test:pwa": "node tests/pwa-lifecycle.mjs",
+    "test:pwa:release": "node tests/pwa-release-shell.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "doctor": "react-doctor ."
   },

@@ -18,6 +18,8 @@ PWA installation is offered only when the browser provides a real install prompt
 
 Installation completion in a browser tab is separate from running in a standalone app window. An external React store carries install/update changes, including an already waiting worker discovered between render and subscription. The generated-worker acceptance test builds its fixture only in the ignored `.local` folder. `FormError` receives focus after a rejected create/deposit input; submit buttons stay in normal flow so they cannot cover the message. Critical fonts and the original default poster are preloaded without removing animation or authentication features.
 
+A cold offline entry shows the cached login shell and retains its deep link, without attempting an uncached Privy SDK chunk. Once SDK loading has begun, a connectivity change cannot unmount a running wallet session. This is an entry/loading boundary, never an authentication shortcut.
+
 ## High-end UI refinement — 4 October 2026
 
 The visual direction is a crafted savings workshop: confident Outfit typography, warm paper, precise financial labels and a dimensional construction object. Blue/yellow/red remain the identity; color is spent on actions, navigation and small block details. Depth belongs to the hero object, raised controls and focused overlays, rather than identical shadows on every section. The memorable interaction remains assembling a savings goal, not a new decorative cursor or chart.

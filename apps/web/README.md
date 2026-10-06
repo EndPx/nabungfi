@@ -27,11 +27,17 @@ pnpm --filter @nabungfi/web test
 pnpm --filter @nabungfi/web typecheck
 pnpm --filter @nabungfi/web build
 pnpm --filter @nabungfi/web test:browser
+pnpm --filter @nabungfi/web test:pwa
+pnpm --filter @nabungfi/web test:pwa:release
 ```
 
 Tests cover request recovery, identity preservation, ambiguous responses, exact USDC amounts, user isolation, signature encoding, presentation thresholds and stable 100-component geometry. Set `VITE_PRIVY_APP_ID` in the ignored `.env`; only the public application ID belongs in frontend configuration. Server secrets and database credentials must never be client variables. The deployment origin must be allowed in the Privy dashboard.
 
 Browser checks use isolated fixtures under `tests/browser`, with no API calls or wallet signing. Install Playwright Chromium using `pnpm --filter @nabungfi/web exec playwright install chromium`, or set `PW_BROWSER_CHANNEL=msedge`/`chrome` to use an installed browser. They cover narrow-screen reflow, lock consent, exact deposit input, completion/claim controls, unavailable balances, keyboard focus restoration and automated WCAG AA checks. They do not establish real wallet financial execution.
+
+The savings app adapts pocket organization from the user's Bank Jago reference: searchable/filterable goals, balance privacy, a create tile, focused detail actions, goal-history search and grouped settings. The approved NabungFi mark and original 3D goal models remain. [Reference evidence](JAGO_REFERENCE.md) distinguishes the 74-screen metadata inventory from the ten detailed screen/component inspections.
+
+`test:pwa` builds a production component fixture into ignored `.local`, then exercises the generated worker's offline/cache/update lifecycle in an isolated browser. `test:pwa:release` requires a current normal frontend build and checks the actual public entry's cold offline launch and manifest, without authenticating. These tests establish browser behavior; [PWA.md](PWA.md) keeps physical-device installation and signed financial acceptance separate.
 
 The guest 3D model is labelled as a nonfinancial preview. Public Try a build links use `?demo=1` to open the silent landing assembly, without API calls or wallet actions. For the historical sample ledger run `pnpm dev:demo` and open `?legacy-demo=1` on the development server; production never routes to that ledger. Small contributions update a fractional next-piece tray; they never place an unfunded whole component. An exact USDC approval returns to a separate deposit review with the same amount and chain, without automatic wallet signing.
 
