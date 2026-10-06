@@ -2,7 +2,7 @@
 
 **Build what you're saving for.**
 
-The testnet frontend is live at **[nabungfi.vercel.app](https://nabungfi.vercel.app)**. Open app leads to Privy sign-in before the authenticated workspace. The native API and keeper run separately on the VPS at [nabungfi-api.endpx.cloud](https://nabungfi-api.endpx.cloud/api/health). [Frontend deployment evidence](apps/web/DEPLOYMENT.md) · [VPS deployment and preservation evidence](docs/VPS_DEPLOYMENT.md).
+The frontend is live at **[nabungfi.endpx.cloud](https://nabungfi.endpx.cloud)**, hosted by the EndPx Vercel project connected to this repository. Open app leads to Google, email or wallet sign-in through Privy before the authenticated workspace. The native API and keeper run separately on the VPS at [nabungfi-api.endpx.cloud](https://nabungfi-api.endpx.cloud/api/health). [Frontend deployment evidence](apps/web/DEPLOYMENT.md) · [VPS deployment and preservation evidence](docs/VPS_DEPLOYMENT.md).
 
 NabungFi is a multichain, goal-locked savings prototype. Contracts isolate each goal's target, reserves and claims, while the authenticated backend stores multiple owner-scoped goals with independent onchain bindings and wallet-action journals. Each goal has its own 100-piece construction. The public build preview uses example artwork and makes no financial application request; the workspace requires a matching Privy/backend session. [Multiple-goal requirements](docs/MULTI_GOAL_REQUIREMENTS.md).
 

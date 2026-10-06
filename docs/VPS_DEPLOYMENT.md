@@ -1,6 +1,6 @@
 # Native VPS backend deployment
 
-The testnet backend is live at **https://nabungfi-api.endpx.cloud**. The frontend was published on Vercel at **https://nabungfi.vercel.app** on 5 October 2026. The API now permits that exact HTTPS origin and retains the previously planned `https://nabungfi.endpx.cloud` origin; the custom frontend domain has not been connected. [Sanitized backend deployment evidence](../contracts/deployments/backend/vps-runtime.json) · [Frontend deployment evidence](../apps/web/DEPLOYMENT.md).
+The testnet backend is live at **https://nabungfi-api.endpx.cloud**. The primary frontend is now **https://nabungfi.endpx.cloud**, published through the EndPx Vercel project on 7 October 2026. Both that exact origin and the original `https://nabungfi.vercel.app` origin remain permitted. The custom frontend reused the existing allowlist; this release did not restart the API or keeper. [Sanitized backend deployment evidence](../contracts/deployments/backend/vps-runtime.json) · [Frontend deployment evidence](../apps/web/DEPLOYMENT.md).
 
 ## Isolation and preservation
 

@@ -1,0 +1,47 @@
+{
+  "deployedAt": "2026-10-06T19:25:34.091Z",
+  "clientDate": "2026-10-07",
+  "clientTimezone": "Asia/Jakarta",
+  "frontendOrigin": "https://nabungfi.endpx.cloud",
+  "apiOrigin": "https://nabungfi-api.endpx.cloud",
+  "projectName": "nabungfi",
+  "projectId": "prj_XnsXSFYNgx2lpIUtoWfxxZglHjKG",
+  "vercelScope": "muhammad-meidy-noor-al-barrys-projects",
+  "deploymentId": "dpl_4JS8vGx12Afyb7w4tPw2cpTu3sgQ",
+  "deploymentUrl": "https://nabungfi-ponazneoq-muhammad-meidy-noor-al-barrys-projects.vercel.app",
+  "sourceCommit": "81b9a25d0b8b8bd3f95022f1f3097da653b35d36",
+  "readyState": "READY",
+  "deploymentMethod": "vercel-github-integration",
+  "gitRepository": "EndPx/nabungfi",
+  "productionBranch": "main",
+  "rootDirectory": "apps/web",
+  "publicBuildVariableNames": ["VITE_PRIVY_APP_ID", "VITE_API_ORIGIN", "VITE_DISABLE_REACT_DEVTOOLS"],
+  "googleAuthentication": {
+    "providerEnabled": true,
+    "credentials": "privy-default-development-credentials",
+    "basicScopes": ["openid", "email", "profile"],
+    "additionalScopes": [],
+    "returnProviderApiTokens": false,
+    "connectedGoogleIdentityObserved": true,
+    "authenticatedWorkspaceWithMatchingBackendSessionObserved": true,
+    "googleCloudMfaOrCredentialsChanged": false
+  },
+  "dns": {
+    "newRecord": {"type": "CNAME", "name": "nabungfi", "value": "ed3eabdf8ee11d8d.vercel-dns-017.com", "ttl": 300},
+    "existingRecordCountPreserved": 15,
+    "existingRecordsUnchanged": true,
+    "nameserversChanged": false,
+    "vercelMisconfigured": false
+  },
+  "verification": {
+    "liveHttpChecksPassed": 22,
+    "publicHttpsVerified": true,
+    "protectedUnauthenticatedStatus": 401,
+    "exactApiOriginAccepted": true,
+    "unknownAndHttpOriginsRejected": true,
+    "apiAndKeeperActive": true,
+    "backendServicesRestartedForThisRelease": false,
+    "financialTransactionsSubmitted": 0,
+    "physicalDevicePwaInstallationTested": false
+  }
+}
