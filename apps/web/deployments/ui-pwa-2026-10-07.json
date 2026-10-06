@@ -1,0 +1,48 @@
+{
+  "project": "NabungFi",
+  "frontend": "https://nabungfi.endpx.cloud",
+  "api": "https://nabungfi-api.endpx.cloud",
+  "verifiedUiSourceCommit": "7d30673634fc366b1fe6313ba4ca0947911fa38b",
+  "vercelDeploymentId": "dpl_CcnxToUWNi2qRPpHVxUHAKq7EkAw",
+  "deploymentState": "READY",
+  "verifiedAtUtc": "2026-10-06T21:37:48Z",
+  "localDate": "2026-10-07",
+  "tests": {
+    "unitPassed": 48,
+    "browserFullSuitePassed": 42,
+    "browserScopedCssRetestPassed": 17,
+    "productionFixtureWorkerLifecycleChecks": 5,
+    "actualProductionEntryChecks": 5,
+    "cssChunkOrderingCases": 6,
+    "liveHttpChecks": 22,
+    "liveManifestScreenshotsFontsAndGoogleConfiguration": "passed",
+    "responsiveWidths": [320, 375, 390, 768, 1280]
+  },
+  "independentReview": {
+    "context": "fresh UI visitor without a project brief",
+    "understoodPerGoalCommitmentFromUi": true,
+    "gasBalanceLabelAndValidationErrorRepairsVerified": true,
+    "waitingWorkerRaceReproducedAndRepairVerified": true
+  },
+  "liveBrowser": {
+    "existingVerifiedAccountPreserved": true,
+    "currentOwnerGoalsShown": 0,
+    "installPromptAvailable": true,
+    "explicitWorkerUpdateCompleted": true,
+    "appSkinComputedColorsVerified": true,
+    "financialTransactionsInThisUiPass": 0
+  },
+  "lighthouseLiveMediansOfThreeRuns": {
+    "landingMobile": {"performance": 99, "accessibility": 100, "bestPractices": 100, "seo": 100},
+    "landingDesktop": {"performance": 100, "accessibility": 100, "bestPractices": 100, "seo": 100},
+    "loginMobile": {"performance": 61, "accessibility": 100, "bestPractices": 77, "seo": 100},
+    "loginDesktop": {"performance": 97, "accessibility": 100, "bestPractices": 77, "seo": 100}
+  },
+  "remainingAcceptance": [
+    "Login SDK startup performance and third-party cookie audit findings",
+    "Physical-device app installation and OAuth return in an installed mobile window",
+    "Authenticated browser-signed financial acceptance is separate from these UI and worker tests"
+  ],
+  "privateEvidence": ".local/jago-pwa-qa, .local/pwa-lifecycle, .local/pwa-release-shell",
+  "secretsCommitted": false
+}
