@@ -249,13 +249,13 @@ export function useLiveController() {
     return () => window.removeEventListener("beforeunload", guard);
   }, [busy]);
   useEffect(() => {
-    if (!authenticated || busy) return;
+    if (!authenticated || busy || loading) return;
     const timer = window.setInterval(() => {
       if (document.visibilityState === "visible" && navigator.onLine)
         void load();
     }, 30000);
     return () => window.clearInterval(timer);
-  }, [authenticated, busy, load]);
+  }, [authenticated, busy, loading, load]);
   useEffect(() => {
     if (!authenticated || !selectedId || !userId) {
       setHistory([]);

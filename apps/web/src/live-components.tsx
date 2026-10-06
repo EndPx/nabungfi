@@ -169,6 +169,7 @@ export function GoalDetail({
   reducedMotion,
   back,
   refresh,
+  refreshing = false,
   busy,
   deposit,
   step,
@@ -178,6 +179,7 @@ export function GoalDetail({
   reducedMotion: boolean;
   back: () => void;
   refresh: () => void;
+  refreshing?: boolean;
   busy: boolean;
   deposit: () => void;
   step: (
@@ -211,11 +213,12 @@ export function GoalDetail({
           <h1>{goal.name}</h1>
           <p>A build of your own, one deposit at a time.</p>
         </div>
-        <Button variant="secondary" onClick={refresh} disabled={busy}>
+        <Button variant="secondary" onClick={refresh} disabled={busy} busy={refreshing}>
           <RefreshCw size={18} />
           Refresh
         </Button>
       </div>
+      {refreshing && <p className="live-help" role="status">Updating balances. Showing the last verified read until the update finishes.</p>}
       <div className="live-detail-grid">
         <div className="goal-workshop-column">
           {available ? (
