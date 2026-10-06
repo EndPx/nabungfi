@@ -45,6 +45,7 @@ import {
 import { navigateApp, readAppRoute } from "./app-routes";
 import { actions, networks } from "./live-config";
 import { readGoalSnapshots } from "./goal-snapshots";
+import { prepareEvmProvider, assertEvmProviderIdentity } from "./wallet-provider";
 export function useLiveController() {
   const {
     ready,
@@ -547,6 +548,23 @@ export function useLiveController() {
     }
     return result.step;
   };
+  const closeUnsent = async (record: WalletRecovery) => {
+    if (record.transactionHash || record.state !== "awaiting-wallet") throw new Error("Reconcile the original attempted wallet transaction.");
+    const original = await request<{step: GoalStepDTO}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}`);
+    validateRecoveryStep(record, original.step);
+    if (!original.step.plan || original.step.transactionHash) throw new Error("The original signing marker cannot be closed as unsent.");
+    const result = await request<{step: GoalStepDTO}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}/wallet-not-invoked`, {body:{fingerprint:original.step.plan.fingerprint,attestation:"wallet-sdk-never-invoked"}});
+    validateRecoveryStep(record, result.step);
+    if (result.step.status !== "rejected" || result.step.transactionHash || result.step.reasonCode !== "OWNER_ATTESTED_WALLET_NOT_INVOKED") throw new Error("The unsent request attestation could not be confirmed.");
+    clearRejectedRecovery(localStorage, record);
+    refreshRecovery();
+    setWalletStep(null);
+    setNotice("This original request was closed by your statement that the wallet was never invoked. It is an attestation, not an onchain receipt. Start another step explicitly when ready.");
+  };
+  const closeUnsentRequest = async (record: WalletRecovery) => {
+    setBusy(true);
+    try {await closeUnsent(record);setError("");await load();} catch (failure) {report(failure);} finally {setBusy(false);}
+  };
   const sendWalletOnce = async (step: GoalStepDTO) => {
     const plan = step.plan;
     if (
@@ -592,6 +610,7 @@ export function useLiveController() {
     setBusy(true);
     setError("");
     let markerStarted = false;
+    let sdkInvoked = false;
     try {
       let hash: string;
       if (plan.transaction.kind === "evm") {
@@ -604,8 +623,7 @@ export function useLiveController() {
           throw new Error(
             "Connect the EVM owner wallet shown in this goal before confirming.",
           );
-        await wallet.switchChain(plan.transaction.chainId);
-        const provider = await wallet.getEthereumProvider();
+        const provider = await prepareEvmProvider(wallet, plan.owner, transaction.chainId);
         if (identityRef.current !== userId)
           throw new Error(
             "The signed-in account changed. Keep the original request and reconnect.",
@@ -623,24 +641,12 @@ export function useLiveController() {
               throw new Error(
                 "The original account or connection changed before wallet confirmation. Reconcile this request before continuing.",
               );
-            const [accounts, chainId] = await Promise.all([
-              provider.request({ method: "eth_accounts" }),
-              provider.request({ method: "eth_chainId" }),
-            ]);
-            if (
-              !Array.isArray(accounts) ||
-              !accounts.some(
-                (account) =>
-                  typeof account === "string" &&
-                  account.toLowerCase() === plan.owner.toLowerCase(),
-              ) ||
-              BigInt(String(chainId)) !== BigInt(transaction.chainId) ||
-              identityRef.current !== userId ||
-              !navigator.onLine
-            )
+            await assertEvmProviderIdentity(provider, plan.owner, transaction.chainId);
+            if (identityRef.current !== userId || !navigator.onLine)
               throw new Error(
                 "The selected owner wallet or chain changed before signing. Inspect the original request before continuing.",
               );
+            sdkInvoked = true;
             return (await callWalletSdk(() =>
               provider.request({
                 method: "eth_sendTransaction",
@@ -690,6 +696,7 @@ export function useLiveController() {
               throw new Error(
                 "The selected Solana owner changed before signing. Inspect the original request before continuing.",
               );
+            sdkInvoked = true;
             return callWalletSdk(() =>
               signAndSendTransaction({
                 transaction,
@@ -716,6 +723,10 @@ export function useLiveController() {
       if (!markerStarted) {
         writeRecovery(localStorage, record);
         refreshRecovery();
+      }
+      if (markerStarted && !sdkInvoked && identityRef.current === userId) {
+        try { await closeUnsent({...record,state:"awaiting-wallet"}); }
+        catch { /* An unconfirmed marker stays in recovery; never send a replacement. */ }
       }
       if (isWalletRejection(failure)) {
         try {
@@ -903,6 +914,7 @@ export function useLiveController() {
     checkOriginal,
     recoverRequest,
     resumeOriginal,
+    closeUnsentRequest,
     createMissingWallet,
   };
 }

@@ -928,6 +928,7 @@ export function RecoveryPanel({
   reconcile,
   retry,
   resume,
+  closeUnsent,
 }: {
   recoveries: WalletRecovery[];
   requests: PendingApiRequest[];
@@ -936,8 +937,10 @@ export function RecoveryPanel({
   reconcile: (record: WalletRecovery, hash?: string) => Promise<void>;
   retry: (record: PendingApiRequest) => Promise<void>;
   resume: (record: WalletRecovery) => Promise<void>;
+  closeUnsent: (record: WalletRecovery) => Promise<void>;
 }) {
   const [hashes, setHashes] = useState<Record<string, string>>({});
+  const [notInvoked, setNotInvoked] = useState<Record<string, boolean>>({});
   return (
     <section className="live-panel" style={{ marginBottom: 24 }}>
       <h2>Check your original request</h2>
@@ -998,6 +1001,13 @@ export function RecoveryPanel({
                 />
               </label>
             )}
+            {!record.transactionHash && record.state === "awaiting-wallet" && (
+              <label className="live-consent">
+                <input type="checkbox" checked={notInvoked[record.stepId] ?? false} disabled={busy}
+                  onChange={event => setNotInvoked(prior => ({...prior,[record.stepId]:event.target.checked}))} />
+                My wallet never opened for this original request. No approval or signing was attempted.
+              </label>
+            )}
           </div>
           {record.state === "planned" ? (
             <Button
@@ -1030,6 +1040,12 @@ export function RecoveryPanel({
               >
                 Check original transaction
               </Button>
+              {!record.transactionHash && record.state === "awaiting-wallet" && (
+                <Button variant="quiet" busy={busy} disabled={offline || !notInvoked[record.stepId] || Boolean(hashes[record.stepId])}
+                  onClick={() => void closeUnsent(record)}>
+                  Close unsent request
+                </Button>
+              )}
             </div>
           )}
         </div>

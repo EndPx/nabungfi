@@ -10,6 +10,20 @@ test("native review releases the top layer for the wallet confirmation portal", 
   await expect(page.getByLabel("Fixture requested action")).toHaveText("wallet-portal-approved");
 });
 
+test("an unsent request requires explicit attestation and a submitted hash retains reconciliation", async ({page}) => {
+  await page.goto("/tests/browser/harness.html?view=recovery");
+  const close = page.getByRole("button",{name:"Close unsent request"});
+  await expect(close).toHaveCount(1); await expect(close).toBeDisabled();
+  await page.getByRole("checkbox",{name:/My wallet never opened/}).check();
+  await expect(close).toBeEnabled();
+  await page.getByRole("textbox",{name:"Original transaction hash"}).fill("0x"+"4".repeat(64));
+  await expect(close).toBeDisabled();
+  await page.getByRole("textbox",{name:"Original transaction hash"}).fill("");
+  await close.click();
+  await expect(page.getByLabel("Fixture requested action")).toHaveText("attest-wallet-not-invoked");
+  await expect(page.getByRole("button",{name:"Check original transaction"}).last()).toBeEnabled();
+});
+
 test("wallet review expires visibly and only requests a refresh of its unsigned original", async ({
   page,
 }) => {

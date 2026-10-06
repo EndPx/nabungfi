@@ -116,6 +116,7 @@ The document owns scrolling. Desktop sidebar is 248px. Below 900px, the app uses
 - Panels: warm paper, 1px border and card radius. Empty states point to the next valid action; unavailable reads show unavailable, never fabricated zero.
 - Dialog: native focus containment, Escape, labelled title, focus restoration, narrow-screen reflow. Lock consent and explicit wallet confirmation remain required.
 - Wallet handoff: remove the native review dialog while a wallet request is busy, so its top-layer focus containment cannot cover the Privy confirmation portal. Keep the original request and recovery state; a closed review never authorizes a replacement transaction.
+- EVM network selection configures and verifies the actual provider instance before the server signing marker, then verifies it again before invoking the SDK. A definitively uninvoked wallet call can close its marker by an owner attestation, labelled separately from provider rejection and from an onchain receipt. Recovery requires an explicit statement that the wallet never opened; a submitted hash or an attempted signature always stays on original-hash reconciliation. Closing an unsent request never automatically signs a replacement.
 - Navigation: icon plus visible text, blue tint and `aria-current` for selection. Settings and install controls retain touch-sized targets.
 - Status: distinct text/icon for pending, failed, offline, unavailable and achieved. An example illustration never establishes a claimable savings goal.
 

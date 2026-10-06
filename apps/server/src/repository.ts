@@ -17,6 +17,7 @@ export interface ApplicationRepository {
  refreshPlan(ownerId:string,goalId:string,id:string,oldFingerprint:string,plan:ChainPlan):Promise<GoalStepDTO>;
  walletStart(ownerId:string,goalId:string,id:string,planFingerprint:string):Promise<GoalStepDTO>;
  walletRejected(ownerId:string,goalId:string,id:string,planFingerprint:string,providerCode:number):Promise<GoalStepDTO>;
+ walletNotInvoked(ownerId:string,goalId:string,id:string,planFingerprint:string):Promise<GoalStepDTO>;
  planFailed(ownerId:string,goalId:string,id:string,reason:string):Promise<void>;
  bindTransaction(ownerId:string,goalId:string,id:string,hash:string):Promise<GoalStepDTO>;
  reconciled(ownerId:string,goalId:string,id:string,result:ReconcileResult):Promise<GoalStepDTO>;
@@ -88,6 +89,17 @@ export function postgresRepository(db:Database):ApplicationRepository {
     const duplicate=await tx.query('SELECT id FROM nabungfi.goal_steps WHERE owner_id=$1 AND network=$2 AND transaction_hash=$3 AND id<>$4',[ownerId,r.network,hash,id]);if(duplicate.rows.length)throw new ApiError('TRANSACTION_ALREADY_BOUND',409,'This transaction is already assigned to one of your actions.');
     const updated=await tx.query("UPDATE nabungfi.goal_steps SET transaction_hash=$1,status=CASE WHEN status IN ('confirmed','failed') THEN status ELSE 'submitted' END,updated_at=now() WHERE id=$2 RETURNING *",[hash,id]);return stepRow(updated.rows[0]!,g);});
    }catch(error){if((error as{constraint?:string}).constraint==='goal_steps_active_wallet_lane')throw walletLaneBusy();if((error as {code?:string}).code==='23505')throw new ApiError('TRANSACTION_ALREADY_BOUND',409,'This transaction is already assigned to a step.');throw error;}},
+  async walletNotInvoked(ownerId,goalId,id,planFingerprint){
+   const g=await goal(ownerId,goalId);return db.transaction(async tx=>{
+    const q=await tx.query('SELECT * FROM nabungfi.goal_steps WHERE id=$1 AND goal_id=$2 AND owner_id=$3 FOR UPDATE',[id,goalId,ownerId]);const r=q.rows[0];if(!r)throw notFound();
+    const original=r.plan as ChainPlan|null;
+    if(r.transaction_hash||!original||original.fingerprint!==planFingerprint)throw new ApiError('ORIGINAL_TRANSACTION_REQUIRED',409,'Reconcile any attempted wallet transaction using its original hash.');
+    if(r.status==='rejected'&&(r.receipt as {kind?:string}|null)?.kind==='owner-attested-wallet-not-invoked')return stepRow(r,g);
+    if(r.status!=='signing')throw new ApiError('WALLET_NOT_INVOKED_NOT_ALLOWED',409,'Only a signing marker whose wallet was never invoked can be closed by attestation.');
+    const receipt={kind:'owner-attested-wallet-not-invoked',ownerId,stepId:id,planFingerprint,attestedAtUtc:new Date().toISOString(),onchainProof:false};
+    const update=await tx.query("UPDATE nabungfi.goal_steps SET status='rejected',receipt=$1,reason_code='OWNER_ATTESTED_WALLET_NOT_INVOKED',updated_at=now() WHERE id=$2 RETURNING *",[JSON.stringify(receipt),id]);return stepRow(update.rows[0]!,g);
+   });
+  },
   async walletRejected(ownerId,goalId,id,planFingerprint,providerCode){
    if(providerCode!==4001)throw new ApiError('EXPLICIT_WALLET_REJECTION_REQUIRED',400,'Only a direct numeric wallet-provider 4001 rejection can be attested.');
    const g=await goal(ownerId,goalId);return db.transaction(async tx=>{

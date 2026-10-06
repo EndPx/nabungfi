@@ -105,6 +105,7 @@ function AuthenticatedApp() {
     checkOriginal,
     recoverRequest,
     resumeOriginal,
+    closeUnsentRequest,
     createMissingWallet,
   } = useLiveController();
   const emailLogin = useLoginWithEmail();
@@ -204,6 +205,7 @@ function AuthenticatedApp() {
               reconcile={checkOriginal}
               retry={recoverRequest}
               resume={resumeOriginal}
+              closeUnsent={closeUnsentRequest}
             />
           )}
           {pwa.offline && !session ? (

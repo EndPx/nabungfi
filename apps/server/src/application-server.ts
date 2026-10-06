@@ -68,7 +68,7 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
    const targetRaw=parseGoalTarget(input.targetAmount),binding=chain.deriveGoalBinding({goalId:'0x'+randomBytes(32).toString('hex'),targetRaw,owner:owners,networks:input.chains});
    const g=await repo.createGoal(user.id,{name:input.name,model:input.model,targetRaw,binding,requestId:id,fingerprint:fingerprint({name:input.name,model:input.model,targetRaw,owner:owners,chains:input.chains})});return respond(res,201,{goal:metadataGoal(g)});
   }
-  const match=path.match(/^\/api\/goals\/([0-9a-f-]+)(?:\/(history|steps)(?:\/([0-9a-f-]+)(?:\/(reconcile|refresh|wallet-start|wallet-rejected))?)?)?$/i);if(!match||!uuid(match[1]))throw notFound();
+  const match=path.match(/^\/api\/goals\/([0-9a-f-]+)(?:\/(history|steps)(?:\/([0-9a-f-]+)(?:\/(reconcile|refresh|wallet-start|wallet-rejected|wallet-not-invoked))?)?)?$/i);if(!match||!uuid(match[1]))throw notFound();
   const gid=match[1],g=await repo.goal(user.id,gid);if(!match[2]&&req.method==='GET')return respond(res,200,{goal:await boundedChainRead(()=>viewGoal(g,chain))});
   if(match[2]==='history'&&req.method==='GET'){const history=await repo.history(user.id,gid);return respond(res,200,{history,entries:history});}
   if(match[2]==='steps'&&req.method==='GET'&&uuid(match[3])&&!match[4])return respond(res,200,{step:await repo.step(user.id,gid,match[3])});
@@ -79,6 +79,10 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
     if(input.action==='create-vault'&&runtime){await runtime.assertCoordinationAdmission(g.binding);admitted=true;}
     return respond(res,201,{step:await repo.savePlan(user.id,gid,result.step.id,plan,admitted)});
    }catch(error){const reason=typeof(error as {code?:unknown}).code==='string'?(error as {code:string}).code:'CHAIN_PLAN_UNAVAILABLE';await repo.planFailed(user.id,gid,result.step.id,reason);if(admitted)try{await repo.releaseUnusedCoordinationAdmission(g.goalId);}catch{/* Ambiguous DB state retains the slot. */}if(error instanceof ApiError)throw error;throw new ApiError(reason,409,'The chain could not prepare this step. Refresh its original status before retrying.');}
+  }
+  if(match[2]==='steps'&&req.method==='POST'&&uuid(match[3])&&match[4]==='wallet-not-invoked'){
+   requireGoalWallets(identity,g.binding.owner);const v=await body(req);fields(v,['fingerprint','attestation']);if(typeof v.fingerprint!=='string'||!v.fingerprint||v.fingerprint.length>200||v.attestation!=='wallet-sdk-never-invoked')throw new ApiError('EXPLICIT_NOT_INVOKED_ATTESTATION_REQUIRED',400,'Attest only that no wallet approval or signing call was invoked for this original plan.');
+   return respond(res,200,{step:await repo.walletNotInvoked(user.id,gid,match[3],v.fingerprint)});
   }
   if(match[2]==='steps'&&req.method==='POST'&&uuid(match[3])&&match[4]==='wallet-rejected'){
    requireGoalWallets(identity,g.binding.owner);const v=await body(req);fields(v,['fingerprint','providerCode']);if(typeof v.fingerprint!=='string'||!v.fingerprint||v.fingerprint.length>200||v.providerCode!==4001)throw new ApiError('EXPLICIT_WALLET_REJECTION_REQUIRED',400,'Attest only a direct numeric wallet-provider 4001 rejection of this original plan.');

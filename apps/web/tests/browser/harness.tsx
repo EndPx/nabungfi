@@ -15,6 +15,7 @@ import {
   CreateGoalModal,
   DepositModal,
   WalletStepModal,
+  RecoveryPanel,
 } from "../../src/live-components";
 import {
   ActivityPage,
@@ -234,6 +235,11 @@ function Harness() {
         />
       )}
       {walletBusy && <div role="dialog" aria-label="Example wallet confirmation"><p>Synthetic wallet portal. No transaction is signed.</p><button onClick={() => setAction("wallet-portal-approved")}>Example wallet approve</button></div>}
+      {params.get("view") === "recovery" && <RecoveryPanel
+        recoveries={[{userId:"fixture-user",goalId:goal.id,stepId:"unsent",requestId:"fixture-request",action:"create-vault",network:"ethereum",state:"awaiting-wallet",createdAt:walletExpiry},
+          {userId:"fixture-user",goalId:goal.id,stepId:"submitted",requestId:"submitted-request",action:"deposit",network:"base",state:"submitted",transactionHash:"0x"+"3".repeat(64),createdAt:walletExpiry}]}
+        requests={[]} busy={false} offline={false} reconcile={async()=>setAction("reconcile-original")}
+        retry={async()=>{}} resume={async()=>setAction("inspect-original")} closeUnsent={async()=>setAction("attest-wallet-not-invoked")} />}
       <output aria-label="Fixture requested action">{action}</output>
     </Shell>
   );
