@@ -44,6 +44,7 @@ import {
 } from "./plan-semantics";
 import { navigateApp, readAppRoute } from "./app-routes";
 import { actions, networks } from "./live-config";
+import { readGoalSnapshots } from "./goal-snapshots";
 export function useLiveController() {
   const {
     ready,
@@ -172,6 +173,11 @@ export function useLiveController() {
       setSession(nextSession);
       setGoals(portfolio.goals);
       setError("");
+      const snapshots = await readGoalSnapshots(portfolio.goals, async id =>
+        (await request<{goal: GoalDTO}>(`/api/goals/${encodeURIComponent(id)}`)).goal,
+        readAppRoute(location).goalId);
+      if (identityRef.current !== identity || generation !== readGeneration.current) return;
+      setGoals(snapshots);
     } catch (failure) {
       if (
         identityRef.current === identity &&

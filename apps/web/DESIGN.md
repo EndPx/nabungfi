@@ -1,5 +1,7 @@
 # NabungFi interface system
 
+The API's portfolio endpoint is metadata-only. Financial UI must hydrate each goal from its authenticated detail endpoint with at most two concurrent reads. A selected goal is prioritized. A failed or mismatched detail preserves the goal name/target but withholds balances and actions; a previous cached achievement is never reused as a fresh read. User identity and read-generation checks still run after hydration. New unprovisioned goals become actionable only from a real detail snapshot, so setup can proceed without treating missing vaults as existing funds.
+
 ## Faucet navigation — 7 October 2026
 
 The user requests a dedicated Faucets menu. It is the fifth app destination, at `/app/faucets`, with the same sidebar/bottom navigation, block icon family, page heading and scoped card styles. Each of the four network cards names the actual testnet, distinguishes USDC from its native gas token, displays the verified destination wallet and offers explicit copy feedback. Links open the provider page; the app does not imply that opening a faucet sends funds or moves money between chains. Missing owner wallets lead back to Wallets. The provider's eligibility and rate limits remain visible through concise helper text and source links. Existing tokens and 44px+ touch targets are reused; the five-item dock must reflow at 320px without hiding labels.
