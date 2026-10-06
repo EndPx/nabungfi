@@ -230,7 +230,7 @@ function AuthenticatedApp() {
                 reducedMotion={reducedMotion}
                 back={() => navigate("goals")}
                 refresh={() => void load()}
-                busy={hasPending || pwa.offline}
+                busy={hasPending || loading || pwa.offline}
                 deposit={() => setDepositing(true)}
                 step={(action, network, amountRaw) =>
                   void planStep(selected, action, network, amountRaw)
@@ -244,7 +244,7 @@ function AuthenticatedApp() {
                   scope={unavailableCount
                     ? `Verified balances · ${unavailableCount} unavailable`
                     : `Across ${goals.length} goal${goals.length === 1 ? "" : "s"}`}
-                  blocked={hasPending || pwa.offline || !session}
+                  blocked={hasPending || loading || pwa.offline || !session}
                   create={() => setCreating(true)}
                   open={id => navigate("goals", id)}
                   activity={() => navigate("activity")}

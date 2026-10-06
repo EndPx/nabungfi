@@ -44,7 +44,7 @@ import {
 } from "./plan-semantics";
 import { navigateApp, readAppRoute } from "./app-routes";
 import { actions, networks } from "./live-config";
-import { readGoalSnapshots } from "./goal-snapshots";
+import { readGoalSnapshots, retainGoalPresentation } from "./goal-snapshots";
 import { prepareEvmProvider, assertEvmProviderIdentity } from "./wallet-provider";
 export function useLiveController() {
   const {
@@ -172,7 +172,7 @@ export function useLiveController() {
         import.meta.env.VITE_PRIVY_APP_ID,
       );
       setSession(nextSession);
-      setGoals(portfolio.goals);
+      setGoals(prior => retainGoalPresentation(portfolio.goals,prior));
       setError("");
       const snapshots = await readGoalSnapshots(portfolio.goals, async id =>
         (await request<{goal: GoalDTO}>(`/api/goals/${encodeURIComponent(id)}`)).goal,

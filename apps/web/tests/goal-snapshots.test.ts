@@ -1,8 +1,17 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
 import type {GoalDTO} from "@nabungfi/shared/application";
-import {readGoalSnapshots} from "../src/goal-snapshots.ts";
+import {readGoalSnapshots,retainGoalPresentation} from "../src/goal-snapshots.ts";
 const metadata = (id:string) => ({id,goalId:`chain-${id}`,targetRaw:"200000",chainState:null,chainStatus:"unavailable",binding:{owner:{solana:"SolanaOwner",evm:"0xabcdef"}}}) as GoalDTO;
+test("a refreshing presentation retains only the same goal's last read while fresh detail remains authoritative", async()=>{
+  const prior=[{...metadata("car"),chainStatus:"available",chainState:{phase:"saving",totalAssetsRaw:"10"}}] as GoalDTO[];
+  const next=retainGoalPresentation([metadata("car"),metadata("house")],prior);
+  assert.equal(next[0]?.chainState?.totalAssetsRaw,"10");assert.equal(next[1]?.chainState,null);
+  const substituted=retainGoalPresentation([{...metadata("car"),targetRaw:"99"}],prior);
+  assert.equal(substituted[0]?.chainState,null);
+  const failed=await readGoalSnapshots(next,async()=>{throw Error("RPC unavailable");});
+  assert(failed.every(goal=>goal.chainState===null&&goal.chainStatus==="unavailable"));
+});
 test("metadata-only lists acquire fresh independent detail snapshots without losing their order",async()=>{
   const input=[metadata("car"),metadata("laptop"),metadata("house")],seen:string[]=[];
   const details=await readGoalSnapshots(input,async id=>{seen.push(id);return {...metadata(id),chainStatus:"unprovisioned"};},"house");
