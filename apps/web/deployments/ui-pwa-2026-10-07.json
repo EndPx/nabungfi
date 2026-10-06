@@ -5,6 +5,13 @@
   "verifiedUiSourceCommit": "7d30673634fc366b1fe6313ba4ca0947911fa38b",
   "vercelDeploymentId": "dpl_CcnxToUWNi2qRPpHVxUHAKq7EkAw",
   "deploymentState": "READY",
+  "freshReadGuardFollowup": {
+    "sourceCommit": "52877de3171f1457c643da519245037dde0b54b3",
+    "vercelDeploymentId": "dpl_8w47Js3tJqKA5AdpSLHnrQToo6pa",
+    "state": "READY",
+    "browserFullSuitePassed": 43,
+    "behavior": "Unavailable achieved snapshots withhold stale per-chain balances and claim controls"
+  },
   "verifiedAtUtc": "2026-10-06T21:37:48Z",
   "localDate": "2026-10-07",
   "tests": {
