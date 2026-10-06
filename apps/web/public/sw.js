@@ -23,6 +23,9 @@ self.addEventListener("fetch", (event) => {
   }
   if (!ASSETS.includes(url.pathname)) return;
   event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+    const type = response.headers.get("content-type") || "";
+    if (response.ok && ((/\.m?js$/.test(url.pathname) && !/(?:java|ecma)script/i.test(type)) || (/\.css$/.test(url.pathname) && !/text\/css/i.test(type))))
+      return new Response("This app module is unavailable. Reopen the app after resolving any wallet request.", {status:503,headers:{"content-type":"text/plain","cache-control":"no-store"}});
     if (response.ok) { const copy = response.clone(); event.waitUntil(caches.open(SHELL).then((cache) => cache.put(request, copy))); }
     return response;
   })));

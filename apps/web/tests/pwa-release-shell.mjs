@@ -8,6 +8,11 @@ import { chromium } from "@playwright/test";
 const web = fileURLToPath(new URL("../", import.meta.url));
 const root = path.join(web, "dist");
 assert.ok((await stat(path.join(root, "index.html"))).mtimeMs >= (await stat(path.join(web, "src/Entry.tsx"))).mtimeMs, "Run pnpm --filter @nabungfi/web build before release shell acceptance");
+const workerSource=await readFile(path.join(root,"sw.js"),"utf8");
+const precache=JSON.parse(workerSource.match(/const PRECACHE = (\[[^\n]+\]);/)[1]);
+const walletChunks=(await readdir(path.join(root,"assets"))).filter(file=>/^(LiveApp|StandardSignAndSendTransactionScreen|EmbeddedWalletConnectingScreen|SignTransactionScreen)-/.test(file));
+assert(walletChunks.some(file=>file.startsWith("StandardSignAndSendTransactionScreen-")),"Built Solana confirmation chunk exists");
+assert(walletChunks.every(file=>precache.includes("/assets/"+file)),"Actual lazy wallet confirmations belong to the same versioned shell");
 const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".webmanifest": "application/manifest+json", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".woff": "font/woff" };
 const server = createServer(async (request, response) => {
   try {
@@ -68,7 +73,7 @@ try {
   assert.equal(errors.length, 0);
   assert.equal(accountRequests.length, 0);
   await page.screenshot({ path: path.join(out, "cold-offline-app.png") });
-  const result = { actualProductionEntry: true, cssOrdersChecked, checks: ["Emitted app CSS keeps the approved skin at three widths in both chunk-loading orders", "Manifest has standalone mobile/desktop icons, screenshots and scoped shortcuts", "Cold offline app launch remains readable without loading the uncached authentication SDK", "Offline Google/signing controls are disabled and the intended goal URL is preserved", "No private account API requests, page errors or financial transactions"], accountRequests, errors, financialTransactions: 0 };
+  const result = { actualProductionEntry: true, cssOrdersChecked, walletChunksRetained:walletChunks.length, checks: ["Emitted app CSS keeps the approved skin at three widths in both chunk-loading orders", "Manifest has standalone mobile/desktop icons, screenshots and scoped shortcuts", "Cold offline app launch remains readable without starting authentication", "Lazy wallet confirmations belong to the versioned public shell", "Offline Google/signing controls are disabled and the intended goal URL is preserved", "No private account API requests, page errors or financial transactions"], accountRequests, errors, financialTransactions: 0 };
   await writeFile(path.join(out, "result.json"), JSON.stringify(result, null, 2));
   process.stdout.write(JSON.stringify(result, null, 2) + "\n");
 } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }

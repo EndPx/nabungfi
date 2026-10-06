@@ -1005,7 +1005,7 @@ export function RecoveryPanel({
               <label className="live-consent">
                 <input type="checkbox" checked={notInvoked[record.stepId] ?? false} disabled={busy}
                   onChange={event => setNotInvoked(prior => ({...prior,[record.stepId]:event.target.checked}))} />
-                My wallet never opened for this original request. No approval or signing was attempted.
+                My wallet never reached approval for this original request. No approval or signing was attempted.
               </label>
             )}
           </div>

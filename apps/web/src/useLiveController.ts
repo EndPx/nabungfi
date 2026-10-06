@@ -553,13 +553,13 @@ export function useLiveController() {
     const original = await request<{step: GoalStepDTO}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}`);
     validateRecoveryStep(record, original.step);
     if (!original.step.plan || original.step.transactionHash) throw new Error("The original signing marker cannot be closed as unsent.");
-    const result = await request<{step: GoalStepDTO}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}/wallet-not-invoked`, {body:{fingerprint:original.step.plan.fingerprint,attestation:"wallet-sdk-never-invoked"}});
+    const result = await request<{step: GoalStepDTO}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}/wallet-not-invoked`, {body:{fingerprint:original.step.plan.fingerprint,attestation:"wallet-approval-never-invoked"}});
     validateRecoveryStep(record, result.step);
     if (result.step.status !== "rejected" || result.step.transactionHash || result.step.reasonCode !== "OWNER_ATTESTED_WALLET_NOT_INVOKED") throw new Error("The unsent request attestation could not be confirmed.");
     clearRejectedRecovery(localStorage, record);
     refreshRecovery();
     setWalletStep(null);
-    setNotice("This original request was closed by your statement that the wallet was never invoked. It is an attestation, not an onchain receipt. Start another step explicitly when ready.");
+    setNotice("This original request was closed by your statement that no wallet approval or signing was attempted. It is an attestation, not an onchain receipt. Start another step explicitly when ready.");
   };
   const closeUnsentRequest = async (record: WalletRecovery) => {
     setBusy(true);

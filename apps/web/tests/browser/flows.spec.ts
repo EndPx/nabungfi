@@ -14,7 +14,7 @@ test("an unsent request requires explicit attestation and a submitted hash retai
   await page.goto("/tests/browser/harness.html?view=recovery");
   const close = page.getByRole("button",{name:"Close unsent request"});
   await expect(close).toHaveCount(1); await expect(close).toBeDisabled();
-  await page.getByRole("checkbox",{name:/My wallet never opened/}).check();
+  await page.getByRole("checkbox",{name:/My wallet never reached approval/}).check();
   await expect(close).toBeEnabled();
   await page.getByRole("textbox",{name:"Original transaction hash"}).fill("0x"+"4".repeat(64));
   await expect(close).toBeDisabled();

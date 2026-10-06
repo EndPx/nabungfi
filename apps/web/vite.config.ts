@@ -54,6 +54,15 @@ export default defineConfig({
           shellFiles.add(file);
           if (item.type === "chunk") item.imports.forEach(visit);
         };
+        const walletGraph = new Set<string>();
+        const visitWalletGraph = (file: string) => {
+          if (walletGraph.has(file)) return;
+          walletGraph.add(file);
+          const item = bundle[file];
+          if (!item) return;
+          shellFiles.add(file);
+          if (item.type === "chunk") [...item.imports,...item.dynamicImports].forEach(visitWalletGraph);
+        };
         for (const [file, item] of Object.entries(bundle)) {
           if (
             item.type === "chunk" &&
@@ -63,6 +72,9 @@ export default defineConfig({
           )
             visit(file);
           if (/\.(css|woff2)$/.test(file)) shellFiles.add(file);
+          // Wallet dialogs load lazily. Keep their entire public module graph
+          // with the same release so an active tab survives a later deployment.
+          if (item.type === "chunk" && file.includes("/LiveApp-")) visitWalletGraph(file);
         }
         const assets = [
           "/index.html",
