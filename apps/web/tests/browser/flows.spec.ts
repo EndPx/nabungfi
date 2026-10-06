@@ -127,6 +127,17 @@ test("unavailable chain reads block financial controls; modal supports Escape an
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "New goal" })).toBeFocused();
 });
+
+test("an unavailable achieved snapshot withholds stale chain balances and claim controls", async ({ page }) => {
+  await page.goto("/tests/browser/harness.html?view=detail&phase=achieved&read=unavailable");
+  await expect(page.getByText("Read unavailable", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Claim", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Add savings", exact: true })).toHaveCount(0);
+  const values = page.locator(".network-row-value");
+  await expect(values).toHaveCount(2);
+  for (const value of await values.all()) await expect(value).toContainText("—");
+  await expect(page.getByText("Unlocked", { exact: true })).toHaveCount(0);
+});
 test("goal overview and creation dialog pass automated WCAG AA checks", async ({
   page,
 }) => {

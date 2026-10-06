@@ -198,7 +198,7 @@ export function GoalDetail({
     (BigInt(total) * 10000n) / BigInt(goal.targetRaw),
   );
   const positions = new Map(
-    state?.positions.map((position) => [position.network, position]) ?? [],
+    available ? state?.positions.map((position) => [position.network, position]) ?? [] : [],
   );
   return (
     <>

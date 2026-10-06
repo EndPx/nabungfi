@@ -58,7 +58,7 @@ const goal = {
   model: "car",
   targetRaw,
   binding: { ...fixtures.binding, targetRaw, initialized: true },
-  chainStatus: phase === "unavailable" ? "unavailable" : "available",
+  chainStatus: phase === "unavailable" || params.get("read") === "unavailable" ? "unavailable" : "available",
   chainState: {
     goalId: fixtures.binding.goalId,
     phase:
