@@ -346,17 +346,15 @@ export function GoalDetail({
                         Create {networks[participant.network]} vault
                       </Button>
                     ))}
-                  {goal.binding.participants.every(
-                    (participant) => participant.vault,
-                  ) && (
-                    <Button
-                      variant="build"
-                      disabled={busy}
-                      onClick={() => step("initialize", "solana")}
-                    >
-                      Initialize Solana goal
-                    </Button>
-                  )}
+                  <Button
+                    variant="build"
+                    disabled={busy || !goal.binding.participants.every(participant => participant.vault && participant.configHash)}
+                    onClick={() => step("initialize", "solana")}
+                  >
+                    Initialize Solana goal
+                  </Button>
+                  {!goal.binding.participants.every(participant => participant.vault && participant.configHash) &&
+                    <p className="live-help">Solana setup becomes available after the selected EVM vaults are created and verified.</p>}
                 </div>
               </>
             ) : !state?.linked ? (

@@ -30,6 +30,17 @@ test("uncreated vaults do not expose a predicted address as an existing account"
   await expect(page.getByText("Vault not created",{exact:true})).toHaveCount(2);
   await expect(page.locator(".vault-address-link")).toHaveCount(0);
   await expect(page.getByRole("button",{name:/Copy .* vault address/})).toHaveCount(0);
+  await expect(page.getByRole("button",{name:"Initialize Solana goal",exact:true})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Initialize Solana goal",exact:true})).toBeDisabled();
+  await expect(page.getByText("Solana setup becomes available after the selected EVM vaults are created and verified.",{exact:true})).toBeVisible();
+});
+
+test("Solana setup requires both the actual EVM vault and its verified configuration",async({page})=>{
+  await page.goto("/tests/browser/harness.html?view=detail&amount=0&vaults=ready&configuration=missing");
+  await expect(page.getByRole("button",{name:"Initialize Solana goal",exact:true})).toBeDisabled();
+  await page.goto("/tests/browser/harness.html?view=detail&amount=0&vaults=ready");
+  await page.getByRole("button",{name:"Initialize Solana goal",exact:true}).click();
+  await expect(page.getByLabel("Fixture requested action")).toHaveText("initialize:solana:");
 });
 
 test("known vault identities survive a failed balance read without exposing claim actions",async({page})=>{

@@ -1,5 +1,7 @@
 # NabungFi interface system
 
+Solana initialization remains visible as a disabled setup action while any selected EVM participant lacks its verified vault or configuration hash. Explain the prerequisite beneath the button. Enable the existing owner-signed initialization only once every selected participant has both fields; the immutable participant binding and backend receipt checks remain authoritative.
+
 The savings overview is labelled Dashboard in the sidebar, mobile navigation, page heading, breadcrumb, browser title and PWA shortcut. Detail navigation says Back to dashboard. Goal names and goal filters retain their object meaning; route IDs and saved /app/goals links remain compatible.
 
 ## App startup and goal loading — 7 October 2026
