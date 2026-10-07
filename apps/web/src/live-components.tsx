@@ -38,6 +38,7 @@ import {
 import { actions, networks, phases, short } from "./live-config";
 import { nextPieceProgress, formatNativeGas } from "./savings-progress";
 import { ChainAllocation } from "./ChainAllocation";
+import { VaultAddress } from "./VaultAddress";
 const CarWorkshop = lazy(() => import("./CarWorkshop"));
 const activityDateFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric", month: "short", year: "numeric",
@@ -411,6 +412,9 @@ export function GoalDetail({
                 ] as AppNetwork[]
               ).map((network) => {
                 const position = positions.get(network);
+                const vault = network === "solana"
+                  ? goal.binding.initialized ? goal.binding.solanaCash : undefined
+                  : goal.binding.participants.find(participant => participant.network === network)?.vault;
                 return (
                   <div key={network} className="network-row">
                     <div className="network-row-name">
@@ -445,6 +449,7 @@ export function GoalDetail({
                         </Button>
                       )}
                     </div>
+                    <VaultAddress network={network} address={vault} />
                   </div>
                 );
               })}

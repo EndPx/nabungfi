@@ -79,9 +79,15 @@
 .live-shell .goal-workshop-column { grid-area: workshop; min-width: 0; }
 .live-shell .live-financial-rail { grid-area: finances; }
 .live-shell .live-timeline-date { display: block; margin-block-start: var(--space-1); font-size: var(--text-xs); color: var(--muted); line-height: 1.5; }
-.live-shell .goal-chain-panel .network-row { padding-block: var(--space-3); border-block-end: 1px solid var(--app-line); }
+.live-shell .goal-chain-panel .network-row { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: var(--space-2); padding-block: var(--space-3); border-block-end: 1px solid var(--app-line); }
 .live-shell .goal-chain-panel .network-row:last-child { border: 0; }
 .live-shell .goal-chain-panel .network-list { gap: var(--space-1); }
+.live-shell .vault-address-row { grid-column: 1 / -1; display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); min-width: 0; margin-block-start: var(--space-1); font-size: var(--text-xs); }
+.live-shell .vault-address-label { color: var(--muted); }
+.live-shell .vault-address-link { display: inline-flex; align-items: center; gap: var(--space-1); min-height: 32px; color: var(--ink); text-decoration: none; border-radius: var(--radius-small); }
+.live-shell .vault-address-link:hover { text-decoration: underline; }
+.live-shell .vault-copy-button { width: 32px; height: 32px; min-width: 32px; min-height: 32px; padding: 0; }
+.live-shell .vault-address-row .live-error { flex-basis: 100%; }
 .live-shell .chain-allocation { margin-block: var(--space-4) var(--space-2); }
 .live-shell .chain-allocation-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-size: var(--text-xs); }
 .live-shell .chain-allocation-heading h3 { font: 500 var(--text-sm)/1.5 var(--font-body); }

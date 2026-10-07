@@ -62,7 +62,8 @@ const goal = {
   name: "My next car",
   model: "car",
   targetRaw,
-  binding: { ...fixtures.binding, targetRaw, initialized: true },
+  binding: { ...fixtures.binding, targetRaw, initialized: params.get("vaults") !== "missing",
+    participants: fixtures.binding.participants.map(participant => params.get("vaults") === "missing" ? {...participant,vault:undefined} : participant) },
   chainStatus: phase === "unavailable" || params.get("read") === "unavailable" ? "unavailable" : "available",
   chainState: {
     goalId: fixtures.binding.goalId,
