@@ -4,7 +4,10 @@ import type { SessionDTO } from "@nabungfi/shared/application";
 import { appStartupPhase, hasVerifiedSession } from "../src/auth-gate";
 import { appHref, isAppRoute, loginHref, loginReturnTarget, readAppRoute, safeAppReturnTarget } from "../src/app-routes";
 
-const session: SessionDTO = { user: { id: "database-user", privySubject: "did:privy:alice", wallets: [] }, profile: "testnet", privyAppId: "test-app", chains: ["solana", "base"] };
+const session: SessionDTO = { user: { id: "database-user", privySubject: "did:privy:alice", wallets: [
+  { chainType: "ethereum", address: "0x1111111111111111111111111111111111111111" },
+  { chainType: "solana", address: "11111111111111111111111111111111" },
+] }, profile: "testnet", privyAppId: "test-app", chains: ["solana", "base"] };
 const valid = { ready: true, authenticated: true, userId: "did:privy:alice", appId: "test-app", session };
 
 test("startup waits for real readiness and first reads without granting access from a loader",()=>{
@@ -26,6 +29,8 @@ test("workspace access requires SDK readiness, real authentication and a matchin
     { ready: false }, { authenticated: false }, { userId: null }, { appId: undefined }, { session: null },
     { userId: "did:privy:bob" }, { appId: "another-app" },
     { session: { ...session, profile: "mainnet" } as unknown as SessionDTO },
+    { session: { ...session, user: { ...session.user, wallets: [] } } },
+    { session: { ...session, user: { ...session.user, wallets: session.user.wallets.slice(0, 1) } } },
   ]) assert.equal(hasVerifiedSession({ ...valid, ...invalid }), false);
 });
 

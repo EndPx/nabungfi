@@ -1,5 +1,9 @@
 # NabungFi interface system
 
+## Automatic owner wallets — 8 October 2026
+
+Google/email/custom login and restored sessions explicitly prepare missing EVM and Solana owner wallets through the client Privy SDK. Reuse existing linked wallets; never create additional wallets or grant server signing access. Backend ownership must contain both families before workspace navigation appears. During provisioning, reuse the fullscreen canonical N LoadingState with Preparing your wallets… and Setting up your EVM and Solana wallets securely. SDK account refresh and bounded backend propagation checks precede the normal initial goal reads. A failure exposes the existing verification error/retry/sign-out controls; retries refresh ownership first and only create a still-missing family. Identity changes cancel the old flow, while offline mode creates no wallets. The existing workspace and transaction recovery rules remain authoritative.
+
 Solana initialization remains visible as a disabled setup action while any selected EVM participant lacks its verified vault or configuration hash. Explain the prerequisite beneath the button. Enable the existing owner-signed initialization only once every selected participant has both fields; the immutable participant binding and backend receipt checks remain authoritative.
 
 The savings overview is labelled Dashboard in the sidebar, mobile navigation, page heading, breadcrumb, browser title and PWA shortcut. Detail navigation says Back to dashboard. Goal names and goal filters retain their object meaning; route IDs and saved /app/goals links remain compatible.

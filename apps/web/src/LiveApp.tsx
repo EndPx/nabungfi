@@ -53,8 +53,9 @@ export default function LiveApp() {
         supportedChains,
         defaultChain: supportedChains[0],
         embeddedWallets: {
-          ethereum: { createOnLogin: "users-without-wallets" },
-          solana: { createOnLogin: "users-without-wallets" },
+          // Custom Google/OTP login provisions missing wallets in useWalletOnboarding.
+          ethereum: { createOnLogin: "off" },
+          solana: { createOnLogin: "off" },
         },
         solana: { rpcs: { "solana:devnet": solanaDevnet } },
         externalWallets: { solana: { connectors: solanaConnectors } },
@@ -82,6 +83,7 @@ function AuthenticatedApp() {
     history,
     loading,
     initialReadSettled,
+    walletOnboarding,
     openingGoal,
     busy,
     error,
@@ -116,7 +118,7 @@ function AuthenticatedApp() {
   const emailLogin = useLoginWithEmail();
   const googleLogin = useLoginWithOAuth();
   const { isOpen } = useModalStatus();
-  const verified = hasVerifiedSession({ ready, authenticated, userId: user?.id,
+  const verified = walletOnboarding.complete && hasVerifiedSession({ ready, authenticated, userId: user?.id,
     appId: import.meta.env.VITE_PRIVY_APP_ID, session });
   useEffect(() => {
     if (!ready) return;
@@ -134,13 +136,13 @@ function AuthenticatedApp() {
     }
   }, [ready, authenticated, verified, destination]);
   const startup=appStartupPhase({ready,authenticated,verified,initialReadSettled,offline:pwa.offline,error});
-  if (startup === "splash") return <AppSplash />;
+  if (startup === "splash") return <AppSplash preparingWallets={walletOnboarding.pending} />;
   if (!verified) {
     return <LoginPage
       status={!ready ? "initializing" : authenticated ? "verifying" : "ready"}
       offline={pwa.offline}
       error={authenticated ? error : undefined}
-      retry={authenticated && error ? () => void load() : undefined}
+      retry={authenticated && error ? () => walletOnboarding.complete ? void load() : walletOnboarding.retry() : undefined}
       signOut={authenticated ? () => void logout() : undefined}
       sendCode={email => emailLogin.sendCode({ email })}
       verifyCode={code => emailLogin.loginWithCode({ code })}

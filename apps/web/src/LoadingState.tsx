@@ -29,6 +29,7 @@ export function LoadingState({ message, description, fullscreen = false }: {
   );
 }
 
-export function AppSplash() {
-  return <LoadingState fullscreen message="Opening NabungFi…" description="Your workshop is getting ready." />;
+export function AppSplash({ preparingWallets = false }: { preparingWallets?: boolean }) {
+  return <LoadingState fullscreen message={preparingWallets ? "Preparing your wallets…" : "Opening NabungFi…"}
+    description={preparingWallets ? "Setting up your EVM and Solana wallets securely." : "Your workshop is getting ready."} />;
 }

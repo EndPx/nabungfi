@@ -1,4 +1,5 @@
 import type { SessionDTO } from "@nabungfi/shared/application";
+import { hasOwnerWallets } from "./wallet-onboarding";
 
 /** Loading presentation never grants workspace access or trusts a persisted session hint. */
 export function appStartupPhase(input: {
@@ -26,5 +27,5 @@ export function hasVerifiedSession(input: {
   const { ready, authenticated, userId, appId, session } = input;
   return Boolean(ready && authenticated && userId && appId && session &&
     session.profile === "testnet" && session.privyAppId === appId &&
-    session.user?.privySubject === userId);
+    session.user?.privySubject === userId && hasOwnerWallets(session.user.wallets));
 }

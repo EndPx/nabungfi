@@ -26,7 +26,10 @@ function AuthFixture() {
   const unavailable = new URLSearchParams(location.search).has("unavailable");
   const offline = new URLSearchParams(location.search).has("offline");
   const returnTo = loginReturnTarget(location.search);
-  const grant = (subject: string) => setSession({ user: { id: "db-example", privySubject: subject, wallets: [] }, privyAppId: "fixture", profile: "testnet", chains: ["solana", "base"] });
+  const grant = (subject: string) => setSession({ user: { id: "db-example", privySubject: subject, wallets: [
+    { chainType: "ethereum", address: "0x1111111111111111111111111111111111111111" },
+    { chainType: "solana", address: "11111111111111111111111111111111" },
+  ] }, privyAppId: "fixture", profile: "testnet", chains: ["solana", "base"] });
   const verified = hasVerifiedSession({ ready: sdkReady, authenticated, userId: "did:privy:example", appId: "fixture", session });
   const startup=appStartupPhase({ready:sdkReady,authenticated,verified,initialReadSettled,offline,error:""});
   return (

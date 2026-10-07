@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { usePrivy, useWallets, useCreateWallet } from "@privy-io/react-auth";
+import { usePrivy, useWallets, useCreateWallet, useUser } from "@privy-io/react-auth";
 import {
   useWallets as useSolanaWallets,
   useSignAndSendTransaction,
@@ -46,6 +46,8 @@ import { navigateApp, readAppRoute } from "./app-routes";
 import { actions, networks } from "./live-config";
 import { readGoalSnapshots, retainGoalPresentation } from "./goal-snapshots";
 import { prepareEvmProvider, assertEvmProviderIdentity } from "./wallet-provider";
+import { useWalletOnboarding } from "./useWalletOnboarding";
+import { hasOwnerWallets } from "./wallet-onboarding";
 export function useLiveController() {
   const {
     ready,
@@ -59,6 +61,7 @@ export function useLiveController() {
   } = usePrivy();
   const { wallets: evmWallets } = useWallets();
   const { wallets: solanaWallets } = useSolanaWallets();
+  const { refreshUser } = useUser();
   const { signAndSendTransaction } = useSignAndSendTransaction();
   const { createWallet: createEthereumWallet } = useCreateWallet();
   const { createWallet: createSolanaWallet } = useCreateSolanaWallet();
@@ -78,7 +81,6 @@ export function useLiveController() {
   const [busy, setBusy] = useState(false);
   const [requestError, setError] = useState("");
   const [recoveryError, setRecoveryError] = useState("");
-  const error = recoveryError || requestError;
   const [notice, setNotice] = useState("");
   const [creating, setCreating] = useState(false);
   const [depositing, setDepositing] = useState(false);
@@ -140,6 +142,13 @@ export function useLiveController() {
       appRequest<T>(getAccessToken, path, options),
     [getAccessToken],
   );
+  const walletOnboarding = useWalletOnboarding({
+    userId, authenticated, ready,
+    offline: pwa.offline, appId: import.meta.env.VITE_PRIVY_APP_ID,
+    refreshUser, createEthereumWallet, createSolanaWallet,
+    readSession: () => request<SessionDTO>("/api/session"),
+  });
+  const error = walletOnboarding.error || recoveryError || requestError;
   useEffect(() => {
     if (!userId) return;
     const changed = (event: StorageEvent) => {
@@ -173,6 +182,8 @@ export function useLiveController() {
         identity,
         import.meta.env.VITE_PRIVY_APP_ID,
       );
+      if (!hasOwnerWallets(nextSession.user.wallets))
+        throw new Error("Your wallet ownership is still syncing. Retry verification to finish setup.");
       setSession(nextSession);
       setGoals(prior => retainGoalPresentation(portfolio.goals,prior));
       setError("");
@@ -227,8 +238,8 @@ export function useLiveController() {
     refreshRecovery();
   }, [authenticated, userId, refreshRecovery]);
   useEffect(() => {
-    if (authenticated) void load();
-  }, [authenticated, walletMembership, load]);
+    if (authenticated && walletOnboarding.complete) void load();
+  }, [authenticated, walletOnboarding.complete, walletMembership, load]);
   useEffect(() => {
     const update = () => {
       const route = readAppRoute(location);
@@ -258,13 +269,13 @@ export function useLiveController() {
     return () => window.removeEventListener("beforeunload", guard);
   }, [busy]);
   useEffect(() => {
-    if (!authenticated || busy || loading) return;
+    if (!authenticated || !walletOnboarding.complete || busy || loading) return;
     const timer = window.setInterval(() => {
       if (document.visibilityState === "visible" && navigator.onLine)
         void load();
     }, 30000);
     return () => window.clearInterval(timer);
-  }, [authenticated, busy, loading, load]);
+  }, [authenticated, walletOnboarding.complete, busy, loading, load]);
   useEffect(() => {
     if (!authenticated || !selectedId || !userId) {
       setHistory([]);
@@ -919,6 +930,7 @@ export function useLiveController() {
     history,
     loading,
     initialReadSettled,
+    walletOnboarding,
     openingGoal,
     busy,
     error,
