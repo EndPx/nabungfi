@@ -2,9 +2,13 @@
 .login-story { display: flex; flex-direction: column; padding: var(--space-10); min-width: 0; background: var(--studio); }
 .login-brand { width: fit-content; text-decoration: none; }
 .login-story-content { margin-block: auto; padding-block: var(--space-8); }
-.login-art { overflow: hidden; border-radius: var(--radius-hero); }
-.login-art .goal-illustration { height: 360px; }
-.login-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.login-art { position: relative; overflow: hidden; border-radius: var(--radius-hero); background: radial-gradient(ellipse at center, var(--paper), var(--studio)); }
+.login-art-scene { position: relative; height: 360px; display: grid; place-items: center; }
+.login-emblem { position: relative; z-index: 1; width: var(--login-emblem-size); }
+.login-emblem svg { display: block; width: 100%; height: auto; overflow: visible; }
+.login-art-shadow { position: absolute; width: 56%; height: var(--space-4); inset-block-end: var(--space-8); border-radius: 50%; background: var(--ink); opacity: .08; filter: blur(10px); }
+.login-art .login-art-pause { position: absolute; inset-inline-end: var(--space-2); inset-block-end: 0; z-index: 2; font-size: var(--text-xs); color: var(--muted); }
+@media(prefers-reduced-motion: reduce) { .login-art .login-art-pause { display: none; } }
 .login-story h2 { margin-top: var(--space-8); font: 500 var(--text-balance)/1.12 var(--font-display); letter-spacing: -.035em; }
 .login-story-content > p { color: var(--muted); line-height: 1.6; margin-top: var(--space-4); }
 .login-side { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; padding: var(--space-20) var(--space-10); }

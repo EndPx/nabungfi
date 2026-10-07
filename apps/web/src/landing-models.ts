@@ -124,7 +124,7 @@ const ordered = (pieces: SculpturePiece[]) => {
     .sort((a,b)=>a.position[1]-b.position[1]);
 };
 export const LANDING_MODELS = [
-  { id: "camera", label: "A new perspective.", name: "Camera", pieces: ordered(camera()) },
-  { id: "scooter", label: "A little more freedom.", name: "Scooter", pieces: ordered(scooter()) },
-  { id: "sailboat", label: "An escape of your own.", name: "Sailboat", pieces: ordered(sailboat()) },
+  { id: "camera", name: "Camera", pieces: ordered(camera()) },
+  { id: "scooter", name: "Scooter", pieces: ordered(scooter()) },
+  { id: "sailboat", name: "Sailboat", pieces: ordered(sailboat()) },
 ] as const;

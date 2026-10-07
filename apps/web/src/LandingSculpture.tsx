@@ -83,9 +83,9 @@ function StudioLight({tall}:{tall:boolean}) {
   </>;
 }
 
-function Sculpture({pieces,active,reducedMotion,stage,progress,onPhase,onNext,onReady}:{
+function Sculpture({pieces,active,reducedMotion,stage,onPhase,onNext,onReady}:{
   pieces:readonly SculpturePiece[];active:boolean;reducedMotion:boolean;
-  stage:RefObject<HTMLDivElement|null>;progress:RefObject<HTMLDivElement|null>;
+  stage:RefObject<HTMLDivElement|null>;
   onPhase:(phase:Phase)=>void;onNext:()=>void;onReady:()=>void;
 }){
   const resources=useMemo(()=>batchesFor(pieces),[pieces]);
@@ -100,9 +100,8 @@ function Sculpture({pieces,active,reducedMotion,stage,progress,onPhase,onNext,on
   const ready=useRef(false);
   const publish=useCallback(()=>{
     if(stage.current)stage.current.dataset.build=String(Math.round(clock.current.build*100));
-    if(progress.current)progress.current.style.transform=`scaleX(${clock.current.build})`;
     invalidate();
-  },[stage,progress,invalidate]);
+  },[stage,invalidate]);
   useLayoutEffect(()=>{
     clock.current={build:reducedMotion ? 1 : 0,angle:reducedMotion ? STUDIO_POSE : BUILD_START_ANGLE};
     publish();
@@ -156,11 +155,11 @@ function Sculpture({pieces,active,reducedMotion,stage,progress,onPhase,onNext,on
 // Reuses the same geometry for original artwork exports, without an animation loop.
 export function StaticLandingModel({id}:{id:LandingModelId}) {
   const model=LANDING_MODELS.find(item=>item.id===id)!;
-  const stage=useRef<HTMLDivElement>(null),progress=useRef<HTMLDivElement>(null);
+  const stage=useRef<HTMLDivElement>(null);
   return <div className="landing-sculpture" ref={stage}>
     <Canvas orthographic camera={STUDIO_CAMERA} dpr={1.5} frameloop="demand" shadows={{type:PCFShadowMap}} gl={{antialias:true,alpha:true}}>
       <StudioLight tall={id==="sailboat"} />
-      <Sculpture pieces={model.pieces} active={false} reducedMotion stage={stage} progress={progress} onPhase={()=>undefined} onNext={()=>undefined} onReady={()=>{if(stage.current)stage.current.dataset.ready="true";}} />
+      <Sculpture pieces={model.pieces} active={false} reducedMotion stage={stage} onPhase={()=>undefined} onNext={()=>undefined} onReady={()=>{if(stage.current)stage.current.dataset.ready="true";}} />
     </Canvas>
   </div>;
 }
@@ -168,7 +167,7 @@ export function StaticLandingModel({id}:{id:LandingModelId}) {
 export default function LandingSculpture({paused,reducedMotion}:{paused:boolean;reducedMotion:boolean}) {
   const [index,setIndex]=useState(0),[phase,setPhase]=useState<Phase>("building"),[ready,setReady]=useState(false);
   const [inView,setInView]=useState(true),[visible,setVisible]=useState(()=>document.visibilityState!=="hidden");
-  const stage=useRef<HTMLDivElement>(null),progress=useRef<HTMLDivElement>(null);
+  const stage=useRef<HTMLDivElement>(null);
   const model=LANDING_MODELS[reducedMotion ? 0 : index];
   const active=!paused && !reducedMotion && inView && visible;
   useEffect(()=>{
@@ -178,7 +177,6 @@ export default function LandingSculpture({paused,reducedMotion}:{paused:boolean;
     if(stage.current)observer.observe(stage.current);
     return()=>{document.removeEventListener("visibilitychange",update);observer.disconnect();};
   },[]);
-  const descriptions={building:"Taking shape",complete:"Piece by piece",reversing:"Room for the next dream",empty:"Something new is coming"};
   return <figure className="landing-studio" data-model={model.id} data-phase={phase} data-ready={ready ? "true" : "false"} data-running={active ? "true" : "false"}>
     <div className="landing-studio-note" aria-hidden="true"><span className="studio-note-block" />Small steps. Real possibilities.</div>
     <div className="landing-sculpture" ref={stage} role="img" aria-label={`${model.name} made of toy bricks. An automatic building illustration, not a savings balance.`}>
@@ -186,16 +184,9 @@ export default function LandingSculpture({paused,reducedMotion}:{paused:boolean;
       <Canvas orthographic camera={STUDIO_CAMERA} dpr={[1,1.5]} frameloop={active ? "always" : "demand"}
         shadows={{type:PCFShadowMap}} gl={{antialias:true,alpha:true}} aria-hidden="true">
         <StudioLight tall={model.id==="sailboat"} />
-        <Sculpture key={model.id} pieces={model.pieces} active={active} reducedMotion={reducedMotion} stage={stage} progress={progress}
+        <Sculpture key={model.id} pieces={model.pieces} active={active} reducedMotion={reducedMotion} stage={stage}
           onPhase={setPhase} onReady={()=>setReady(true)} onNext={()=>setIndex(value=>(value+1)%LANDING_MODELS.length)} />
       </Canvas>
     </div>
-    <figcaption className="landing-studio-caption">
-      <span><small>{descriptions[phase]}</small><strong key={model.id}>{model.label}</strong></span>
-      <span className="landing-studio-dots" aria-hidden="true">
-        {LANDING_MODELS.map((item,i)=><i key={item.id} className={i===index ? "is-active" : ""} title={item.name} />)}
-      </span>
-    </figcaption>
-    <div className="landing-studio-track" aria-hidden="true"><div ref={progress} /></div>
   </figure>;
 }

@@ -1,6 +1,48 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test("login artwork animates the approved N, pauses and continues during verification", async ({page}) => {
+  await page.emulateMedia({reducedMotion:"no-preference"});
+  await page.setViewportSize({width:1280,height:900});
+  await page.goto("/tests/browser/auth.html");
+  const artwork=page.locator(".login-art"),scene=page.locator(".login-art-scene");
+  await expect(artwork).toHaveAttribute("data-running","true");
+  await expect(page.locator('.login-art img[src*="/models/"]')).toHaveCount(0);
+  const assembling=await scene.screenshot();
+  await page.waitForTimeout(450);
+  expect((await scene.screenshot()).equals(assembling)).toBe(false);
+  await page.getByRole("button",{name:"Pause artwork",exact:true}).click();
+  await expect(artwork).toHaveAttribute("data-running","false");
+  const paused=await page.locator(".login-emblem").screenshot();
+  const pausedTransform=await page.locator(".login-emblem").evaluate(element=>getComputedStyle(element).transform);
+  await page.waitForTimeout(450);
+  expect((await page.locator(".login-emblem").screenshot()).equals(paused)).toBe(true);
+  expect(await page.locator(".login-emblem").evaluate(element=>getComputedStyle(element).transform)).toBe(pausedTransform);
+  await page.getByRole("button",{name:"Resume artwork",exact:true}).click();
+  await expect(artwork).toHaveAttribute("data-running","true");
+  await page.getByRole("button",{name:"Continue with Google",exact:true}).click();
+  await page.getByRole("button",{name:"Complete example Google sign-in"}).click();
+  await expect(page.getByRole("heading",{name:"Verifying your account"})).toBeVisible();
+  await expect(artwork).toHaveAttribute("data-running","true");
+  await expect(page.getByRole("navigation",{name:"Main navigation"})).toHaveCount(0);
+});
+
+test("reduced motion shows a static N and the hidden mobile artwork does not animate", async ({page}) => {
+  await page.emulateMedia({reducedMotion:"reduce"});
+  await page.setViewportSize({width:1280,height:900});
+  await page.goto("/tests/browser/auth.html");
+  await expect(page.locator(".login-art")).toHaveAttribute("data-running","false");
+  await page.evaluate(()=>document.fonts.ready);
+  const emblem=page.locator(".login-emblem"),before=await emblem.screenshot();
+  await page.waitForTimeout(450);
+  expect((await emblem.screenshot()).equals(before)).toBe(true);
+  await expect(page.getByRole("button",{name:"Pause artwork",exact:true})).toBeHidden();
+  await page.emulateMedia({reducedMotion:"no-preference"});
+  await page.setViewportSize({width:390,height:844});
+  await expect(page.locator(".login-art")).toBeHidden();
+  await expect(page.locator(".login-art")).toHaveAttribute("data-running","false");
+});
+
 test("email OTP and backend identity verification precede any workspace", async ({ page }) => {
   await page.goto("/tests/browser/auth.html?next=%2Fapp%2Fgoals%3Fgoal%3Dcar");
   await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);

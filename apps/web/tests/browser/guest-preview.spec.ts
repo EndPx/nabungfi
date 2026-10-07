@@ -15,6 +15,7 @@ test("three new sculptures automatically build, rotate and reverse to zero befor
   await expect(page.locator(".car-stage, .workshop")).toHaveCount(0);
   await expect(page.getByRole("button",{name:/Try a build|Try assembly|Explore 360/})).toHaveCount(0);
   await expect(page.getByRole("link",{name:/Try.*build/})).toHaveCount(0);
+  await expect(page.locator(".landing-studio-caption, .landing-studio-track, .landing-studio-dots")).toHaveCount(0);
   for(const id of ["camera","scooter","sailboat"]){
     await expect(studio).toHaveAttribute("data-model",id,{timeout:13000});
     await expect(studio).toHaveAttribute("data-phase","complete",{timeout:13000});

@@ -8,11 +8,6 @@ export function LandingPoster() {
         <img src="/illustrations/landing-camera.webp" width={800} height={800}
           alt="An original blue and ivory camera built from toy bricks" fetchPriority="high" />
       </div>
-      <figcaption className="landing-studio-caption">
-        <span><small>One piece at a time</small><strong>A new perspective.</strong></span>
-        <span className="landing-studio-dots" aria-hidden="true"><i className="is-active" /><i /><i /></span>
-      </figcaption>
-      <div className="landing-studio-track" aria-hidden="true"><div style={{transform:"scaleX(1)"}} /></div>
     </figure>
   );
 }

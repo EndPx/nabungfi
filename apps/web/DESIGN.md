@@ -1,5 +1,11 @@
 # NabungFi interface system
 
+## Landing captions and login artwork — 7 October 2026
+
+The user removes the entire caption below the landing sculptures: no phase sentence, item title, colored selector dots or progress line. The same omission applies to loading/error posters. Keep the automatic build/rotation/reverse cycle and accessible artwork descriptions.
+
+Replace the login/verifying page's static app-car poster with the approved six-row N as lightweight SVG artwork. Reuse BuildingMark's canonical geometry and blue/yellow/red palette. Set `--login-emblem-size: clamp(180px, 23vw, 300px)`; keep the artwork within the existing 360px story stage. Individual body blocks assemble with 0.065s staggering and a 0.6s back.out snap, exposed studs appear after assembly, the completed mark rises 6px and returns over two 1.5s sine steps, then the pieces scatter before the 6.5s cycle repeats. The effect uses scoped GSAP cleanup, not a second 3D renderer. A soft oval ink shadow at 0.08 opacity, studio/paper radial light and the canonical colored blocks provide depth without changing the mark. Pause artwork and OS reduced motion show the complete static N. Suspend animation while the document is hidden; do not run it below the 900px story-column breakpoint. The existing sign-in, verification, OTP, Google, wallet, offline and backend-session rules remain the authority for the right panel. Artwork never represents authentication progress and plays no audio.
+
 ## Automatic landing studio — 7 October 2026
 
 The landing hero is a marketing composition, with its own three original brick sculptures: a camera, a scooter and a sailboat. It never imports the app's car, laptop, house, workshop controls, balances or financial state. Keep the approved Outfit/Work Sans typography and blue/yellow/red identity. The headline is Small saves. Big possibilities. A single Start a goal action leads to login; How it works is the secondary anchor. Remove Try a build, Explore 360 and public demo navigation, including the sidebar link. Historical /demo links redirect to the normal landing; the demo query no longer selects a special mode.

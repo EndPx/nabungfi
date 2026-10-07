@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, LockKeyhole, Wallet } from "./icons";
 import { Button, Logo } from "./ui";
-import { GoalIllustration } from "./GoalIllustration";
+import { LoginArtwork } from "./LoginArtwork";
 import "./login.css";
 
 export interface LoginPageProps {
@@ -25,7 +25,7 @@ export function LoginPage({ status = "initializing", offline = false, error, ret
       <section className="login-story" aria-label="NabungFi">
         <a className="login-brand" href="/" aria-label="NabungFi home"><Logo /></a>
         <div className="login-story-content">
-          <div className="login-art"><GoalIllustration model="car" priority /></div>
+          <LoginArtwork />
           <h2>Little by little.<br />Something worth building.</h2>
           <p>Your goals, taking shape with every deposit.</p>
         </div>

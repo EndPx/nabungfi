@@ -49,6 +49,7 @@
   --text-hero: 64px;
   --text-hero-large: 80px;
   --landing-stage-height: clamp(320px, 36vw, 440px);
+  --login-emblem-size: clamp(180px, 23vw, 300px);
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
