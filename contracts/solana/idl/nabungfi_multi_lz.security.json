@@ -1,0 +1,15 @@
+{
+  "name": "NabungFi LayerZero Transport",
+  "project_url": "https://nabungfi.endpx.cloud",
+  "source_code": "https://github.com/EndPx/nabungfi",
+  "contacts": [
+    "link:https://github.com/EndPx/nabungfi/issues"
+  ],
+  "preferred_languages": [
+    "en",
+    "id"
+  ],
+  "description": "LayerZero V2 messaging for NabungFi multichain savings goals on Solana Devnet.",
+  "logo": "https://nabungfi.endpx.cloud/brand/nabungfi-mark.svg",
+  "version": "0.2.0"
+}

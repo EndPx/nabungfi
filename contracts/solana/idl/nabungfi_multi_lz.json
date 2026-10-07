@@ -1,0 +1,1051 @@
+{
+  "address": "G2R7kB4yiYKB8Z6sF8f34w79Lof4L5oqqMhumiTzrG3d",
+  "metadata": {
+    "name": "nabungfi_multi_lz",
+    "version": "0.2.0",
+    "spec": "0.1.0"
+  },
+  "instructions": [
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "administrator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "program"
+        },
+        {
+          "name": "program_data"
+        },
+        {
+          "name": "store",
+          "writable": true
+        },
+        {
+          "name": "receive_types",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_peer",
+      "discriminator": [
+        255,
+        130,
+        67,
+        201,
+        150,
+        77,
+        239,
+        55
+      ],
+      "accounts": [
+        {
+          "name": "administrator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "store",
+          "writable": true
+        },
+        {
+          "name": "peer",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "PeerArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "lz_receive",
+      "discriminator": [
+        8,
+        179,
+        120,
+        109,
+        33,
+        118,
+        189,
+        80
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "store"
+        },
+        {
+          "name": "peer"
+        },
+        {
+          "name": "goal",
+          "writable": true
+        },
+        {
+          "name": "receiver"
+        },
+        {
+          "name": "core_program"
+        },
+        {
+          "name": "transport_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "LzReceiveParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "lz_receive_types_info",
+      "discriminator": [
+        43,
+        148,
+        213,
+        93,
+        101,
+        127,
+        37,
+        170
+      ],
+      "accounts": [
+        {
+          "name": "oapp_account"
+        },
+        {
+          "name": "receive_types"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "LzReceiveParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "lz_receive_types_v2",
+      "discriminator": [
+        109,
+        157,
+        200,
+        142,
+        138,
+        223,
+        159,
+        164
+      ],
+      "accounts": [
+        {
+          "name": "store"
+        },
+        {
+          "name": "peer"
+        },
+        {
+          "name": "goal"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "LzReceiveParams"
+            }
+          }
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "LzReceiveTypesV2Result"
+        }
+      }
+    },
+    {
+      "name": "quote",
+      "discriminator": [
+        149,
+        42,
+        109,
+        247,
+        134,
+        146,
+        213,
+        123
+      ],
+      "accounts": [
+        {
+          "name": "store"
+        },
+        {
+          "name": "peer"
+        },
+        {
+          "name": "goal"
+        }
+      ],
+      "args": [
+        {
+          "name": "domain",
+          "type": "u32"
+        },
+        {
+          "name": "sequence",
+          "type": "u64"
+        },
+        {
+          "name": "options",
+          "type": "bytes"
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "MessagingFee"
+        }
+      }
+    },
+    {
+      "name": "seal_route",
+      "discriminator": [
+        231,
+        172,
+        27,
+        37,
+        5,
+        220,
+        106,
+        9
+      ],
+      "accounts": [
+        {
+          "name": "administrator",
+          "signer": true
+        },
+        {
+          "name": "store",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "send",
+      "discriminator": [
+        102,
+        251,
+        20,
+        187,
+        65,
+        75,
+        12,
+        69
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "store"
+        },
+        {
+          "name": "peer"
+        },
+        {
+          "name": "goal"
+        }
+      ],
+      "args": [
+        {
+          "name": "domain",
+          "type": "u32"
+        },
+        {
+          "name": "sequence",
+          "type": "u64"
+        },
+        {
+          "name": "native_fee",
+          "type": "u64"
+        },
+        {
+          "name": "options",
+          "type": "bytes"
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "MessagingReceipt"
+        }
+      }
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Goal",
+      "discriminator": [
+        163,
+        66,
+        166,
+        245,
+        130,
+        131,
+        207,
+        26
+      ]
+    },
+    {
+      "name": "LzReceiveTypesAccounts",
+      "discriminator": [
+        248,
+        87,
+        167,
+        117,
+        5,
+        251,
+        21,
+        126
+      ]
+    },
+    {
+      "name": "PeerConfig",
+      "discriminator": [
+        181,
+        157,
+        86,
+        198,
+        33,
+        193,
+        94,
+        203
+      ]
+    },
+    {
+      "name": "Store",
+      "discriminator": [
+        130,
+        48,
+        247,
+        244,
+        182,
+        191,
+        30,
+        26
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "MessageSubmitted",
+      "discriminator": [
+        208,
+        144,
+        0,
+        167,
+        232,
+        87,
+        34,
+        118
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "BootstrapAuthority",
+      "msg": "Only upgrade authority may bootstrap"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidPeer",
+      "msg": "Invalid fixed peer"
+    },
+    {
+      "code": 6002,
+      "name": "MissingPeer",
+      "msg": "Every global peer must be initialized"
+    },
+    {
+      "code": 6003,
+      "name": "SealedRoute",
+      "msg": "Route has been sealed"
+    },
+    {
+      "code": 6004,
+      "name": "UnsealedRoute",
+      "msg": "Route not sealed"
+    },
+    {
+      "code": 6005,
+      "name": "MissingEndpointAccounts",
+      "msg": "Wrong Endpoint account list"
+    },
+    {
+      "code": 6006,
+      "name": "MissingFeePayer",
+      "msg": "Signed fee payer missing"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidPacket",
+      "msg": "Invalid v2 packet"
+    }
+  ],
+  "types": [
+    {
+      "name": "AccountMetaRef",
+      "docs": [
+        "Account metadata for V2 execution planning.",
+        "Used by the Executor to construct the final transaction.",
+        "",
+        "V2 removes the legacy is_signer flag from V1's AccountMeta.",
+        "Instead, signer roles are explicitly declared through AddressLocator variants.",
+        "This provides clearer semantics and enables multiple signer support."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pubkey",
+            "docs": [
+              "The account address locator - supports multiple resolution strategies"
+            ],
+            "type": {
+              "defined": {
+                "name": "AddressLocator"
+              }
+            }
+          },
+          {
+            "name": "is_writable",
+            "docs": [
+              "Whether the account should be writable in the final transaction"
+            ],
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AddressLocator",
+      "docs": [
+        "A generic account locator used in LZ execution planning for V2.",
+        "Can reference the address directly, via ALT, or as a placeholder.",
+        "",
+        "This enum enables the compact account referencing design of V2, supporting:",
+        "- OApps to request multiple signer accounts, not just a single Executor EOA",
+        "- Dynamic creation of writable EOA-based data accounts",
+        "- Efficient encoding of addresses via ALTs, reducing account list size",
+        "",
+        "The legacy is_signer flag is removed. Instead, signer roles are explicitly",
+        "declared through Payer and indexed Signer(u8) variants."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Address",
+            "fields": [
+              "pubkey"
+            ]
+          },
+          {
+            "name": "AltIndex",
+            "fields": [
+              "u8",
+              "u8"
+            ]
+          },
+          {
+            "name": "Payer"
+          },
+          {
+            "name": "Signer",
+            "fields": [
+              "u8"
+            ]
+          },
+          {
+            "name": "Context"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Goal",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "goal_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "target",
+            "type": "u64"
+          },
+          {
+            "name": "principal",
+            "type": "u64"
+          },
+          {
+            "name": "claimed",
+            "type": "u64"
+          },
+          {
+            "name": "round",
+            "type": "u64"
+          },
+          {
+            "name": "outbound_sequence",
+            "type": "u64"
+          },
+          {
+            "name": "local_reserved",
+            "type": "u64"
+          },
+          {
+            "name": "local_ready_slot",
+            "type": "u64"
+          },
+          {
+            "name": "achieved_total",
+            "type": "u64"
+          },
+          {
+            "name": "local_ready",
+            "type": "bool"
+          },
+          {
+            "name": "phase",
+            "type": {
+              "defined": {
+                "name": "Phase"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "participants",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Participant"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Instruction",
+      "docs": [
+        "The list of instructions that can be executed in the LzReceive transaction.",
+        "",
+        "V2's multi-instruction model enables complex patterns such as:",
+        "- Preprocessing steps before lz_receive (e.g., account initialization)",
+        "- Postprocessing steps after lz_receive (e.g., verification, cleanup)",
+        "- ABA messaging patterns with additional LayerZero sends",
+        "- Conditional execution flows based on message content"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "LzReceive",
+            "fields": [
+              {
+                "name": "accounts",
+                "docs": [
+                  "Account list for the lz_receive instruction",
+                  "Uses AddressLocator for flexible address resolution"
+                ],
+                "type": {
+                  "vec": {
+                    "defined": {
+                      "name": "AccountMetaRef"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "Standard",
+            "fields": [
+              {
+                "name": "program_id",
+                "docs": [
+                  "Target program ID for the custom instruction"
+                ],
+                "type": "pubkey"
+              },
+              {
+                "name": "accounts",
+                "docs": [
+                  "Account list for the custom instruction",
+                  "Uses same AddressLocator system as LzReceive"
+                ],
+                "type": {
+                  "vec": {
+                    "defined": {
+                      "name": "AccountMetaRef"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "data",
+                "docs": [
+                  "Instruction data payload",
+                  "Raw bytes containing the instruction's parameters"
+                ],
+                "type": "bytes"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "LzReceiveParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "src_eid",
+            "type": "u32"
+          },
+          {
+            "name": "sender",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "guid",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "message",
+            "type": "bytes"
+          },
+          {
+            "name": "extra_data",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LzReceiveTypesAccounts",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "store",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LzReceiveTypesV2Result",
+      "docs": [
+        "Output of the lz_receive_types_v2 instruction.",
+        "",
+        "This structure enables the multi-instruction execution model where OApps can",
+        "define multiple instructions to be executed atomically by the Executor.",
+        "The Executor constructs a single transaction containing all returned instructions."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "context_version",
+            "docs": [
+              "The version of context account"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "alts",
+            "docs": [
+              "ALTs required for this execution context",
+              "Used by the Executor to resolve AltIndex references in AccountMetaRef",
+              "Enables efficient account list compression for complex transactions"
+            ],
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "instructions",
+            "docs": [
+              "The complete list of instructions required for LzReceive execution",
+              "MUST include exactly one LzReceive instruction",
+              "MAY include additional Standard instructions for preprocessing/postprocessing",
+              "Instructions are executed in the order returned"
+            ],
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Instruction"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MessageSubmitted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "goal",
+            "type": "pubkey"
+          },
+          {
+            "name": "domain",
+            "type": "u32"
+          },
+          {
+            "name": "sequence",
+            "type": "u64"
+          },
+          {
+            "name": "guid",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MessagingFee",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "native_fee",
+            "type": "u64"
+          },
+          {
+            "name": "lz_token_fee",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MessagingReceipt",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "guid",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": {
+              "defined": {
+                "name": "MessagingFee"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Participant",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "domain",
+            "type": "u32"
+          },
+          {
+            "name": "eid",
+            "type": "u32"
+          },
+          {
+            "name": "asset",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "router",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "vault",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "owner",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "config_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "linked",
+            "type": "bool"
+          },
+          {
+            "name": "net_assets",
+            "type": "u64"
+          },
+          {
+            "name": "progress_sequence",
+            "type": "u64"
+          },
+          {
+            "name": "observation",
+            "type": "u64"
+          },
+          {
+            "name": "observed_at",
+            "type": "u64"
+          },
+          {
+            "name": "received_at",
+            "type": "u64"
+          },
+          {
+            "name": "inbound_sequence",
+            "type": "u64"
+          },
+          {
+            "name": "reserved",
+            "type": "u64"
+          },
+          {
+            "name": "ready",
+            "type": "bool"
+          },
+          {
+            "name": "abort_ack",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PeerArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "domain",
+            "type": "u32"
+          },
+          {
+            "name": "eid",
+            "type": "u32"
+          },
+          {
+            "name": "router",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PeerConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "domain",
+            "type": "u32"
+          },
+          {
+            "name": "eid",
+            "type": "u32"
+          },
+          {
+            "name": "router",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Phase",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Locked"
+          },
+          {
+            "name": "Preparing"
+          },
+          {
+            "name": "Aborting"
+          },
+          {
+            "name": "Achieved"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Store",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "administrator",
+            "type": "pubkey"
+          },
+          {
+            "name": "endpoint",
+            "type": "pubkey"
+          },
+          {
+            "name": "route_sealed",
+            "type": "bool"
+          },
+          {
+            "name": "peer_mask",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

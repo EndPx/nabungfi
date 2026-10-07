@@ -2,3 +2,5 @@
 /ops/native/*.sh text eol=lf
 /ops/native/*.service text eol=lf
 /ops/native/*.timer text eol=lf
+/contracts/solana/idl/*.json text eol=lf
+/contracts/deployments/solana-metadata/*.json text eol=lf

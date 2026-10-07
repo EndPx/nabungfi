@@ -1,0 +1,271 @@
+{
+  "network": "solana-devnet",
+  "verifiedAt": "2026-10-07T14:55:27.909Z",
+  "signer": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+  "spentLamports": 83651020,
+  "programBytesUnchanged": true,
+  "programSlotsUnchanged": true,
+  "programAuthoritiesUnchanged": true,
+  "programs": [
+    {
+      "name": "nabungfi_multi",
+      "program": "FWfjDER6zJbP227GymMqTwGveJ5fjw7nKJvwLEAbXsZn",
+      "programData": "ADfZcJcf4uPiUdthrZJxaKEEXprr2z1EDLJn7Ph9Y82n",
+      "authority": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "slot": "505952225",
+      "elfSha256": "db6dcd1e2323c4d32c88b79644c33367550ee42ef788546aec34e341d91628b5",
+      "elfBytes": 313416,
+      "legacyIdl": "6FvK53TBkRN8RNDtcMJ6ETAa2TFoPjpV1qbNzqKE38uQ",
+      "legacyIdlExists": true,
+      "metadata": [
+        {
+          "name": "nabungfi_multi",
+          "kind": "pmp",
+          "seed": "idl",
+          "address": "3Y1NrkwZxwszNFUqujPq8M6izb7JpLHxWYHoKoy3TK7u",
+          "transactions": 4
+        },
+        {
+          "name": "nabungfi_multi",
+          "kind": "pmp",
+          "seed": "security",
+          "address": "BvAPx7DwdrqX8KcJtvAKg7wYGbCiq5eEo7JcyfKoSAFX",
+          "transactions": 1
+        }
+      ],
+      "resolver": {
+        "idl": {
+          "status": 200,
+          "source": "pmp"
+        },
+        "security-txt": {
+          "status": 200,
+          "source": "pmp"
+        }
+      }
+    },
+    {
+      "name": "nabungfi_multi_lz",
+      "program": "G2R7kB4yiYKB8Z6sF8f34w79Lof4L5oqqMhumiTzrG3d",
+      "programData": "CcYCMNRvxcb2aawKnNGwRiVAgyBzvsYbBcgrCeKKfUM1",
+      "authority": "AMoZFFdhUaNq8qyVRE4RrdW7rBc5Jssc6b7MyERMB7s8",
+      "slot": "505957652",
+      "elfSha256": "5ddee1f55de8e0e3f90e770caf86b4c6f5ac10a8c96227f6c1ec4c27edc2802f",
+      "elfBytes": 446776,
+      "legacyIdl": "Dpt6vBQ9L3tcKw1sWtzqWrVJycVcNCTo7Qcp62uqt6m6",
+      "legacyIdlExists": true,
+      "metadata": [
+        {
+          "name": "nabungfi_multi_lz",
+          "kind": "pmp",
+          "seed": "idl",
+          "address": "6A6jsouzs7L8wmeXmbKBodYqawfurVCyRsCnZXgdFEtT",
+          "transactions": 5
+        },
+        {
+          "name": "nabungfi_multi_lz",
+          "kind": "pmp",
+          "seed": "security",
+          "address": "6PE43gs1EBsLLAsAFfmUHQYzJNdeB7ZgcH3JeKJ3pWXq",
+          "transactions": 1
+        }
+      ],
+      "resolver": {
+        "idl": {
+          "status": 200,
+          "source": "pmp"
+        },
+        "security-txt": {
+          "status": 200,
+          "source": "pmp"
+        }
+      }
+    }
+  ],
+  "transactions": [
+    {
+      "signature": "4xcAtPxW7mYGzVshMQ7m8UYGN3YEjKm5VnFXu1RK1ofWU8VsSN8YwSjALdKb9dVr9x29Bx46SLSw9Zhh6neguHwX",
+      "instructionHash": "e780d143e9d9d33e9b7dd1dae24162b8694caf35e14be3a9885bd1d893ed9fb4",
+      "status": "finalized",
+      "slot": 508489113
+    },
+    {
+      "signature": "34sTH1yUYaAaRMbccm88eSTrAVWXCZ2Fj2mb5fwz4zUnW65gCnWTuQpAHiMQfZDzNLyntBuBLzjRDnpjahZFQuWi",
+      "instructionHash": "7282fb571e4c5dac90e422c9a1c74fc4193eaa075b27fe8261074b0efb3dd91c",
+      "status": "finalized",
+      "slot": 508489119
+    },
+    {
+      "signature": "2gsBNi8sGzhCiCakETfr5HJex7CRsTUijcPfJ2z5racCjsxq7KqFUJP7KgiWELf9HtB9efi3jBfCLMkH5vVxyW5Q",
+      "instructionHash": "b29b5f6bf59b6cd9aae4d7f16580e9b0027dac36ecc279918e998a5e9358b179",
+      "status": "finalized",
+      "slot": 508489124
+    },
+    {
+      "signature": "3yzUN2BFv8beZwcLvjweX3hnSa1vMDCDPxhkJyX7hDBKV9XprqvJTGfZpLXQPcnATGQecDWkpE6VJSizE2Xj48t",
+      "instructionHash": "7cd96a367471133703a11d836c9ee44cafb9d0dcf6dfb15a44f9313def9a1a4d",
+      "status": "finalized",
+      "slot": 508489129
+    },
+    {
+      "signature": "2DdWEpLKAjLiYn5WZQVjrfni754HUz25vNNasxX1mnaUJg7p4Y8CVMiAtszTy2VWprpPHccdvXmeRGw4TruBBrrV",
+      "instructionHash": "d9b8241108c506773bef88304e36553ccb1b42578e91a8c9d8e01225c602586f",
+      "status": "finalized",
+      "slot": 508489135
+    },
+    {
+      "signature": "3x2gMxCA2izmEkDPpX3k9NukWBDqmvnbvtB7YA5BKm3QW4XtnXMryf9JvbgC4fSE8Vq8vcs3moqpDufjTo45v1h9",
+      "instructionHash": "3ad1c3bc097e5e190ac04b934846ac58d8357f3670d088f37cf2731db097716b",
+      "status": "finalized",
+      "slot": 508489177
+    },
+    {
+      "signature": "64Tmta3mjHLezNxUGCSPmdgUS96cTX8sEKhzKWwUSsswa7HnC6LnxkAhLsyW6uDnDTA2G5jNHLZDXZXnKRuGhZyb",
+      "instructionHash": "ab13d6ad2741de3b0e916fadf863d1ce550ebabd1efe800306e8c4d6c76b7805",
+      "status": "finalized",
+      "slot": 508489183
+    },
+    {
+      "signature": "3sAi5iauMeBdfgt4GvWGZ2igPgCJPcAFga8yqeQATaSk59F32LxfKGhdaa8gfK6g8SJ3kEV5w1kL6cBxq37qi6p5",
+      "instructionHash": "d8c27e8579b44911a31392f2554476ddbe4413ff48f2b16693e8e074519edff4",
+      "status": "finalized",
+      "slot": 508489188
+    },
+    {
+      "signature": "4EPvjmXqZbeYghnjv5FdRseRPg8hN935BhekJxJ2cQMBseTgtNQpqD69ZDtVCkEnnS1dQPBbnLyofTHu7pyM9vL6",
+      "instructionHash": "dcb4db0f172f5f1f76eb03d7e514e49ccbb2519b01616f7ad16fc90cc7cca7f1",
+      "status": "finalized",
+      "slot": 508489192
+    },
+    {
+      "signature": "2dsjJaVntSxJtxAqhrG15CAquG2pbdUDmzL6jcBtvACZZauEYxvn7pz2DYcp8ujWdS4xArj1KStCHtLUFr56of7U",
+      "instructionHash": "41e0daa91dda1ed800093362ceeae4e9ea914d8e81b47fd77943763c9f24ee82",
+      "status": "finalized",
+      "slot": 508489199
+    },
+    {
+      "signature": "4Zk1pkpiGUkTAepduE6jDXeDEHjfrVHjpBfV4x2zcWWKG5PZGp4oBF6p5UxBv4aXuhmKSRSos6eKtKxibiEBzu4h",
+      "instructionHash": "2918b0936e6500ecbaed9d42b30175cbdaa68267584290aeed1582fe873c9129",
+      "status": "finalized",
+      "slot": 508489204
+    },
+    {
+      "signature": "F7qQvSPr5iWsU3DYF6GWC2Kb7YYX4QKgEPGLAvW9MC5Y5cZeoqyzatXuSj74iJU9FzNfKodLo41zR1Xggovxawy",
+      "instructionHash": "058f48be8760c530309af5c70f52fa64f1161e3fe62411c08122adfa9efbcf3d",
+      "status": "finalized",
+      "slot": 508489210
+    },
+    {
+      "signature": "3Hw3jzdJMXWEJDvsMXapqSddkzCsWaNeLmZNuzyqD59UYo1sE4JQs1ZYcuy1BMmJecggFDDYXvquDCymzD5Q9gSp",
+      "instructionHash": "f40ce08f533fdbaf0a4a09951fd630c4397957630d29a3562013adc3d1aeb417",
+      "status": "finalized",
+      "slot": 508489215
+    },
+    {
+      "signature": "3ooxP3vdC4tnJtcp2rKnz6PiRMSEBsLqXUWvMVzrM2N7nRsmccLxs7yQEfnB8bxbaPvgc5wPFcnE5FAcy2c2mWXQ",
+      "instructionHash": "a075ae1164345934c8804e8bb37642258e908514aaf871fa4155810756776bf3",
+      "status": "finalized",
+      "slot": 508489228
+    },
+    {
+      "signature": "4FZyYW2SXkvjquhGK9BpLLX6QnRZxRkA99oRvcHAG8uxGLgDpYJrWPtuTo9ULE2CWaHGmRk2bLLbVM5Ta5Smo5Qk",
+      "instructionHash": "d851beda567b30dbdf7ec8cdf59bb91f03c802444a7b3a08ad194db7ad8da593",
+      "status": "finalized",
+      "slot": 508489240
+    },
+    {
+      "signature": "4wk4yVDh1ujX14zeAErWxVh4uQaDu8A97xifr9eiuS31BBfQxqjj58HMoYh2YyBHhDSyUTnCerBgF9BhqCYuFAQ3",
+      "instructionHash": "a0f619241f58bc352b0fb6808c0f00f7d133b97cbc5a8978b0c7f0cff19695d8",
+      "status": "finalized",
+      "slot": 508489248
+    },
+    {
+      "signature": "4LCbrSGkrf93c9LTuDjrpiJcs4exxmCYHA1HGgndWKCiEFypiixjcrhV9qjxYSvs1scZ5uvcLiap84Tr8Dd76Zdz",
+      "instructionHash": "f87c2c3ecf923358875650d027c6a87eda5a5d3bf92a126fd0a8e61b50a73d94",
+      "status": "finalized",
+      "slot": 508489252
+    },
+    {
+      "signature": "3qcvozkSCpQtGxB2tXASGw4oNGtWB2Q9JA8PgM2Qp6mXXAHFefL6e4yfAEyUbFcGc5aiXXqGu72xAdScwfEwfc6F",
+      "instructionHash": "6a56ace9f81ae3f4e6d8505fbd591a75532c2ff865364082df30e3c533e7ed5b",
+      "status": "finalized",
+      "slot": 508489256
+    },
+    {
+      "signature": "44zy9sj3ZhG2yp2ZLTmjhsbbWY3FFNgBw7xLK45h4casx5nesKYRxUQmTKoznDFcHoXCpt8vNWRUVgpcaG1gkPC8",
+      "instructionHash": "cf3be228aec8eb2ffab98246d6e1346edcc87aa3c59580e6e56993ba45c02399",
+      "status": "finalized",
+      "slot": 508489264
+    },
+    {
+      "signature": "3Kmj342arnDYQZbg7GKu7nfjx4hJLGinSCHisUrrUwErAPDDCujLeg8QLN6cx7BX1Sv7Jmee7DSQGhhgux8r7WNH",
+      "instructionHash": "7f888feec487f7858ff5eff24c7533ebe2758eac0552fd488864d0a0367dded1",
+      "status": "finalized",
+      "slot": 508489282
+    },
+    {
+      "signature": "4kLq7N4gNnjtdrzmH4FbgPiSKCfJoEEv4YKnNKcsAUFLSTSnkkEugkmMr7wKwTfHoEt6cbxVG2Rbwns3uK9vo6iC",
+      "instructionHash": "6fd8644520f6a2f0491021ab8daedcdfb4d0b2d04b6b45f5fc38c83b150646f0",
+      "status": "finalized",
+      "slot": 508489290
+    }
+  ],
+  "fileHashes": {
+    "contracts/solana/idl/nabungfi_multi.json": "c26ede7f35e46786eae403b292c5f68f84bd1ef37f439ed56bbb9dac0e7ca0c1",
+    "contracts/solana/idl/nabungfi_multi.codama.json": "be09bf045ee33bb1b40e82f5fe0c9650daabf4a7b6c10fdcf21616827948477e",
+    "contracts/solana/idl/nabungfi_multi.security.json": "6fa73324fa98e633a909cd5f9525bd53ae1d759219ada9b7407354853a2c3c4a",
+    "contracts/solana/idl/nabungfi_multi_lz.json": "0023d5e5a3bd1a1d36db476dfb02aa6118e879a5c39a4b5eb754ebc1de210cc9",
+    "contracts/solana/idl/nabungfi_multi_lz.codama.json": "a2e59e8466ac6e44fde3fc92f3421c7417e419d02cba13a2c027c31cbe0a68de",
+    "contracts/solana/idl/nabungfi_multi_lz.security.json": "c15f3d6ec8e5d188cc20bec3667c6020e2f4030b90f831d659a59fdab65790c8"
+  },
+  "decoderValidation": [
+    {
+      "name": "nabungfi_multi",
+      "program": "FWfjDER6zJbP227GymMqTwGveJ5fjw7nKJvwLEAbXsZn",
+      "instructions": [
+        "achieve",
+        "begin_abort",
+        "begin_prepare",
+        "claim",
+        "deposit",
+        "initialize",
+        "mark_local_ready",
+        "receive_packet"
+      ],
+      "witness": {
+        "instruction": "claim",
+        "amountRaw": "280000",
+        "goalAccountType": "Goal"
+      },
+      "anchorSha256": "c26ede7f35e46786eae403b292c5f68f84bd1ef37f439ed56bbb9dac0e7ca0c1",
+      "codamaSha256": "be09bf045ee33bb1b40e82f5fe0c9650daabf4a7b6c10fdcf21616827948477e"
+    },
+    {
+      "name": "nabungfi_multi_lz",
+      "program": "G2R7kB4yiYKB8Z6sF8f34w79Lof4L5oqqMhumiTzrG3d",
+      "instructions": [
+        "initialize",
+        "initialize_peer",
+        "lz_receive",
+        "lz_receive_types_info",
+        "lz_receive_types_v2",
+        "quote",
+        "seal_route",
+        "send"
+      ],
+      "witness": {
+        "instruction": "lz_receive",
+        "signature": "28AXMqARCEpU2kJk8fnknvUZ1nJcPcer4W2QetDY6Eyz8SwpBnFt4wAUFihqXUMKUQNMEXN4S6jnqQ2GCpixsFga"
+      },
+      "anchorSha256": "0023d5e5a3bd1a1d36db476dfb02aa6118e879a5c39a4b5eb754ebc1de210cc9",
+      "codamaSha256": "a2e59e8466ac6e44fde3fc92f3421c7417e419d02cba13a2c027c31cbe0a68de"
+    }
+  ],
+  "explorerVerification": {
+    "verifiedAt": "2026-10-07T15:01:54.274Z",
+    "url": "https://explorer.solana.com/tx/3NdYnAnbhptq9hd4ENrZHQtRqcDFo56rwSXPLS9To1dN7LsRLAZJNmycSHpEtjKzBxpErEfrAWT1VFPLrHBouum8?cluster=devnet",
+    "instructionLabel": "NabungfiMulti: Claim",
+    "amountRaw": "280000",
+    "amountUsdc": "0.28"
+  }
+}

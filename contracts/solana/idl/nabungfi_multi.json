@@ -1,0 +1,918 @@
+{
+  "address": "FWfjDER6zJbP227GymMqTwGveJ5fjw7nKJvwLEAbXsZn",
+  "metadata": {
+    "name": "nabungfi_multi",
+    "version": "0.2.0",
+    "spec": "0.1.0"
+  },
+  "instructions": [
+    {
+      "name": "achieve",
+      "discriminator": [
+        31,
+        28,
+        174,
+        247,
+        82,
+        164,
+        24,
+        247
+      ],
+      "accounts": [
+        {
+          "name": "goal",
+          "writable": true
+        },
+        {
+          "name": "cash",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "goal"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "begin_abort",
+      "discriminator": [
+        241,
+        51,
+        67,
+        161,
+        237,
+        45,
+        231,
+        195
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "goal"
+          ]
+        },
+        {
+          "name": "goal",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "begin_prepare",
+      "discriminator": [
+        51,
+        57,
+        68,
+        82,
+        163,
+        231,
+        32,
+        142
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "goal"
+          ]
+        },
+        {
+          "name": "goal",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim",
+      "discriminator": [
+        62,
+        198,
+        214,
+        193,
+        213,
+        159,
+        108,
+        210
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "goal"
+          ]
+        },
+        {
+          "name": "goal",
+          "writable": true
+        },
+        {
+          "name": "usdc_mint",
+          "address": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
+        },
+        {
+          "name": "cash",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "goal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit",
+      "discriminator": [
+        242,
+        35,
+        198,
+        137,
+        82,
+        225,
+        242,
+        182
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "goal"
+          ]
+        },
+        {
+          "name": "goal",
+          "writable": true
+        },
+        {
+          "name": "usdc_mint",
+          "address": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
+        },
+        {
+          "name": "source",
+          "writable": true
+        },
+        {
+          "name": "cash",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "goal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "goal",
+          "writable": true
+        },
+        {
+          "name": "usdc_mint",
+          "address": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
+        },
+        {
+          "name": "cash",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "goal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "InitializeArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "mark_local_ready",
+      "discriminator": [
+        72,
+        66,
+        141,
+        249,
+        81,
+        253,
+        4,
+        204
+      ],
+      "accounts": [
+        {
+          "name": "goal",
+          "writable": true
+        },
+        {
+          "name": "cash",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "goal"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "receive_packet",
+      "discriminator": [
+        63,
+        80,
+        211,
+        98,
+        33,
+        16,
+        172,
+        29
+      ],
+      "accounts": [
+        {
+          "name": "goal",
+          "writable": true
+        },
+        {
+          "name": "receiver",
+          "signer": true
+        },
+        {
+          "name": "transport_program",
+          "address": "G2R7kB4yiYKB8Z6sF8f34w79Lof4L5oqqMhumiTzrG3d"
+        }
+      ],
+      "args": [
+        {
+          "name": "packet",
+          "type": {
+            "defined": {
+              "name": "Packet"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Goal",
+      "discriminator": [
+        163,
+        66,
+        166,
+        245,
+        130,
+        131,
+        207,
+        26
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "GoalCreated",
+      "discriminator": [
+        40,
+        74,
+        205,
+        224,
+        20,
+        51,
+        92,
+        239
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "WrongPhase",
+      "msg": "Wrong lifecycle phase"
+    },
+    {
+      "code": 6001,
+      "name": "ZeroAmount",
+      "msg": "Amount must be positive"
+    },
+    {
+      "code": 6002,
+      "name": "Overflow",
+      "msg": "Integer overflow"
+    },
+    {
+      "code": 6003,
+      "name": "AlreadyReady",
+      "msg": "Already ready"
+    },
+    {
+      "code": 6004,
+      "name": "WrongGoal",
+      "msg": "Wrong goal"
+    },
+    {
+      "code": 6005,
+      "name": "WrongConfig",
+      "msg": "Wrong immutable configuration"
+    },
+    {
+      "code": 6006,
+      "name": "WrongPeer",
+      "msg": "Wrong registered peer"
+    },
+    {
+      "code": 6007,
+      "name": "WrongRound",
+      "msg": "Wrong round"
+    },
+    {
+      "code": 6008,
+      "name": "WrongSequence",
+      "msg": "Out of order lifecycle sequence"
+    },
+    {
+      "code": 6009,
+      "name": "MissingReady",
+      "msg": "Every participant must be ready"
+    },
+    {
+      "code": 6010,
+      "name": "ReserveReduced",
+      "msg": "Reserved balance reduced"
+    },
+    {
+      "code": 6011,
+      "name": "TargetNotMet",
+      "msg": "Target not met"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidAbortAck",
+      "msg": "Invalid abort acknowledgement"
+    },
+    {
+      "code": 6013,
+      "name": "StillLocked",
+      "msg": "Funds remain locked"
+    },
+    {
+      "code": 6014,
+      "name": "InsufficientFunds",
+      "msg": "Not enough local USDC"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidConfig",
+      "msg": "Invalid immutable configuration"
+    },
+    {
+      "code": 6016,
+      "name": "WrongMint",
+      "msg": "Wrong token mint"
+    },
+    {
+      "code": 6017,
+      "name": "UnexpectedTokenMovement",
+      "msg": "Unexpected token movement"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidTransport",
+      "msg": "Unauthorized transport signer"
+    },
+    {
+      "code": 6019,
+      "name": "ReadinessTooRecent",
+      "msg": "Readiness must cross a slot boundary"
+    },
+    {
+      "code": 6020,
+      "name": "InvalidPacket",
+      "msg": "Invalid v2 packet"
+    },
+    {
+      "code": 6021,
+      "name": "GoalNotRegistered",
+      "msg": "Every participant must be registered"
+    }
+  ],
+  "types": [
+    {
+      "name": "Goal",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "goal_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "target",
+            "type": "u64"
+          },
+          {
+            "name": "principal",
+            "type": "u64"
+          },
+          {
+            "name": "claimed",
+            "type": "u64"
+          },
+          {
+            "name": "round",
+            "type": "u64"
+          },
+          {
+            "name": "outbound_sequence",
+            "type": "u64"
+          },
+          {
+            "name": "local_reserved",
+            "type": "u64"
+          },
+          {
+            "name": "local_ready_slot",
+            "type": "u64"
+          },
+          {
+            "name": "achieved_total",
+            "type": "u64"
+          },
+          {
+            "name": "local_ready",
+            "type": "bool"
+          },
+          {
+            "name": "phase",
+            "type": {
+              "defined": {
+                "name": "Phase"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "participants",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Participant"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "GoalCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "goal",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "target",
+            "type": "u64"
+          },
+          {
+            "name": "participants",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitializeArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "goal_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "target",
+            "type": "u64"
+          },
+          {
+            "name": "participants",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "ParticipantArgs"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Packet",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "kind",
+            "type": "u8"
+          },
+          {
+            "name": "source_domain",
+            "type": "u32"
+          },
+          {
+            "name": "destination_domain",
+            "type": "u32"
+          },
+          {
+            "name": "goal_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "config_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "source",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "destination",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "evm_owner",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "round",
+            "type": "u64"
+          },
+          {
+            "name": "sequence",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "aggregate",
+            "type": "u64"
+          },
+          {
+            "name": "observation",
+            "type": "u64"
+          },
+          {
+            "name": "observed_at",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Participant",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "domain",
+            "type": "u32"
+          },
+          {
+            "name": "eid",
+            "type": "u32"
+          },
+          {
+            "name": "asset",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "router",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "vault",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "owner",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "config_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "linked",
+            "type": "bool"
+          },
+          {
+            "name": "net_assets",
+            "type": "u64"
+          },
+          {
+            "name": "progress_sequence",
+            "type": "u64"
+          },
+          {
+            "name": "observation",
+            "type": "u64"
+          },
+          {
+            "name": "observed_at",
+            "type": "u64"
+          },
+          {
+            "name": "received_at",
+            "type": "u64"
+          },
+          {
+            "name": "inbound_sequence",
+            "type": "u64"
+          },
+          {
+            "name": "reserved",
+            "type": "u64"
+          },
+          {
+            "name": "ready",
+            "type": "bool"
+          },
+          {
+            "name": "abort_ack",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ParticipantArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "domain",
+            "type": "u32"
+          },
+          {
+            "name": "eid",
+            "type": "u32"
+          },
+          {
+            "name": "asset",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "router",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "vault",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "owner",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Phase",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Locked"
+          },
+          {
+            "name": "Preparing"
+          },
+          {
+            "name": "Aborting"
+          },
+          {
+            "name": "Achieved"
+          }
+        ]
+      }
+    }
+  ]
+}

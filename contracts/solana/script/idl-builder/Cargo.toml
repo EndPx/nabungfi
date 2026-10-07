@@ -1,0 +1,10 @@
+[package]
+name = "nabungfi-idl-builder"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+anchor-lang-idl = { version = "=0.1.4", features = ["build"] }
+serde_json = "=1.0.151"

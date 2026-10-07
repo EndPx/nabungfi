@@ -2,6 +2,8 @@
 
 ## Current multichain deployment (v2)
 
+Both v2 programs have onchain Anchor IDLs, canonical PMP Codama IDLs and program metadata. On 2026-10-07, all 21 publication transactions finalized, the IDL resolver returned both interfaces, and Solana Explorer decoded the existing owner claim as `NabungfiMulti: Claim`. Program bytecode, deployment slots and authorities remained unchanged. See the [metadata publication record and regeneration commands](../../docs/SOLANA_PROGRAM_METADATA.md).
+
 Separate `nabungfi-multi` and `nabungfi-multi-lz` programs now coordinate one to three immutable EVM participants per goal. One actual four-chain goal completed 4+2+2+2-USDC cash deposits, all-peer reserve readiness, achievement and partial/full claims. All 21 public LayerZero messages were delivered, including three post-claim NAV updates to zero. Solana retained phase Achieved, achieved total10USDC and cumulative claims4USDC; local cash is zero and the owner's initial20USDC restored. [Public v2 receipts](../deployments/multichain/live-goal.json), [program deployments](../deployments/multichain/solana-devnet.json), [v2 runbook](../../docs/MULTICHAIN_TESTNET_RUNBOOK.md).
 
 Use `multichain.env.example` and `script/operate-multichain-goal.mjs` for v2, with the actual verified EVM vault receipts. `programs/nabungfi-multi/README.md` describes the cash-only ABI. New local checks add 15 core and four transport native tests plus six fresh SBF/LiteSVM cases. Default workspace checks total59 tests including the retained v1 suites and test-library identity check. These local scenarios are distinct from the actual public receipts. The local app/shared multiple-goal flow, unattended keeper and real earning remain unfinished.
