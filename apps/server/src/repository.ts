@@ -18,6 +18,7 @@ export interface ApplicationRepository {
  walletStart(ownerId:string,goalId:string,id:string,planFingerprint:string):Promise<GoalStepDTO>;
  walletRejected(ownerId:string,goalId:string,id:string,planFingerprint:string,providerCode:number):Promise<GoalStepDTO>;
  walletNotInvoked(ownerId:string,goalId:string,id:string,planFingerprint:string):Promise<GoalStepDTO>;
+ expireUntrackedSolana(ownerId:string,goalId:string,id:string,planFingerprint:string,proof:Record<string,unknown>):Promise<GoalStepDTO>;
  planFailed(ownerId:string,goalId:string,id:string,reason:string):Promise<void>;
  bindTransaction(ownerId:string,goalId:string,id:string,hash:string):Promise<GoalStepDTO>;
  reconciled(ownerId:string,goalId:string,id:string,result:ReconcileResult):Promise<GoalStepDTO>;
@@ -89,6 +90,15 @@ export function postgresRepository(db:Database):ApplicationRepository {
     const duplicate=await tx.query('SELECT id FROM nabungfi.goal_steps WHERE owner_id=$1 AND network=$2 AND transaction_hash=$3 AND id<>$4',[ownerId,r.network,hash,id]);if(duplicate.rows.length)throw new ApiError('TRANSACTION_ALREADY_BOUND',409,'This transaction is already assigned to one of your actions.');
     const updated=await tx.query("UPDATE nabungfi.goal_steps SET transaction_hash=$1,status=CASE WHEN status IN ('confirmed','failed') THEN status ELSE 'submitted' END,updated_at=now() WHERE id=$2 RETURNING *",[hash,id]);return stepRow(updated.rows[0]!,g);});
    }catch(error){if((error as{constraint?:string}).constraint==='goal_steps_active_wallet_lane')throw walletLaneBusy();if((error as {code?:string}).code==='23505')throw new ApiError('TRANSACTION_ALREADY_BOUND',409,'This transaction is already assigned to a step.');throw error;}},
+  async expireUntrackedSolana(ownerId,goalId,id,planFingerprint,proof){
+   const g=await goal(ownerId,goalId);return db.transaction(async tx=>{
+    const q=await tx.query('SELECT * FROM nabungfi.goal_steps WHERE id=$1 AND goal_id=$2 AND owner_id=$3 FOR UPDATE',[id,goalId,ownerId]);const r=q.rows[0];if(!r)throw notFound();const original=r.plan as ChainPlan|null;
+    if(r.transaction_hash||r.network!=='solana'||!original||original.fingerprint!==planFingerprint)throw new ApiError('ORIGINAL_TRANSACTION_REQUIRED',409,'Keep the original attempted transaction.');
+    if(r.status==='failed'&&r.reason_code==='EXPIRED_SOLANA_MESSAGE_NOT_EXECUTED')return stepRow(r,g);
+    if(r.status!=='signing'||proof.kind!=='finalized-expired-message-absence'||proof.planFingerprint!==planFingerprint||proof.historyCoveredBeforeCreation!==true)throw new ApiError('ORIGINAL_EXPIRY_NOT_PROVEN',409,'The original signing outcome is not proven expired.');
+    const updated=await tx.query("UPDATE nabungfi.goal_steps SET status='failed',receipt=$1,reason_code='EXPIRED_SOLANA_MESSAGE_NOT_EXECUTED',updated_at=now() WHERE id=$2 RETURNING *",[JSON.stringify(proof),id]);return stepRow(updated.rows[0]!,g);
+   });
+  },
   async walletNotInvoked(ownerId,goalId,id,planFingerprint){
    const g=await goal(ownerId,goalId);return db.transaction(async tx=>{
     const q=await tx.query('SELECT * FROM nabungfi.goal_steps WHERE id=$1 AND goal_id=$2 AND owner_id=$3 FOR UPDATE',[id,goalId,ownerId]);const r=q.rows[0];if(!r)throw notFound();

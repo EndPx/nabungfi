@@ -932,6 +932,7 @@ export function RecoveryPanel({
   retry,
   resume,
   closeUnsent,
+  resolveExpired,
 }: {
   recoveries: WalletRecovery[];
   requests: PendingApiRequest[];
@@ -941,6 +942,7 @@ export function RecoveryPanel({
   retry: (record: PendingApiRequest) => Promise<void>;
   resume: (record: WalletRecovery) => Promise<void>;
   closeUnsent: (record: WalletRecovery) => Promise<void>;
+  resolveExpired: (record: WalletRecovery) => Promise<void>;
 }) {
   const [hashes, setHashes] = useState<Record<string, string>>({});
   const [notInvoked, setNotInvoked] = useState<Record<string, boolean>>({});
@@ -1047,6 +1049,11 @@ export function RecoveryPanel({
                 <Button variant="quiet" busy={busy} disabled={offline || !notInvoked[record.stepId] || Boolean(hashes[record.stepId])}
                   onClick={() => void closeUnsent(record)}>
                   Close unsent request
+                </Button>
+              )}
+              {!record.transactionHash && record.network === "solana" && record.state === "awaiting-wallet" && (
+                <Button variant="secondary" busy={busy} disabled={offline} onClick={() => void resolveExpired(record)}>
+                  Check expired Solana request
                 </Button>
               )}
             </div>

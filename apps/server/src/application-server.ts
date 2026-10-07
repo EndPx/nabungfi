@@ -9,6 +9,7 @@ import {requireGoalWallets} from './auth.js';
 import {ApiError,notFound} from './errors.js';
 import type {AppConfig} from './config.js';
 import {boundedChainRead} from './server-runtime.js';
+import type {ExpiredSolanaResolution} from './chain/expired-solana.js';
 
 export interface ChainServices {
  deriveGoalBinding(input:{goalId:string;targetRaw:string;owner:{solana:string;evm:string};networks:typeof APP_NETWORKS[number][]}):GoalBinding;
@@ -16,6 +17,7 @@ export interface ChainServices {
  planGoalStep(binding:GoalBinding,input:GoalStepInput):Promise<ChainPlan>;
  assertPlanUsable(binding:GoalBinding,plan:ChainPlan):Promise<void>;
  reconcileGoalStep(binding:GoalBinding,plan:ChainPlan,hash:string):Promise<ReconcileResult>;
+ resolveExpiredSolanaPlan?(binding:GoalBinding,plan:ChainPlan):Promise<ExpiredSolanaResolution>;
 }
 export interface CoordinationStatus { configured:boolean;available:boolean;capacity:number;registered:number;reasonCode?:string }
 export interface ApplicationRuntime { coordinationStatus():Promise<CoordinationStatus>;assertCoordinationAdmission(binding:GoalBinding):Promise<void> }
@@ -68,7 +70,7 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
    const targetRaw=parseGoalTarget(input.targetAmount),binding=chain.deriveGoalBinding({goalId:'0x'+randomBytes(32).toString('hex'),targetRaw,owner:owners,networks:input.chains});
    const g=await repo.createGoal(user.id,{name:input.name,model:input.model,targetRaw,binding,requestId:id,fingerprint:fingerprint({name:input.name,model:input.model,targetRaw,owner:owners,chains:input.chains})});return respond(res,201,{goal:metadataGoal(g)});
   }
-  const match=path.match(/^\/api\/goals\/([0-9a-f-]+)(?:\/(history|steps)(?:\/([0-9a-f-]+)(?:\/(reconcile|refresh|wallet-start|wallet-rejected|wallet-not-invoked))?)?)?$/i);if(!match||!uuid(match[1]))throw notFound();
+  const match=path.match(/^\/api\/goals\/([0-9a-f-]+)(?:\/(history|steps)(?:\/([0-9a-f-]+)(?:\/(reconcile|refresh|wallet-start|wallet-rejected|wallet-not-invoked|resolve-expired-solana))?)?)?$/i);if(!match||!uuid(match[1]))throw notFound();
   const gid=match[1],g=await repo.goal(user.id,gid);if(!match[2]&&req.method==='GET')return respond(res,200,{goal:await boundedChainRead(()=>viewGoal(g,chain))});
   if(match[2]==='history'&&req.method==='GET'){const history=await repo.history(user.id,gid);return respond(res,200,{history,entries:history});}
   if(match[2]==='steps'&&req.method==='GET'&&uuid(match[3])&&!match[4])return respond(res,200,{step:await repo.step(user.id,gid,match[3])});
@@ -79,6 +81,15 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
     if(input.action==='create-vault'&&runtime){await runtime.assertCoordinationAdmission(g.binding);admitted=true;}
     return respond(res,201,{step:await repo.savePlan(user.id,gid,result.step.id,plan,admitted)});
    }catch(error){const reason=typeof(error as {code?:unknown}).code==='string'?(error as {code:string}).code:'CHAIN_PLAN_UNAVAILABLE';await repo.planFailed(user.id,gid,result.step.id,reason);if(admitted)try{await repo.releaseUnusedCoordinationAdmission(g.goalId);}catch{/* Ambiguous DB state retains the slot. */}if(error instanceof ApiError)throw error;throw new ApiError(reason,409,'The chain could not prepare this step. Refresh its original status before retrying.');}
+  }
+  if(match[2]==='steps'&&req.method==='POST'&&uuid(match[3])&&match[4]==='resolve-expired-solana'){
+   requireGoalWallets(identity,g.binding.owner);const v=await body(req);fields(v,['fingerprint']);const prior=await repo.step(user.id,gid,match[3]);
+   if(prior.status==='failed'&&!prior.transactionHash&&prior.reasonCode==='EXPIRED_SOLANA_MESSAGE_NOT_EXECUTED'&&prior.plan?.fingerprint===v.fingerprint)return respond(res,200,{step:prior});
+   if(prior.network!=='solana'||prior.status!=='signing'||prior.transactionHash||!prior.plan||prior.plan.fingerprint!==v.fingerprint)throw new ApiError('ORIGINAL_TRANSACTION_REQUIRED',409,'Reconcile the original attempted wallet transaction.');
+   if(!chain.resolveExpiredSolanaPlan)throw new ApiError('RECOVERY_UNAVAILABLE',503,'Keep the original request until finalized history can be checked.');
+   let result:ExpiredSolanaResolution;try{result=await boundedChainRead(()=>chain.resolveExpiredSolanaPlan!(g.binding,prior.plan!));}catch(error){if(error instanceof ApiError)throw error;const code=(error as {code?:string}).code;throw new ApiError(code&&/^[A-Z_]{1,80}$/.test(code)?code:'ORIGINAL_HISTORY_UNAVAILABLE',code==='ORIGINAL_STILL_LIVE'||code==='ORIGINAL_HISTORY_LIMIT'?409:503,'The original message could not be proven expired without execution. Keep this request and its original signature.');}
+   if(result.kind==='located')return respond(res,200,{step:prior,transactionHash:result.transactionHash});
+   return respond(res,200,{step:await repo.expireUntrackedSolana(user.id,gid,prior.id,prior.plan.fingerprint,result.proof)});
   }
   if(match[2]==='steps'&&req.method==='POST'&&uuid(match[3])&&match[4]==='wallet-not-invoked'){
    requireGoalWallets(identity,g.binding.owner);const v=await body(req);fields(v,['fingerprint','attestation']);if(typeof v.fingerprint!=='string'||!v.fingerprint||v.fingerprint.length>200||!['wallet-sdk-never-invoked','wallet-approval-never-invoked'].includes(String(v.attestation)))throw new ApiError('EXPLICIT_NOT_INVOKED_ATTESTATION_REQUIRED',400,'Attest only that no wallet approval or signing call was invoked for this original plan.');

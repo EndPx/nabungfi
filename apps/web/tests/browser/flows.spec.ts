@@ -1,6 +1,13 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test("an unknown Solana request offers a read-only expired-history check without another signature",async({page})=>{
+  await page.goto("/tests/browser/harness.html?view=recovery&expired-solana=1");
+  await page.getByRole("button",{name:"Check expired Solana request"}).click();
+  await expect(page.getByLabel("Fixture requested action")).toHaveText("resolve-expired-original");
+  await expect(page.getByRole("button",{name:"Confirm in wallet"})).toHaveCount(0);
+});
+
 test("the browser can encode and decode Solana transaction bytes for its wallet SDK", async ({page}) => {
   await page.goto("/tests/browser/harness.html");
   const bytes = await page.evaluate(() => {

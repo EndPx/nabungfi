@@ -565,6 +565,21 @@ export function useLiveController() {
     setBusy(true);
     try {await closeUnsent(record);setError("");await load();} catch (failure) {report(failure);} finally {setBusy(false);}
   };
+  const resolveExpiredRequest = async (record: WalletRecovery) => {
+    setBusy(true);
+    try {
+      if(record.network!=="solana"||record.transactionHash||record.userId!==userId)throw new Error("Use the original transaction hash for this request.");
+      const original=await request<{step:GoalStepDTO}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}`);
+      validateRecoveryStep(record,original.step);if(!original.step.plan)throw new Error("The original plan is unavailable.");
+      const result=await request<{step:GoalStepDTO;transactionHash?:string}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}/resolve-expired-solana`,{body:{fingerprint:original.step.plan.fingerprint}});
+      validateRecoveryStep(record,result.step);
+      if(identityRef.current!==userId)throw new Error("Reconnect to the original account before continuing.");
+      if(result.transactionHash){await reconcile(record,result.transactionHash);return;}
+      if(result.step.status!=="failed"||result.step.transactionHash||result.step.reasonCode!=="EXPIRED_SOLANA_MESSAGE_NOT_EXECUTED")throw new Error("The original outcome remains unresolved.");
+      clearRejectedRecovery(localStorage,record);refreshRecovery();setWalletStep(null);setError("");
+      setNotice("Finalized history confirms the expired original message was not executed. No replacement was sent. You can review a new step explicitly.");await load();
+    }catch(failure){report(failure);}finally{setBusy(false);}
+  };
   const sendWalletOnce = async (step: GoalStepDTO) => {
     const plan = step.plan;
     if (
@@ -915,6 +930,7 @@ export function useLiveController() {
     recoverRequest,
     resumeOriginal,
     closeUnsentRequest,
+    resolveExpiredRequest,
     createMissingWallet,
   };
 }

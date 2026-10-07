@@ -4,6 +4,7 @@ import { deriveGoalBinding } from './codec.js';
 import { buildPlan, assertUsablePlan } from './planner.js';
 import { snapshot } from './state.js';
 import { reconcile } from './receipt.js';
+import {resolveExpiredSolana,type ExpiredSolanaResolution} from './expired-solana.js';
 export { deriveGoalBinding } from './codec.js';
 export type { RpcTransport } from './rpc.js';
 export interface ChainService {
@@ -11,11 +12,13 @@ export interface ChainService {
     planGoalStep(binding: GoalBinding, input: GoalStepInput): Promise<ChainPlan>;
     readGoalState(binding: GoalBinding): Promise<GoalChainState>;
     reconcileGoalStep(binding: GoalBinding, plan: ChainPlan, hash: string): Promise<ReconcileResult>;
+    resolveExpiredSolana(binding:GoalBinding,plan:ChainPlan):Promise<ExpiredSolanaResolution>;
 }
-export function createChainService(rpc: RpcTransport = new ReadOnlyRpc()): ChainService { return { assertPlanUsable: (b, plan) => assertUsablePlan(rpc, b, plan), planGoalStep: (b, input) => buildPlan(rpc, b, input), readGoalState: b => snapshot(rpc, b), reconcileGoalStep: (b, plan, hash) => reconcile(rpc, b, plan, hash) }; }
+export function createChainService(rpc: RpcTransport = new ReadOnlyRpc()): ChainService { return { resolveExpiredSolana:(b,plan)=>resolveExpiredSolana(rpc,b,plan),assertPlanUsable: (b, plan) => assertUsablePlan(rpc, b, plan), planGoalStep: (b, input) => buildPlan(rpc, b, input), readGoalState: b => snapshot(rpc, b), reconcileGoalStep: (b, plan, hash) => reconcile(rpc, b, plan, hash) }; }
 let service: ChainService | undefined;
 const current = () => service ??= createChainService();
 export const planGoalStep: ChainService['planGoalStep'] = (b, input) => current().planGoalStep(b, input);
 export const readGoalState: ChainService['readGoalState'] = b => current().readGoalState(b);
 export const reconcileGoalStep: ChainService['reconcileGoalStep'] = (b, plan, hash) => current().reconcileGoalStep(b, plan, hash);
 export const assertPlanUsable: ChainService['assertPlanUsable'] = (b, plan) => current().assertPlanUsable(b, plan);
+export const resolveExpiredSolanaPlan:ChainService['resolveExpiredSolana']=(b,plan)=>current().resolveExpiredSolana(b,plan);
