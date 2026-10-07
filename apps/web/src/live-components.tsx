@@ -38,6 +38,10 @@ import {
 import { actions, networks, phases, short } from "./live-config";
 import { nextPieceProgress, formatNativeGas } from "./savings-progress";
 const CarWorkshop = lazy(() => import("./CarWorkshop"));
+const activityDateFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric", month: "short", year: "numeric",
+  hour: "2-digit", minute: "2-digit", timeZoneName: "short",
+});
 
 export function PortfolioSummary({ balance, scope }: { balance: string; scope: string }) {
   const [hidden, setHidden] = useState(false);
@@ -255,10 +259,6 @@ export function GoalDetail({
               </Button>
             </div>
           )}
-          <div className="live-panel goal-history-panel">
-            <h2>Goal activity</h2>
-            <HistoryList history={history} />
-          </div>
         </div>
         <aside className="live-financial-rail">
           <section className="live-panel goal-financial-summary">
@@ -460,6 +460,10 @@ export function GoalDetail({
             </p>
           </section>
         </aside>
+        <section className="live-panel goal-history-panel">
+          <h2>Goal activity</h2>
+          <HistoryList history={history} />
+        </section>
       </div>
     </>
   );
@@ -474,31 +478,38 @@ export function HistoryList({ history }: { history: GoalHistoryEntry[] }) {
     );
   return (
     <div className="live-timeline">
-      {history.map((entry) => (
-        <div className="live-timeline-row" key={entry.id}>
-          <div>
-            <strong>{actions[entry.action]}</strong>
-            <p>
-              {networks[entry.network]} · {entry.status}
-              {entry.amountRaw ? ` · ${formatUsdc(entry.amountRaw)} USDC` : ""}
-            </p>
+      {history.map((entry) => {
+        const timestamp = new Date(entry.createdAt);
+        const validDate = Number.isFinite(timestamp.getTime());
+        return (
+          <div className="live-timeline-row" key={entry.id}>
+            <div>
+              <strong>{actions[entry.action]}</strong>
+              <p>
+                {networks[entry.network]} · {entry.status}
+                {entry.amountRaw ? ` · ${formatUsdc(entry.amountRaw)} USDC` : ""}
+              </p>
+              <time className="live-timeline-date" dateTime={validDate ? entry.createdAt : undefined}>
+                {validDate ? activityDateFormat.format(timestamp) : "Date unavailable"}
+              </time>
+            </div>
+            {entry.transactionHash && (
+              <a
+                href={
+                  entry.network === "solana"
+                    ? `https://explorer.solana.com/tx/${entry.transactionHash}?cluster=devnet`
+                    : `${EVM_DEPLOYMENTS[entry.network].explorer}/tx/${entry.transactionHash}`
+                }
+                target="_blank"
+                rel="noreferrer"
+              >
+                View transaction
+                <ExternalLink size={14} />
+              </a>
+            )}
           </div>
-          {entry.transactionHash && (
-            <a
-              href={
-                entry.network === "solana"
-                  ? `https://explorer.solana.com/tx/${entry.transactionHash}?cluster=devnet`
-                  : `${EVM_DEPLOYMENTS[entry.network].explorer}/tx/${entry.transactionHash}`
-              }
-              target="_blank"
-              rel="noreferrer"
-            >
-              View transaction
-              <ExternalLink size={14} />
-            </a>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

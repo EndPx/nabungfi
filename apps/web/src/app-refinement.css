@@ -74,9 +74,11 @@
 .live-shell .live-panel h2 { font-size: var(--text-title); font-weight: 600; }
 .live-shell .goal-financial-summary { background: var(--app-pocket); }
 .live-shell .live-panel .live-balance { color: var(--ink); }
-.live-shell .goal-history-panel { margin-block-start: var(--space-6); }
-.live-shell .live-detail-grid { grid-template-columns: minmax(0, 1fr) 336px; }
-.live-shell .goal-workshop-column { min-width: 0; }
+.live-shell .goal-history-panel { grid-area: history; min-width: 0; }
+.live-shell .live-detail-grid { grid-template-columns: minmax(0, 1fr) 336px; grid-template-areas: "workshop finances" "history finances"; grid-template-rows: min-content 1fr; align-items: start; }
+.live-shell .goal-workshop-column { grid-area: workshop; min-width: 0; }
+.live-shell .live-financial-rail { grid-area: finances; }
+.live-shell .live-timeline-date { display: block; margin-block-start: var(--space-1); font-size: var(--text-xs); color: var(--muted); line-height: 1.5; }
 .live-shell .goal-chain-panel .network-row { padding-block: var(--space-3); border-block-end: 1px solid var(--app-line); }
 .live-shell .goal-chain-panel .network-row:last-child { border: 0; }
 .live-shell .goal-chain-panel .network-list { gap: var(--space-1); }
@@ -125,7 +127,7 @@
 .live-shell .install-feedback { flex-basis: 100%; font-size: var(--text-sm); color: var(--muted); }
 .live-shell .live-field:has(input[inputmode="decimal"]) { padding: var(--space-4); background: var(--app-pocket); border: 1px solid var(--app-line); border-radius: var(--radius-surface); }
 .live-shell .live-field input[inputmode="decimal"] { font: 500 var(--text-mobile-heading)/1.2 var(--font-display); min-height: 64px; background: var(--app-paper); font-variant-numeric: tabular-nums; }
-@media (max-width: 1199px) { .live-shell .goal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .live-shell .live-detail-grid { grid-template-columns: minmax(0, 1fr); } .live-shell .live-financial-rail { display: contents; } .live-shell .goal-financial-summary { grid-row: 1; } .live-shell .goal-workshop-column { grid-row: 2; } .live-shell .portfolio-caption { max-width: 28ch; } }
+@media (max-width: 1199px) { .live-shell .goal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .live-shell .live-detail-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; grid-template-rows: none; } .live-shell .live-financial-rail { display: contents; } .live-shell .goal-financial-summary { grid-row: 1; } .live-shell .goal-workshop-column { grid-area: auto; grid-row: 2; } .live-shell .goal-chain-panel { grid-row: 3; } .live-shell .goal-commitment-panel { grid-row: 4; } .live-shell .goal-history-panel { grid-area: auto; grid-row: 5; } .live-shell .portfolio-caption { max-width: 28ch; } }
 @media (max-width: 899px) {
   .live-shell { padding-block-end: calc(var(--app-dock-height) + env(safe-area-inset-bottom)); }
   .live-shell .live-navigation { inset: auto 0 0; border: 0; border-block-start: 1px solid var(--app-line); border-radius: 0; box-shadow: none; background: var(--app-paper); padding: var(--space-2) var(--space-3) calc(var(--space-2) + env(safe-area-inset-bottom)); gap: var(--space-2); }

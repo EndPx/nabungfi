@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import type {
   GoalDTO,
+  GoalHistoryEntry,
   GoalStepAction,
   AppNetwork,
 } from "@nabungfi/shared/application";
@@ -84,6 +85,13 @@ const goal = {
   } as GoalChainState,
 } as GoalDTO;
 
+const history: GoalHistoryEntry[] = params.get("history") === "1" ? [
+  {id:"example-claim",goalId:goal.id,action:"claim",network:"solana",amountRaw:"250000",status:"confirmed",transactionHash:null,
+    createdAt:"2026-10-06T23:15:00.000Z",updatedAt:"2026-10-07T02:30:00.000Z"},
+  {id:"example-deposit",goalId:goal.id,action:"deposit",network:"base",amountRaw:"10000",status:"confirmed",transactionHash:null,
+    createdAt:"2026-10-06T16:30:00.000Z",updatedAt:"2026-10-06T16:31:00.000Z"},
+] : [];
+
 function Harness() {
   const [selectedGoal, setSelectedGoal] = useState(goal);
   const exampleGoals: GoalDTO[] = params.get("empty") === "1" ? [] : (["car", "laptop", "house"] as const).map(model => ({ ...goal, id: model, name: `My ${model}`, model,
@@ -120,7 +128,7 @@ function Harness() {
         (detail ? (
           <GoalDetail
             goal={selectedGoal}
-            history={[]}
+            history={history}
             reducedMotion={params.get("motion") !== "on"}
             back={() => setDetail(false)}
             refresh={() => setAction("refresh")}
