@@ -16,7 +16,6 @@ import { ContactShadows, OrbitControls } from "@react-three/drei";
 import { gsap } from "gsap";
 import {
   Box,
-  Check,
   ChevronLeft,
   ChevronRight,
   Move,
@@ -54,6 +53,7 @@ import {
 } from "./sound";
 import { Button, IconButton } from "./ui";
 import { formatUsdc } from "./live-api";
+import { buildFinishKind } from "./build-feedback";
 
 export interface BuildSequence {
   key: number;
@@ -86,6 +86,7 @@ const MODEL_TARGETS: Record<WorkshopModel, [number, number, number]> = {
   house: [0, 1.35, 0],
   custom: [0, 0.75, 0],
 };
+const MODEL_HOME: [number,number,number] = [0,0.06,0];
 
 function readBuilt(goalId: string, funded: number) {
   try {
@@ -325,6 +326,8 @@ function Car({
   sequence,
   reducedMotion,
   sound,
+  fullCompletionAllowed,
+  onCelebrating,
   onPiece,
   onComplete,
 }: {
@@ -333,22 +336,26 @@ function Car({
   sequence: BuildSequence | null;
   reducedMotion: boolean;
   sound: boolean;
+  fullCompletionAllowed: boolean;
+  onCelebrating: (value: boolean) => void;
   onPiece: (count: number) => void;
   onComplete: () => void;
 }) {
   const groups = useRef<(Group | null)[]>([]);
+  const assembled = useRef<Group>(null);
   const { invalidate } = useThree();
-  const callback = useRef({ onPiece, onComplete, sound });
+  const callback = useRef({ onPiece, onComplete, sound, onCelebrating });
   useEffect(() => {
-    callback.current = { onPiece, onComplete, sound };
-  }, [onPiece, onComplete, sound]);
+    callback.current = { onPiece, onComplete, sound, onCelebrating };
+  }, [onPiece, onComplete, sound, onCelebrating]);
 
   useEffect(() => {
     if (!sequence) return;
     const { from, to } = sequence;
+    const finishKind = buildFinishKind(to,fullCompletionAllowed);
     let completed = false;
     if (reducedMotion) {
-      if (callback.current.sound) playBuildFinish(to - from);
+      if (callback.current.sound) playBuildFinish(to - from,finishKind);
       callback.current.onPiece(to);
       callback.current.onComplete();
       invalidate();
@@ -358,7 +365,7 @@ function Car({
       onUpdate: invalidate,
       onComplete: () => {
         completed = true;
-        if (callback.current.sound) playBuildFinish(to - from);
+        callback.current.onCelebrating(false);
         callback.current.onComplete();
       },
     });
@@ -415,14 +422,28 @@ function Car({
         start + 0.6,
       );
     }
+    // Celebrate only after the last child brick has landed; the same group stays intact.
+    timeline.call(() => {
+      if(callback.current.sound) playBuildFinish(to-from,finishKind);
+      if(finishKind === "goal") callback.current.onCelebrating(true);
+    });
+    if(finishKind === "goal" && assembled.current) {
+      timeline.to(assembled.current.position,{y:0.61,duration:0.25,ease:"power2.out"},"+=0.085");
+      timeline.to(assembled.current.position,{y:0.61,duration:0.08});
+      timeline.to(assembled.current.position,{y:0.06,duration:0.27,ease:"power2.in"});
+      timeline.to(assembled.current.position,{y:0.13,duration:0.10,ease:"power2.out"});
+      timeline.to(assembled.current.position,{y:0.06,duration:0.13,ease:"power2.in"});
+    }
     return () => {
       timeline.kill();
+      if(assembled.current) assembled.current.position.y=0.06;
+      callback.current.onCelebrating(false);
       if (!completed) stopBuildAudio();
     };
-  }, [sequence, reducedMotion, invalidate, pieces]);
+  }, [sequence, reducedMotion, invalidate, pieces, fullCompletionAllowed]);
 
   return (
-    <group position={[0, 0.06, 0]}>
+    <group ref={assembled} position={MODEL_HOME}>
       {pieces.map((piece) => (
         <group key={piece.id}>
           {piece.id >= built && (
@@ -531,12 +552,6 @@ function CameraControl({
     invalidate();
   }, [reset, cancelSpin, camera, model, invalidate]);
   useEffect(() => {
-    const control = controls.current;
-    if (!control) return;
-    control.addEventListener("start", cancelSpin);
-    return () => control.removeEventListener("start", cancelSpin);
-  }, [cancelSpin]);
-  useEffect(() => {
     if (spin.id === consumedSpin.current) return;
     consumedSpin.current = spin.id;
     cancelSpin();
@@ -547,7 +562,7 @@ function CameraControl({
     onSpinning(true);
     spinTween.current = gsap.to(angle, {
       value: angle.value + Math.PI * 2,
-      duration: 3.2,
+      duration: 8,
       ease: "none",
       onUpdate: () => {
         control.setAzimuthalAngle(angle.value);
@@ -568,6 +583,7 @@ function CameraControl({
       maxAzimuthAngle={Infinity}
       minPolarAngle={0.06}
       maxPolarAngle={Math.PI - 0.06}
+      onStart={cancelSpin}
       onChange={() => onBelowView((controls.current?.getPolarAngle() ?? 0) > Math.PI / 2)}
       makeDefault
     />
@@ -636,6 +652,9 @@ export default function CarWorkshop({
   const [reset, setReset] = useState(0);
   const [spin, setSpin] = useState({ id: 0, run: false });
   const [spinning, setSpinning] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
+  const [preparing, setPreparing] = useState(false);
+  const starting = useRef<symbol | null>(null);
   const cursor = Math.min(built, funded);
   const unbuilt = Math.max(0, funded - cursor);
   const validSequence = sequence && sequence.to === funded ? sequence : null;
@@ -655,7 +674,11 @@ export default function CarWorkshop({
     }
   }, [sound, preview, introBuild]);
 
-  useEffect(() => () => stopBuildAudio(), []);
+  useLayoutEffect(() => {
+    starting.current=null;
+    setPreparing(false);
+    return () => {starting.current=null;stopBuildAudio();};
+  }, [goalId,model,funded]);
 
   useEffect(() => {
     try {
@@ -668,10 +691,15 @@ export default function CarWorkshop({
     }
   }, [goalId, built, funded]);
 
-  const start = (replay = false) => {
-    if (active || !funded) return;
+  const start = async (replay = false) => {
+    if (active || !funded || starting.current) return;
+    const token=Symbol();
+    starting.current=token;
     stopBuildAudio();
-    if (sound) void unlockAudio();
+    if (sound) {setPreparing(true); await unlockAudio();}
+    if(starting.current !== token) return;
+    starting.current=null;
+    setPreparing(false);
     const from = replay ? 0 : cursor;
     setBuilt(from);
     setSequence({ key: Date.now(), from, to: funded });
@@ -683,6 +711,7 @@ export default function CarWorkshop({
       data-spinning={spinning ? "true" : "false"}
       data-view={belowView ? "underside" : "studio"}
       data-free-orbit={freeOrbit ? "true" : "false"}
+      data-celebrating={celebrating ? "true" : "false"}
       onKeyDown={event => { if(event.key === "Escape") setFreeOrbit(false); }}
       aria-label={
         preview
@@ -715,6 +744,7 @@ export default function CarWorkshop({
         aria-label={`Three dimensional ${model === "custom" ? "goal sculpture" : model} ${preview ? "preview" : "savings build"} with ${displayCount} of 100 pieces assembled. ${belowView ? "Underside view. " : ""}Drag or use arrow keys and rotation controls to turn and tilt.`}
         role="img"
         tabIndex={0}
+        onPointerDown={() => { if(spinning) setSpin(value => ({id:value.id + 1,run:false})); }}
         onKeyDown={event => {
           if(event.key === "ArrowLeft") {event.preventDefault();setTurn(value => value - 1);}
           if(event.key === "ArrowRight") {event.preventDefault();setTurn(value => value + 1);}
@@ -762,6 +792,8 @@ export default function CarWorkshop({
                 sequence={validSequence}
                 reducedMotion={reducedMotion}
                 sound={sound}
+                fullCompletionAllowed={achieved || preview}
+                onCelebrating={setCelebrating}
                 onPiece={setBuilt}
                 onComplete={() => setSequence(null)}
               />
@@ -795,12 +827,6 @@ export default function CarWorkshop({
           </Suspense>
         </SceneBoundary>
       </div>
-      {!preview && (
-        <div className="stage-side-note" aria-hidden="true">
-          <span>Made of</span>
-          <strong>small steps.</strong>
-        </div>
-      )}
       <div className="workshop-bottom">
         <div className="piece-counter">
           <span className="piece-icon">
@@ -812,7 +838,7 @@ export default function CarWorkshop({
               <span> / 100 pieces</span>
             </strong>
             <p>
-              {active
+              {celebrating ? "You built your goal!" : active
                 ? `Building ${pieces[Math.min(built, 99)].label.toLowerCase()}…`
                 : unbuilt > 0
                   ? `${unbuilt} new ${unbuilt === 1 ? "piece is" : "pieces are"} ready to build`
@@ -827,10 +853,10 @@ export default function CarWorkshop({
         <Button
           variant="build"
           className="build-button"
-          onClick={() => start(unbuilt === 0)}
-          disabled={!funded || active}
+          onClick={() => void start(unbuilt === 0)}
+          disabled={!funded || active || preparing}
         >
-          {active ? (
+          {preparing ? "Preparing…" : active ? (
             <>
               <span className="build-spinner">
                 <Box size={18} />
@@ -942,12 +968,6 @@ export default function CarWorkshop({
         {!active &&
           `${displayCount} of 100 pieces assembled. ${preview ? "Preview only." : achieved ? "Goal achieved." : ""}`}
       </div>
-      {achieved && (
-        <div className="completion-stamp">
-          <Check size={14} />
-          Built with commitment
-        </div>
-      )}
     </section>
   );
 }

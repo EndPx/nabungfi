@@ -1,3 +1,5 @@
+import { BUILD_FINISH_FILES, type BuildFinishKind } from "./build-feedback";
+
 interface Voice {
   source: AudioBufferSourceNode;
   gain: GainNode;
@@ -10,6 +12,7 @@ let master: GainNode | undefined;
 let enabled = false;
 let loading: Promise<void> | undefined;
 let buildingBuffer: AudioBuffer | undefined;
+let progressBuffer: AudioBuffer | undefined;
 let completionBuffer: AudioBuffer | undefined;
 let building: Voice | undefined;
 const voices = new Set<Voice>();
@@ -32,13 +35,14 @@ export async function unlockAudio(): Promise<boolean> {
     if (context.state === "suspended") await context.resume();
     const audioContext = context;
     loading ??= Promise.all(
-      ["building-loop.wav", "build-complete.wav"].map(async (name) => {
+      ["building-loop.wav", BUILD_FINISH_FILES.progress, BUILD_FINISH_FILES.goal].map(async (name) => {
         const response = await fetch(`${import.meta.env.BASE_URL}audio/${name}`);
         if (!response.ok) throw new Error(`Could not load ${name}`);
         return audioContext.decodeAudioData(await response.arrayBuffer());
       }),
-    ).then(([loop, finish]) => {
+    ).then(([loop, progress, finish]) => {
       buildingBuffer = loop;
+      progressBuffer = progress;
       completionBuffer = finish;
     });
     await loading;
@@ -97,8 +101,9 @@ export function playBuildStep() {
   building = play(buildingBuffer, 0.94, context.currentTime, true);
 }
 
-export function playBuildFinish(pieceCount: number) {
-  if (!context || !completionBuffer || !enabled) return;
+export function playBuildFinish(pieceCount: number, kind: BuildFinishKind) {
+  const buffer = kind === "goal" ? completionBuffer : progressBuffer;
+  if (!context || !buffer || !enabled) return;
   // Keep even a one-piece build audible before the single finishing impact.
   const finishAt = Math.max(
     context.currentTime + 0.085,
@@ -108,6 +113,6 @@ export function playBuildFinish(pieceCount: number) {
     stopVoice(building, finishAt - 0.04);
     building = undefined;
   }
-  const weight = Math.min(1, 0.7 + Math.log2(Math.max(1, pieceCount)) * 0.045);
-  play(completionBuffer, 0.76 * weight, finishAt);
+  const level = kind === "goal" ? 0.98 : Math.min(0.78, 0.64 + Math.log2(Math.max(1,pieceCount)) * 0.025);
+  play(buffer, level, finishAt);
 }

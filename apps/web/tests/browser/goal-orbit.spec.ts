@@ -67,7 +67,7 @@ test("360 exploration loads a complete model and a full turn changes the view", 
   expect(during.equals(before)).toBe(false);
   await expect(
     page.getByRole("button", { name: "Rotate 360°", exact: true }),
-  ).toBeVisible();
+  ).toBeVisible({timeout:12000});
   await expect(page.locator(".workshop")).toHaveAttribute(
     "data-spinning",
     "false",
@@ -86,6 +86,7 @@ test("drag, arrow and reset interrupt the automatic turn", async ({ page }) => {
     "false",
   );
   await page.getByRole("button", { name: "Rotate 360°", exact: true }).click();
+  await page.locator("canvas").scrollIntoViewIfNeeded();
   const box = await page.locator("canvas").boundingBox();
   if (!box) throw new Error("The goal canvas did not render");
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);

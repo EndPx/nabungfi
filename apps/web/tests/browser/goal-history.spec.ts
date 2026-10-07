@@ -7,7 +7,7 @@ for (const width of [375,768]) test(`goal activity is below every goal section a
   await page.setViewportSize({width,height:900});
   await page.goto("/tests/browser/harness.html?view=detail&history=1");
   await page.locator(".car-stage").waitFor({state:"visible",timeout:30000});
-  const sections=[".goal-financial-summary",".goal-workshop-column",".goal-chain-panel",".goal-commitment-panel",".goal-history-panel"];
+  const sections=[".goal-workshop-column",".goal-financial-summary",".goal-chain-panel",".goal-commitment-panel",".goal-history-panel"];
   for(let i=0;i<sections.length-1;i++) {
     const before=(await page.locator(sections[i]).boundingBox())!;
     const after=(await page.locator(sections[i+1]).boundingBox())!;

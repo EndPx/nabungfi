@@ -336,22 +336,6 @@ h1 {
 .car-stage canvas:active {
   cursor: grabbing;
 }
-.stage-side-note {
-  position: absolute;
-  left: 32px;
-  top: 94px;
-  color: var(--quiet);
-  pointer-events: none;
-  font-family: "Outfit", sans-serif;
-}
-.stage-side-note span {
-  display: block;
-  font-size: var(--text-sm);
-}
-.stage-side-note strong {
-  font-size: var(--text-lead);
-  font-weight: 500;
-}
 .workshop-bottom {
   display: flex;
   align-items: center;
@@ -418,16 +402,6 @@ h1 {
 }
 .stage-tools .icon-button {
   color: var(--muted);
-}
-.completion-stamp {
-  position: absolute;
-  right: 24px;
-  top: 55px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: var(--text-xs);
-  color: var(--success);
 }
 .workshop--complete {
   border-color: var(--lime-dark);
@@ -1771,16 +1745,6 @@ h1 {
   }
   .car-stage {
     height: 288px;
-  }
-  .stage-side-note {
-    left: 20px;
-    top: 59px;
-  }
-  .stage-side-note span {
-    font-size: var(--text-xs);
-  }
-  .stage-side-note strong {
-    font-size: var(--text-sm);
   }
   .workshop-bottom {
     padding: 12px;

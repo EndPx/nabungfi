@@ -4,6 +4,8 @@
 /IMPLEMENTATION_STATUS.md
 /docs/BROWSER_VERIFICATION.md
 /apps/web/assets/audio/pixabay-building-208359.mp3
+/apps/web/assets/audio/finish-progress-source.mp3
+/apps/web/assets/audio/finish-goal-source.mp3
 
 # Dependencies, generated files and local state.
 node_modules/

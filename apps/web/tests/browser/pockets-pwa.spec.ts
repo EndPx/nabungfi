@@ -41,13 +41,13 @@ test("an empty search resets and an empty account opens the real goal consent fo
   await expect(page.getByRole("button", { name: "Create goal", exact: true })).toBeDisabled();
 });
 
-test("mobile savings action precedes the 3D model and navigation does not obscure it", async ({ page }) => {
+test("mobile savings action follows the 3D model and navigation does not obscure it", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/tests/browser/harness.html?view=detail");
   const action = page.getByRole("button", { name: "Add savings", exact: true });
   const model = page.locator(".goal-workshop-column");
   const nav = page.getByRole("navigation", { name: "Main navigation" });
-  expect((await action.boundingBox())!.y).toBeLessThan((await model.boundingBox())!.y);
+  expect((await action.boundingBox())!.y).toBeGreaterThan((await model.boundingBox())!.y + (await model.boundingBox())!.height);
   await action.focus();
   expect((await action.boundingBox())!.y + (await action.boundingBox())!.height).toBeLessThanOrEqual((await nav.boundingBox())!.y);
   expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
