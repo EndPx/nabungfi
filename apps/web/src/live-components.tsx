@@ -37,6 +37,7 @@ import {
 } from "./live-api";
 import { actions, networks, phases, short } from "./live-config";
 import { nextPieceProgress, formatNativeGas } from "./savings-progress";
+import { ChainAllocation } from "./ChainAllocation";
 const CarWorkshop = lazy(() => import("./CarWorkshop"));
 const activityDateFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric", month: "short", year: "numeric",
@@ -399,6 +400,7 @@ export function GoalDetail({
           </section>
           <section className="live-panel goal-chain-panel">
             <h2>Where your pieces are</h2>
+            {available && state && <ChainAllocation positions={state.positions} />}
             <div className="network-list">
               {(
                 [

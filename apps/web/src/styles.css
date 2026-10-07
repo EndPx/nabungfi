@@ -1945,6 +1945,12 @@ h1 {
 .car-stage canvas {
   touch-action: pan-y !important;
 }
+.workshop[data-free-orbit="true"] .car-stage,
+.workshop[data-free-orbit="true"] .car-stage canvas {
+  touch-action: none !important;
+}
+.car-stage:focus-visible { outline: 3px solid var(--blue); outline-offset: -3px; }
+.stage-tools-right { flex-wrap: wrap; }
 @media (max-width: 599px) {
   .stage-tools .rotate-tools,
   .stage-tools .stage-tools-right {

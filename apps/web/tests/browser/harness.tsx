@@ -26,6 +26,7 @@ import {
 } from "../../src/account-pages";
 import { GoalsOverview } from "../../src/GoalsOverview";
 import { FaucetsPage } from "../../src/FaucetsPage";
+import { ChainAllocation } from "../../src/ChainAllocation";
 import { registerPwa } from "../../src/pwa";
 import { formatUsdc } from "../../src/live-api";
 import "@fontsource/outfit/latin-500.css";
@@ -92,6 +93,13 @@ const history: GoalHistoryEntry[] = params.get("history") === "1" ? [
     createdAt:"2026-10-06T16:30:00.000Z",updatedAt:"2026-10-06T16:31:00.000Z"},
 ] : [];
 
+const allocationExample = [
+  {network:"solana" as const,amount:"25000000"},
+  {network:"base" as const,amount:"62000000"},
+  {network:"arbitrum" as const,amount:"8000000"},
+  {network:"ethereum" as const,amount:"5000000"},
+].map(share=>({network:share.network,assetsRaw:params.get("collected") === "1" ? "0" : share.amount,claimedRaw:params.get("collected") === "1" ? share.amount : "0"}));
+
 function Harness() {
   const [selectedGoal, setSelectedGoal] = useState(goal);
   const exampleGoals: GoalDTO[] = params.get("empty") === "1" ? [] : (["car", "laptop", "house"] as const).map(model => ({ ...goal, id: model, name: `My ${model}`, model,
@@ -125,7 +133,7 @@ function Harness() {
         {params.get("presentation") === "1" ? "Example savings goals · For illustration" : "Component acceptance fixture. All balances are examples; no API or wallet is connected."}
       </p>
       {destination === "goals" &&
-        (detail ? (
+        (params.get("view") === "allocation" ? <section className="live-panel goal-chain-panel"><h2>Where your pieces are</h2><ChainAllocation positions={allocationExample} /></section> : detail ? (
           <GoalDetail
             goal={selectedGoal}
             history={history}

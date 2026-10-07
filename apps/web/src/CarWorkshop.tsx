@@ -457,21 +457,26 @@ function Car({
 
 function CameraControl({
   turn,
+  tilt,
   reset,
   spin,
   onSpinning,
+  onBelowView,
   reducedMotion,
   model,
 }: {
   turn: number;
+  tilt: number;
   reset: number;
   spin: { id: number; run: boolean };
   onSpinning: (value: boolean) => void;
+  onBelowView: (value: boolean) => void;
   reducedMotion: boolean;
   model: WorkshopModel;
 }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const previousTurn = useRef(turn);
+  const previousTilt = useRef(tilt);
   const previousReset = useRef(reset);
   const consumedSpin = useRef(0);
   const spinTween = useRef<ReturnType<typeof gsap.to> | null>(null);
@@ -500,6 +505,17 @@ function CameraControl({
       );
     control.update();
   }, [turn, cancelSpin]);
+  useEffect(() => {
+    const control = controls.current;
+    if (!control) return;
+    const delta = tilt - previousTilt.current;
+    previousTilt.current = tilt;
+    if (!delta) return;
+    cancelSpin();
+    control.setPolarAngle(Math.max(0.06, Math.min(Math.PI - 0.06, control.getPolarAngle() + delta * Math.PI / 8)));
+    control.update();
+    invalidate();
+  }, [tilt, cancelSpin, invalidate]);
   useEffect(() => {
     if (reset === previousReset.current) return;
     previousReset.current = reset;
@@ -550,8 +566,9 @@ function CameraControl({
       enableDamping={!reducedMotion}
       minAzimuthAngle={-Infinity}
       maxAzimuthAngle={Infinity}
-      minPolarAngle={0.3}
-      maxPolarAngle={Math.PI / 2.2}
+      minPolarAngle={0.06}
+      maxPolarAngle={Math.PI - 0.06}
+      onChange={() => onBelowView((controls.current?.getPolarAngle() ?? 0) > Math.PI / 2)}
       makeDefault
     />
   );
@@ -613,6 +630,9 @@ export default function CarWorkshop({
     }
   });
   const [turn, setTurn] = useState(0);
+  const [tilt, setTilt] = useState(0);
+  const [belowView, setBelowView] = useState(false);
+  const [freeOrbit, setFreeOrbit] = useState(false);
   const [reset, setReset] = useState(0);
   const [spin, setSpin] = useState({ id: 0, run: false });
   const [spinning, setSpinning] = useState(false);
@@ -661,6 +681,9 @@ export default function CarWorkshop({
     <section
       className={`workshop ${achieved ? "workshop--complete" : ""}`}
       data-spinning={spinning ? "true" : "false"}
+      data-view={belowView ? "underside" : "studio"}
+      data-free-orbit={freeOrbit ? "true" : "false"}
+      onKeyDown={event => { if(event.key === "Escape") setFreeOrbit(false); }}
       aria-label={
         preview
           ? "Interactive model preview, no savings or transactions"
@@ -689,8 +712,16 @@ export default function CarWorkshop({
       </div>
       <div
         className="car-stage"
-        aria-label={`Three dimensional ${model === "custom" ? "goal sculpture" : model} ${preview ? "preview" : "savings build"} with ${displayCount} of 100 pieces assembled. Drag to rotate, or use the rotation buttons below.`}
+        aria-label={`Three dimensional ${model === "custom" ? "goal sculpture" : model} ${preview ? "preview" : "savings build"} with ${displayCount} of 100 pieces assembled. ${belowView ? "Underside view. " : ""}Drag or use arrow keys and rotation controls to turn and tilt.`}
         role="img"
+        tabIndex={0}
+        onKeyDown={event => {
+          if(event.key === "ArrowLeft") {event.preventDefault();setTurn(value => value - 1);}
+          if(event.key === "ArrowRight") {event.preventDefault();setTurn(value => value + 1);}
+          if(event.key === "ArrowUp") {event.preventDefault();setTilt(value => value - 1);}
+          if(event.key === "ArrowDown") {event.preventDefault();setTilt(value => value + 1);}
+          if(event.key === "Home") {event.preventDefault();setReset(value => value + 1);}
+        }}
       >
         <SceneBoundary>
           <Suspense
@@ -734,25 +765,29 @@ export default function CarWorkshop({
                 onPiece={setBuilt}
                 onComplete={() => setSequence(null)}
               />
-              <mesh position={[0, -0.07, 0]} receiveShadow>
-                <cylinderGeometry args={[3.3, 3.4, 0.1, 80]} />
-                <meshStandardMaterial color="#eeeddf" roughness={0.85} />
-              </mesh>
-              <ContactShadows
-                position={[0, -0.01, 0]}
-                opacity={0.3}
-                scale={10}
-                blur={2.5}
-                far={3}
-                resolution={256}
-                color="#807d68"
-                frames={active ? Infinity : 1}
-              />
+              <group visible={!belowView}>
+                <mesh position={[0, -0.07, 0]} receiveShadow>
+                  <cylinderGeometry args={[3.3, 3.4, 0.1, 80]} />
+                  <meshStandardMaterial color="#eeeddf" roughness={0.85} />
+                </mesh>
+                <ContactShadows
+                  position={[0, -0.01, 0]}
+                  opacity={0.3}
+                  scale={10}
+                  blur={2.5}
+                  far={3}
+                  resolution={256}
+                  color="#807d68"
+                  frames={active ? Infinity : 1}
+                />
+              </group>
               <CameraControl
                 turn={turn}
+                tilt={tilt}
                 reset={reset}
                 spin={spin}
                 onSpinning={setSpinning}
+                onBelowView={setBelowView}
                 reducedMotion={reducedMotion}
                 model={model}
               />
@@ -855,7 +890,7 @@ export default function CarWorkshop({
           </IconButton>
           <span>
             <Move size={13} />
-            Drag to rotate 360°
+            Turn and tilt
           </span>
           <IconButton
             label="Rotate build right"
@@ -863,8 +898,11 @@ export default function CarWorkshop({
           >
             <ChevronRight size={17} />
           </IconButton>
+          <IconButton label="Tilt build up" onClick={() => setTilt(value => value - 1)}><ChevronLeft size={17} style={{transform:"rotate(90deg)"}} /></IconButton>
+          <IconButton label="Tilt build down" onClick={() => setTilt(value => value + 1)}><ChevronRight size={17} style={{transform:"rotate(90deg)"}} /></IconButton>
         </div>
         <div className="stage-tools-right">
+          <Button variant="quiet" className="turn-button" aria-pressed={freeOrbit} onClick={() => setFreeOrbit(value => !value)}><Move size={16} />{freeOrbit ? "Done rotating" : "Rotate freely"}</Button>
           <Button
             variant="quiet"
             className="turn-button"
