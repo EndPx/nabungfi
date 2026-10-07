@@ -15,7 +15,7 @@
     {"src": "/screenshots/goals-wide.png", "sizes": "1280x900", "type": "image/png", "form_factor": "wide", "label": "Example savings goals in NabungFi on desktop"}
   ],
   "shortcuts": [
-    {"name": "Your goals", "short_name": "Goals", "description": "Open your savings goals", "url": "/app/goals", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png"}]},
+    {"name": "Dashboard", "short_name": "Dashboard", "description": "Open your savings dashboard", "url": "/app/goals", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png"}]},
     {"name": "Goal activity", "short_name": "Activity", "description": "Review your goal histories", "url": "/app/activity", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png"}]},
     {"name": "Your wallets", "short_name": "Wallets", "description": "Open your verified owner wallets", "url": "/app/wallets", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png"}]}
   ],

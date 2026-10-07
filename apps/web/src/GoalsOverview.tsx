@@ -26,7 +26,7 @@ export function GoalsOverview({ goals, balance, scope, blocked, create, open, ac
   const reset = () => { setQuery(""); setFilter("all"); };
   return <>
     <div className="page-heading goals-heading">
-      <div><p className="page-eyebrow">YOUR SAVINGS, TAKING SHAPE</p><h1>Your goals</h1><p>A little closer with every deposit.</p></div>
+      <div><p className="page-eyebrow">YOUR SAVINGS, TAKING SHAPE</p><h1>Dashboard</h1><p>A little closer with every deposit.</p></div>
       <Button variant="build" onClick={create} disabled={blocked}><Plus size={18} />New goal</Button>
     </div>
     <PortfolioSummary balance={balance} scope={scope} />

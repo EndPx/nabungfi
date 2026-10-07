@@ -16,7 +16,7 @@ import { usePwa } from "./pwa";
 export type { Destination } from "./app-routes";
 import type { Destination } from "./app-routes";
 const destinations = [
-  { id: "goals", label: "Goals", Icon: Box },
+  { id: "goals", label: "Dashboard", Icon: Box },
   { id: "activity", label: "Activity", Icon: History },
   { id: "wallets", label: "Wallets", Icon: Wallet },
   { id: "faucets", label: "Faucets", Icon: Faucet },
@@ -38,7 +38,7 @@ export function Shell({
 }) {
   const pwa = usePwa();
   useEffect(() => {
-    document.title = `${destinations.find((item) => item.id === destination)?.label ?? "Goals"} · NabungFi`;
+    document.title = `${destinations.find((item) => item.id === destination)?.label ?? "Dashboard"} · NabungFi`;
   }, [destination]);
   return (
     <div className="live-shell">

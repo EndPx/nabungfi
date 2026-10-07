@@ -1,5 +1,7 @@
 # NabungFi interface system
 
+The savings overview is labelled Dashboard in the sidebar, mobile navigation, page heading, breadcrumb, browser title and PWA shortcut. Detail navigation says Back to dashboard. Goal names and goal filters retain their object meaning; route IDs and saved /app/goals links remain compatible.
+
 ## App startup and goal loading — 7 October 2026
 
 App routes show a full-screen NabungFi splash while their entry module, Privy readiness, authenticated backend verification and first goal-detail batch are pending. The shared LoadingState uses the canonical N with a subtle 1.6s block-opacity/rise sequence, existing studio/paper colors, a 120px emblem and the existing 20/32px typography. Reduced motion uses the complete static mark; hidden documents pause the sequence. It has a polite status landmark, no artificial minimum delay, no progress percentage and no balance placeholders. Cold offline or failed verification exposes the existing actionable login/retry UI rather than an endless splash. Public marketing routes retain their own neutral entry fallback.

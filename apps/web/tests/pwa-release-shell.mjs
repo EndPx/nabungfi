@@ -44,7 +44,7 @@ try {
   for (const width of [375, 768, 1280]) {
     await page.setViewportSize({ width, height: 844 });
     for (const order of [[appCss, baseCss], [baseCss, appCss]]) {
-      await page.setContent(`<html><head>${[mainCss, ...order].map(file => `<link rel="stylesheet" href="${origin}/assets/${file}">`).join("")}</head><body><div class="live-shell"><nav class="live-navigation"><button class="is-active" aria-current="page">Goals</button></nav><section class="portfolio-summary"><h2>Total saved</h2></section></div></body></html>`, { waitUntil: "networkidle" });
+      await page.setContent(`<html><head>${[mainCss, ...order].map(file => `<link rel="stylesheet" href="${origin}/assets/${file}">`).join("")}</head><body><div class="live-shell"><nav class="live-navigation"><button class="is-active" aria-current="page">Dashboard</button></nav><section class="portfolio-summary"><h2>Total saved</h2></section></div></body></html>`, { waitUntil: "networkidle" });
       const skin = await page.evaluate(() => ({ active: getComputedStyle(document.querySelector(".live-navigation button")).backgroundColor, pocket: getComputedStyle(document.querySelector(".portfolio-summary")).backgroundColor, pocketImage: getComputedStyle(document.querySelector(".portfolio-summary")).backgroundImage, dockRadius: getComputedStyle(document.querySelector(".live-navigation")).borderRadius }));
       assert.equal(skin.active, "rgb(255, 244, 204)", "App selection color wins independently of CSS loading order");
       assert.equal(skin.pocket, "rgb(244, 244, 235)");

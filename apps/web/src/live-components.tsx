@@ -213,7 +213,7 @@ export function GoalDetail({
     <>
       <button className="live-back" type="button" onClick={back}>
         <ArrowLeft size={18} />
-        All goals
+        Back to dashboard
       </button>
       <div className="page-heading">
         <div>
