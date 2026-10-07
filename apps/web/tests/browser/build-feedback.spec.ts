@@ -17,11 +17,12 @@ async function recordAudio(page: import("@playwright/test").Page) {
   });
 }
 
-test("a partial build plays the short cue without a goal hop",async({page})=>{
+test("a first-visit partial build plays the short cue by default without a goal hop",async({page})=>{
   await page.emulateMedia({reducedMotion:"no-preference"});
   await recordAudio(page);
   await page.goto("/tests/browser/harness.html?view=detail&amount=250000&motion=on");
-  await page.getByRole("button",{name:"Enable assembly sound",exact:true}).click();
+  await expect(page.getByRole("button",{name:"Mute assembly sound",exact:true})).toHaveAttribute("aria-pressed","true");
+  expect(await page.evaluate(()=>(window as any).buildAudio)).toEqual([]);
   await page.getByRole("button",{name:"Replay build",exact:true}).click();
   await expect.poll(async()=>page.evaluate(()=>(window as any).buildAudio.filter((a:any)=>!a.loop).map((a:any)=>a.duration))).toEqual([0.64]);
   await expect(page.locator(".workshop")).toHaveAttribute("data-celebrating","false");
@@ -32,7 +33,7 @@ test("100-percent completion plays the full cue and hops only after assembly",as
   await page.emulateMedia({reducedMotion:"no-preference"});
   await recordAudio(page);
   await page.goto("/tests/browser/harness.html?view=detail&phase=claimed&motion=on");
-  await page.getByRole("button",{name:"Enable assembly sound",exact:true}).click();
+  await expect(page.getByRole("button",{name:"Mute assembly sound",exact:true})).toHaveAttribute("aria-pressed","true");
   await page.getByRole("button",{name:"Replay build",exact:true}).click();
   await expect(page.locator(".workshop")).toHaveAttribute("data-celebrating","true",{timeout:14000});
   await expect(page.locator(".car-stage")).toHaveAttribute("aria-label",/100 of 100/);
@@ -45,9 +46,15 @@ test("100-percent completion plays the full cue and hops only after assembly",as
   await expect(page.getByRole("button",{name:"Replay build",exact:true})).toBeEnabled();
 });
 
-test("reduced motion finishes silently when muted and never hops",async({page})=>{
+test("saved mute survives reload and reduced motion finishes silently without a hop",async({page})=>{
+  await page.emulateMedia({reducedMotion:"reduce"});
   await recordAudio(page);
   await page.goto("/tests/browser/harness.html?view=detail&phase=claimed");
+  await page.getByRole("button",{name:"Mute assembly sound",exact:true}).click();
+  await expect(page.getByRole("button",{name:"Enable assembly sound",exact:true})).toHaveAttribute("aria-pressed","false");
+  expect(await page.evaluate(()=>localStorage.getItem("nabungfi:assembly-sound"))).toBe("off");
+  await page.reload();
+  await expect(page.getByRole("button",{name:"Enable assembly sound",exact:true})).toHaveAttribute("aria-pressed","false");
   await page.getByRole("button",{name:"Replay build",exact:true}).click();
   await expect(page.locator(".workshop")).toHaveAttribute("data-celebrating","false");
   expect(await page.evaluate(()=>(window as any).buildAudio)).toEqual([]);

@@ -640,9 +640,9 @@ export default function CarWorkshop({
   const [sound, setSound] = useState(() => {
     if (preview && introBuild) return false;
     try {
-      return localStorage.getItem("nabungfi:assembly-sound") === "on";
+      return localStorage.getItem("nabungfi:assembly-sound") !== "off";
     } catch {
-      return false;
+      return true;
     }
   });
   const [turn, setTurn] = useState(0);

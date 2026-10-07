@@ -149,6 +149,8 @@ The visitor can pause marketing motion, and OS reduced motion renders the comple
 
 The original model geometry, lighting and material palette remain exempt from UI tokens. Selecting the interactive landing preview starts a silent build after an explicit click; it does not automatically enable sound or change the account's stored sound preference. Model previews contain no API or wallet operations. Static original-render posters provide the initial visual and the loading fallback.
 
+App workshops enable assembly sound by default on a first visit, including when optional preference storage is unavailable. A saved mute is honored on later visits. Build or Replay unlocks audio through the user's gesture; entering or refreshing a goal does not play audio. The landing assembly intro stays silent and preserves the stored app sound preference.
+
 The beui `scroll-animation` and `text-animation` sources inform native reduced-motion fallback and readable grouped text. Adapt those mechanisms to the existing GSAP stack; do not add Lenis/Motion or copy their components.
 
 App URLs are `/app/goals`, `/app/activity`, `/app/wallets` and `/app/settings`. `/app` remains the goals entry; `?goal=` belongs to `/app/goals`. Browser history and legacy hash links remain supported. Account navigation never loads marketing motion.
