@@ -15,6 +15,7 @@ import {
 import { Button, NetworkMark, PageHeading } from "./ui";
 import { InstallPanel } from "./Shell";
 import { phases } from "./live-config";
+import { WalletAddress } from "./WalletAddress";
 
 export function ActivityPage({
   goals,
@@ -135,12 +136,6 @@ export function WalletsPage({
                 Create Solana wallet
               </Button>
             )}
-          <Button variant="secondary" onClick={connect}>
-            Connect wallet
-          </Button>
-          <Button variant="build" onClick={link}>
-            Link owner wallet
-          </Button>
         </div>
       </PageHeading>
       <div className="wallet-list">
@@ -162,7 +157,7 @@ export function WalletsPage({
                 <span className="live-help">Verified by Privy</span>
               </div>
             </div>
-            <p className="live-address">{wallet.address}</p>
+            <WalletAddress address={wallet.address} chains={wallet.chainType === "solana" ? ["solana"] : ["base", "arbitrum", "ethereum"]} />
             <p className="live-help">
               {wallet.chainType === "solana"
                 ? "Solana Devnet"
@@ -175,6 +170,13 @@ export function WalletsPage({
           </section>
         ))}
       </div>
+      <details className="wallet-extra-actions">
+        <summary>External wallet options</summary>
+        <div className="live-actions">
+          <Button variant="secondary" onClick={connect} disabled={busy || blocked}>Connect external wallet</Button>
+          <Button variant="secondary" onClick={link} disabled={busy || blocked}>Link external wallet</Button>
+        </div>
+      </details>
       <div className="live-notice">
         <ShieldCheck size={24} />
         <div>

@@ -95,6 +95,19 @@
 .live-shell .wallet-copy { margin-block-start: auto; align-self: flex-start; }
 .live-shell .wallet-network-marks { display: flex; gap: var(--space-2); align-items: center; }
 .live-shell .wallet-network-marks .network-mark { background: var(--app-paper); }
+.live-shell .wallet-address-row { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.live-shell .wallet-address-row .live-address { flex: 1; min-width: 0; }
+.live-shell .wallet-explorer-trigger { display: inline-flex; align-items: center; justify-content: center; width: var(--touch-min); height: var(--touch-min); flex-shrink: 0; border-radius: var(--radius-control); color: var(--ink); cursor: pointer; list-style: none; }
+.live-shell .wallet-explorer-trigger::-webkit-details-marker { display: none; }
+.live-shell .wallet-explorer-trigger:hover { background: var(--yellow-soft); }
+.live-shell .wallet-explorer-menu { position: relative; flex-shrink: 0; }
+.live-shell .wallet-explorer-links { position: absolute; inset-inline-end: 0; top: 100%; z-index: 5; width: 252px; max-width: calc(100vw - 64px); display: grid; padding: var(--space-2); border: 1px solid var(--app-line); border-radius: var(--radius-surface); background: var(--app-paper); box-shadow: var(--app-shadow); }
+.live-shell .wallet-explorer-links a { display: flex; align-items: center; gap: var(--space-2); min-height: var(--touch-min); padding-inline: var(--space-2); border-radius: var(--radius-control); font-size: var(--text-sm); color: var(--ink); text-decoration: none; }
+.live-shell .wallet-explorer-links a:hover { background: var(--yellow-soft); }
+.live-shell .wallet-explorer-links a > span:not(.network-mark) { flex: 1; }
+.live-shell .wallet-extra-actions { margin-block: var(--space-6); }
+.live-shell .wallet-extra-actions summary { min-height: var(--touch-min); align-content: center; color: var(--muted); font-size: var(--text-sm); cursor: pointer; }
+.live-shell .wallet-extra-actions .live-actions { padding-block-start: var(--space-2); }
 .live-shell .faucet-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
 .live-shell .faucet-card { display: flex; flex-direction: column; gap: var(--space-4); }
 .live-shell .faucet-heading { display: flex; align-items: center; gap: var(--space-3); }
@@ -103,7 +116,6 @@
 .live-shell .faucet-wallet .live-address { margin-block: var(--space-2); }
 .live-shell .faucet-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 .live-shell .faucet-actions .button { flex: 1; }
-.live-shell .faucet-source { display: inline-flex; gap: var(--space-2); align-items: center; min-height: var(--touch-min); font-size: var(--text-sm); margin-block-start: auto; }
 .live-shell .faucet-note { margin-block-start: var(--space-6); }
 @media (max-width: 599px) { .live-shell .faucet-grid { grid-template-columns: minmax(0, 1fr); } }
 .live-shell .settings-install-details { font-size: var(--text-sm); width: 100%; color: var(--muted); }

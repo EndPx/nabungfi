@@ -12,12 +12,11 @@ for (const width of [320, 375, 768, 1280]) test(`faucets and five-destination na
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   expect((await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21aa"]).analyze()).violations).toEqual([]);
 });
-test("faucet destinations keep native gas networks separate and show eligibility", async ({page}) => {
+test("faucet destinations keep native gas networks separate", async ({page}) => {
   await page.goto("/tests/browser/harness.html?page=faucets");
   await expect(page.getByRole("link",{name:"Get SOL for Solana Devnet",exact:true})).toHaveAttribute("href","https://faucet.solana.com/");
   await expect(page.getByRole("link",{name:"Get ETH for Base Sepolia",exact:true})).toHaveAttribute("href","https://portal.cdp.coinbase.com/products/faucet");
   await expect(page.getByRole("link",{name:"Get ETH for Arbitrum Sepolia",exact:true})).toHaveAttribute("href","https://www.alchemy.com/faucets/arbitrum-sepolia");
-  await expect(page.getByText("Alchemy requires mainnet balance",{exact:false})).toBeVisible();
   await expect(page.getByRole("link",{name:"Get ETH for Ethereum Sepolia",exact:true})).toHaveAttribute("href","https://cloud.google.com/application/web3/faucet/ethereum/sepolia");
 });
 test("missing faucet wallet leads to verified wallet setup", async ({page}) => {

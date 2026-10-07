@@ -6,6 +6,10 @@ export const networks: Record<AppNetwork, string> = {
   arbitrum: "Arbitrum Sepolia",
   ethereum: "Ethereum Sepolia",
 };
+export const walletExplorer = (network: AppNetwork, address: string) =>
+  network === "solana"
+    ? `https://explorer.solana.com/address/${encodeURIComponent(address)}?cluster=devnet`
+    : `${EVM_DEPLOYMENTS[network].explorer}/address/${encodeURIComponent(address)}`;
 export const actions: Record<GoalStepAction, string> = {
   "create-vault": "Create vault",
   initialize: "Initialize goal",
