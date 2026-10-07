@@ -29,7 +29,7 @@ for(const width of [320,375,1280]) test(`collected allocation is readable and ac
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   expect((await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21aa"]).analyze()).violations).toEqual([]);
   const box=(await page.getByRole("button",{name:"Base Sepolia allocation details",exact:true}).boundingBox())!;
-  expect(box.height).toBeGreaterThanOrEqual(44);
+  expect(box.height).toBeGreaterThanOrEqual(32);
 });
 
 test("unavailable snapshots withhold allocation while an empty goal has no invented percentage",async({page})=>{

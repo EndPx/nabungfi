@@ -82,7 +82,7 @@
 .live-shell .goal-chain-panel .network-row { padding-block: var(--space-3); border-block-end: 1px solid var(--app-line); }
 .live-shell .goal-chain-panel .network-row:last-child { border: 0; }
 .live-shell .goal-chain-panel .network-list { gap: var(--space-1); }
-.live-shell .chain-allocation { margin-block: var(--space-4) var(--space-5); }
+.live-shell .chain-allocation { margin-block: var(--space-4) var(--space-2); }
 .live-shell .chain-allocation-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-size: var(--text-xs); }
 .live-shell .chain-allocation-heading h3 { font: 500 var(--text-sm)/1.5 var(--font-body); }
 .live-shell .chain-allocation-heading > span { color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -97,8 +97,8 @@
 .live-shell .chain-allocation-segment:hover { filter: brightness(.9); }
 .live-shell .chain-allocation-tooltip { position: absolute; bottom: calc(100% - 2px); left: 50%; transform: translateX(-50%); z-index: 5; width: max-content; max-width: 100%; display: grid; gap: var(--space-1); padding: var(--space-3); border: 1px solid var(--app-line); border-radius: var(--radius-surface); background: var(--app-paper); box-shadow: var(--app-shadow); font-size: var(--text-sm); }
 .live-shell .chain-allocation-tooltip small { font-size: var(--text-xs); color: var(--muted); }
-.live-shell .chain-allocation-legend { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-1) var(--space-2); margin-block-start: var(--space-2); }
-.live-shell .chain-allocation-legend button { display: flex; align-items: center; gap: var(--space-2); min-width: 0; min-height: var(--touch-min); padding-inline: var(--space-1); border: 0; border-radius: var(--radius-control); background: transparent; font: 400 var(--text-xs)/1.5 var(--font-body); color: var(--ink); cursor: pointer; }
+.live-shell .chain-allocation-legend { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 var(--space-2); margin-block-start: var(--space-1); }
+.live-shell .chain-allocation-legend button { display: flex; align-items: center; gap: var(--space-2); min-width: 0; min-height: var(--space-8); padding-inline: var(--space-1); border: 0; border-radius: var(--radius-control); background: transparent; font: 400 var(--text-xs)/1.5 var(--font-body); color: var(--ink); cursor: pointer; }
 .live-shell .chain-allocation-legend button:hover, .live-shell .chain-allocation-legend button.is-active { background: var(--app-pocket); }
 .live-shell .chain-allocation-legend i { width: 8px; height: 8px; flex-shrink: 0; border-radius: 2px; background: var(--allocation-color); }
 .live-shell .chain-allocation-legend button > span { flex: 1; text-align: start; }
