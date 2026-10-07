@@ -70,9 +70,6 @@ export function Shell({
           <strong>Your workshop</strong>
           <p>Independent USDC goals.</p>
         </div>
-        <a className="sidebar-demo" href="/?demo=1">
-          Try a build <ChevronRight size={16} />
-        </a>
       </aside>
       <div className="live-content">
         <header className="live-header">

@@ -66,7 +66,7 @@ test("device reduced motion shows the completed brand and leaves FAQs usable", a
   ).toHaveCSS("opacity", "1");
 });
 
-test("requested 3D intro stays silent and preserves the account sound preference", async ({
+test("automatic marketing artwork stays silent and preserves the app sound preference", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -74,13 +74,10 @@ test("requested 3D intro stays silent and preserves the account sound preference
     localStorage.setItem("nabungfi:assembly-sound", "on"),
   );
   await page.goto("/");
-  await page.getByRole("button", { name: "Try a build" }).click();
   await expect(
-    page.getByRole("button", { name: "Enable assembly sound" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Try assembly" }),
-  ).toBeEnabled();
+    page.locator('.landing-studio[data-ready="true"]'),
+  ).toHaveAttribute("data-phase","complete");
+  await expect(page.getByRole("button", { name: /assembly sound|Try a build|Try assembly/ })).toHaveCount(0);
   expect(
     await page.evaluate(() => localStorage.getItem("nabungfi:assembly-sound")),
   ).toBe("on");

@@ -30,19 +30,24 @@ test("a first-visit partial build plays the short cue by default without a goal 
 });
 
 test("100-percent completion plays the full cue and hops only after assembly",async({page})=>{
+  await page.setViewportSize({width:1280,height:1000});
   await page.emulateMedia({reducedMotion:"no-preference"});
   await recordAudio(page);
   await page.goto("/tests/browser/harness.html?view=detail&phase=claimed&motion=on");
+  await page.locator(".car-stage").scrollIntoViewIfNeeded();
+  const stageBox=await page.locator(".car-stage").boundingBox();
+  if(!stageBox)throw new Error("The goal model did not render");
   await expect(page.getByRole("button",{name:"Mute assembly sound",exact:true})).toHaveAttribute("aria-pressed","true");
   await page.getByRole("button",{name:"Replay build",exact:true}).click();
   await expect(page.locator(".workshop")).toHaveAttribute("data-celebrating","true",{timeout:14000});
   await expect(page.locator(".car-stage")).toHaveAttribute("aria-label",/100 of 100/);
-  await expect.poll(async()=>page.evaluate(()=>(window as any).buildAudio.filter((a:any)=>!a.loop).map((a:any)=>a.duration))).toEqual([1.8]);
-  await page.waitForTimeout(300);
-  const airborne=await page.locator(".car-stage").screenshot();
+  // Capture the rising model directly; locator auto-scrolling could outlast the short hop.
+  await page.waitForTimeout(160);
+  const airborne=await page.screenshot({clip:stageBox});
   await expect(page.locator(".workshop")).toHaveAttribute("data-celebrating","false");
-  const landed=await page.locator(".car-stage").screenshot();
+  const landed=await page.screenshot({clip:stageBox});
   expect(airborne.equals(landed)).toBe(false);
+  await expect.poll(async()=>page.evaluate(()=>(window as any).buildAudio.filter((a:any)=>!a.loop).map((a:any)=>a.duration))).toEqual([1.8]);
   await expect(page.getByRole("button",{name:"Replay build",exact:true})).toBeEnabled();
 });
 

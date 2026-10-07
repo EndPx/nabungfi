@@ -12,11 +12,17 @@ import { isAppRoute } from "./app-routes";
 
 const Entry = lazy(() => import("./Entry"));
 
-const DemoApp = lazy(() => import("./App"));
 const Showcase = lazy(() => import("./DesignShowcase"));
 const Landing = lazy(() => import("./Landing"));
 const ModelShowcase = lazy(() => import("./ModelShowcase"));
 const parameters = new URLSearchParams(window.location.search);
+const legacyDemoPath=/^\/demo(?:\/|$)/.test(location.pathname);
+if (legacyDemoPath || parameters.has("demo") || parameters.has("legacy-demo")) {
+  parameters.delete("demo");
+  parameters.delete("legacy-demo");
+  const query=parameters.toString();
+  history.replaceState(null,"",`${legacyDemoPath ? "/" : location.pathname}${query ? `?${query}` : ""}${location.hash}`);
+}
 const appRoute = isAppRoute(location);
 registerPwa();
 
@@ -48,10 +54,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <ModelShowcase />
       ) : parameters.has("showcase") ? (
         <Showcase />
-      ) : import.meta.env.DEV && parameters.get("legacy-demo") === "1" ? (
-        <DemoApp />
       ) : (
-        <Landing initialPreviewMode={parameters.get("demo") === "1" ? "build" : "poster"} />
+        <Landing />
       )}
     </Suspense>
   </React.StrictMode>,

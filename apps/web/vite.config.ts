@@ -20,7 +20,7 @@ export default defineConfig({
       transformIndexHtml: {
         order: "post",
         handler(_html, context) {
-          const tags: HtmlTagDescriptor[] = [{ tag: "link", attrs: { rel: "preload", as: "image", href: `/models/car.jpg?revision=${MODEL_POSTER_REVISION}`, fetchpriority: "high" } }];
+          const tags: HtmlTagDescriptor[] = [{ tag: "link", attrs: { rel: "preload", as: "image", href: "/illustrations/landing-camera.webp", fetchpriority: "high" } }];
           for (const font of Object.keys(context.bundle ?? {}).filter(file =>
             /\/(outfit-latin-500|work-sans-latin-400)-normal-.*\.woff2$/.test(file))) {
             tags.push({ tag: "link", attrs: { rel: "preload", as: "font", href: `/${font}`, type: "font/woff2", crossorigin: "anonymous" } });
@@ -91,6 +91,9 @@ export default defineConfig({
           "/chains/arbitrum.png",
           "/chains/ethereum.png",
           "/providers/google.png",
+          "/illustrations/landing-camera.webp",
+          "/illustrations/landing-scooter.webp",
+          "/illustrations/landing-sailboat.webp",
           "/models/car.jpg",
           "/models/laptop.jpg",
           "/models/house.jpg",

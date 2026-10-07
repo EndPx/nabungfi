@@ -60,7 +60,7 @@ const goal = {
   id: "fixture-car",
   goalId: fixtures.binding.goalId,
   name: "My next car",
-  model: "car",
+  model: params.get("model") === "laptop" ? "laptop" : params.get("model") === "house" ? "house" : "car",
   targetRaw,
   binding: { ...fixtures.binding, targetRaw, initialized: params.get("vaults") !== "missing",
     participants: fixtures.binding.participants.map(participant => params.get("vaults") === "missing" ? {...participant,vault:undefined} : participant) },

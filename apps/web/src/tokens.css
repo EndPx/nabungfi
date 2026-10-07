@@ -48,6 +48,7 @@
   --text-balance: 48px;
   --text-hero: 64px;
   --text-hero-large: 80px;
+  --landing-stage-height: clamp(320px, 36vw, 440px);
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;

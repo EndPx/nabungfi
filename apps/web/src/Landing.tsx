@@ -1,22 +1,14 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { ArrowRight, Box, Car, Laptop, Home, LockKeyhole, Check, Plus } from "./icons";
-import { Button, Logo, WorkshopBoundary } from "./ui";
-import { GoalIllustration } from "./GoalIllustration";
-import type { WorkshopModel } from "./goal-models";
+import { ArrowRight, Box, LockKeyhole, Check, Plus } from "./icons";
+import { Button, Logo } from "./ui";
+import { LandingArtBoundary, LandingPoster } from "./LandingPoster";
 import { BuildingMark } from "./BuildingMark";
 import { ChainStory } from "./ChainStory";
 import { useLandingMotion } from "./useLandingMotion";
 import "./landing.css";
 
-const Workshop = lazy(() => import("./CarWorkshop"));
-const models = [
-  { id: "car", label: "A new car", Icon: Car },
-  { id: "laptop", label: "A better laptop", Icon: Laptop },
-  { id: "house", label: "A home", Icon: Home },
-] as const;
-export default function Landing({ initialPreviewMode = "poster" }: {
-  initialPreviewMode?: "poster" | "explore" | "build";
-}) {
+const Sculpture = lazy(() => import("./LandingSculpture"));
+export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
   const [reducedMotion, setReducedMotion] = useState(
     () => matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -30,10 +22,6 @@ export default function Landing({ initialPreviewMode = "poster" }: {
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
-  const [model, setModel] = useState<WorkshopModel>("car");
-  const [previewMode, setPreviewMode] = useState<
-    "poster" | "explore" | "build"
-  >(initialPreviewMode);
   return (
     <div
       ref={root}
@@ -83,106 +71,29 @@ export default function Landing({ initialPreviewMode = "poster" }: {
               <Box size={18} />
               Multichain USDC savings · Available on testnet
             </p>
-            <h1 aria-label="Build what you’re saving for.">
-              {["Build", "what", "you’re", "saving", "for."].map((word, i) => (
-                <span className="hero-word-frame" key={word}>
-                  <span className="hero-word" aria-hidden="true">
-                    {word}
-                  </span>
-                  {i < 4 ? " " : ""}
-                </span>
-              ))}
+            <h1 aria-label="Small saves. Big possibilities.">
+              <span className="hero-word-frame"><span className="hero-word" aria-hidden="true">Small saves.</span></span>
+              <span className="hero-word-frame"><span className="hero-word" aria-hidden="true">Big possibilities.</span></span>
             </h1>
             <p>
-              Your next car. A laptop for work. A place of your own. Turn a
-              savings goal into something you can see taking shape, one block at
-              a time.
+              Put a little toward what matters. Save USDC across multiple
+              chains and watch your goal come together, one block at a time.
             </p>
             <div className="landing-actions">
               <a className="button button--build" href="/login">
                 Start a goal
                 <Plus size={18} />
               </a>
-              <div className="landing-guest-action">
-                <a className="landing-text-link" href="/?demo=1">
-                  Try the build
-                  <ArrowRight size={18} />
-                </a>
-                <small>No wallet needed</small>
-              </div>
+              <a className="landing-text-link" href="#how-it-works">How it works<ArrowRight size={18} /></a>
             </div>
+            <p className="landing-hero-footnote"><LockKeyhole size={16} />Your goal. Your target. Your commitment.</p>
           </div>
           <div className="landing-preview">
-            <div className="landing-preview-heading">
-              <span>
-                <Box size={24} />
-                Your goal, in pieces
-              </span>
-              <span className="preview-label">Build preview</span>
-            </div>
-            <div className="landing-model-choices" aria-label="Preview a goal">
-              {models.map((choice) => (
-                <button
-                  type="button"
-                  key={choice.id}
-                  aria-pressed={model === choice.id}
-                  onClick={() => setModel(choice.id)}
-                >
-                  <choice.Icon size={20} />
-                  <span>{choice.label}</span>
-                </button>
-              ))}
-            </div>
-            {previewMode !== "poster" ? (
-              <WorkshopBoundary>
-                <Suspense
-                  fallback={
-                    <div className="landing-poster">
-                      <GoalIllustration model={model} />
-                      <p role="status">Opening the 3D build…</p>
-                    </div>
-                  }
-                >
-                  <Workshop
-                    key={model}
-                    goalId={`landing-preview:${model}`}
-                    model={model}
-                    funded={100}
-                    achieved={false}
-                    reducedMotion={motionDisabled}
-                    introBuild={previewMode === "build"}
-                    preview
-                  />
-                </Suspense>
-              </WorkshopBoundary>
-            ) : (
-              <>
-                <div className="landing-poster">
-                  <GoalIllustration model={model} priority />
-                </div>
-                <div className="landing-preview-bottom">
-                  <p>
-                    A goal becomes a 100-piece build.
-                    <small>Example artwork. No funds are deposited.</small>
-                  </p>
-                  <div className="landing-preview-actions">
-                    <Button
-                      variant="primary"
-                      onClick={() => setPreviewMode("explore")}
-                    >
-                      Explore 360°
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={() => setPreviewMode("build")}
-                    >
-                      Try a build
-                      <ArrowRight size={18} />
-                    </Button>
-                  </div>
-                </div>
-              </>
-            )}
+            <LandingArtBoundary>
+              <Suspense fallback={<LandingPoster />}>
+                <Sculpture paused={paused} reducedMotion={reducedMotion} />
+              </Suspense>
+            </LandingArtBoundary>
           </div>
         </section>
         <section
@@ -293,10 +204,10 @@ export default function Landing({ initialPreviewMode = "poster" }: {
             <details onToggle={refreshMotion}>
               <summary>Does building the model unlock my savings?</summary>
               <p>
-                No. The model visualizes your verified savings progress.
-                Playing or replaying the assembly never changes your balances
-                or claim eligibility. You can reduce motion without affecting
-                the savings rules.
+                No. The landing artwork is an illustration. Inside the app,
+                your model visualizes verified savings progress. Animation
+                never changes your balances or claim eligibility. You can
+                reduce motion without affecting the savings rules.
               </p>
             </details>
             <details onToggle={refreshMotion}>
@@ -352,7 +263,6 @@ export default function Landing({ initialPreviewMode = "poster" }: {
         >
           View source
         </a>
-        <a href="/?demo=1">Try a build</a>
       </footer>
     </div>
   );

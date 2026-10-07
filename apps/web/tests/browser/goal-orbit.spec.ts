@@ -3,10 +3,8 @@ import { test, expect } from "@playwright/test";
 test("all goal models expose their underside and restore the studio on reset",async({page})=>{
   await page.emulateMedia({reducedMotion:"reduce"});
   await page.setViewportSize({width:375,height:900});
-  await page.goto("/");
-  await page.getByRole("button",{name:"Explore 360°",exact:true}).click();
-  for(const model of ["A new car","A better laptop","A home"]) {
-    await page.getByRole("button",{name:model,exact:true}).click();
+  for(const model of ["car","laptop","house"]) {
+    await page.goto(`/tests/browser/harness.html?view=detail&phase=claimed&model=${model}`);
     const stage=page.locator(".car-stage");
     await expect(stage).toHaveAttribute("aria-label",/100 of 100/);
     const before=await stage.screenshot();
@@ -43,17 +41,13 @@ test("free rotation accepts vertical drag and Escape restores page scrolling",as
   await expect(page.locator(".workshop")).toHaveAttribute("data-view","underside");
 });
 
-test("360 exploration loads a complete model and a full turn changes the view", async ({
+test("a complete app goal makes a full turn without changing funded pieces", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.addInitScript(() =>
-    localStorage.setItem("nabungfi:built:landing-preview:car", "7"),
-  );
-  await page.goto("/");
-  await page.getByRole("button", { name: "Explore 360°" }).click();
+  await page.goto("/tests/browser/harness.html?view=detail&phase=claimed&motion=on");
   await expect(
-    page.getByRole("button", { name: "Try assembly" }),
+    page.getByRole("button", { name: "Replay build" }),
   ).toBeEnabled();
   const stage = page.locator(".car-stage");
   await expect(stage).toHaveAttribute("aria-label", /100 of 100/);
@@ -77,8 +71,7 @@ test("360 exploration loads a complete model and a full turn changes the view", 
 
 test("drag, arrow and reset interrupt the automatic turn", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.goto("/");
-  await page.getByRole("button", { name: "Explore 360°" }).click();
+  await page.goto("/tests/browser/harness.html?view=detail&phase=claimed&motion=on");
   await page.getByRole("button", { name: "Rotate 360°", exact: true }).click();
   await page.getByRole("button", { name: "Rotate build right" }).click();
   await expect(page.locator(".workshop")).toHaveAttribute(
@@ -112,10 +105,8 @@ test("all goal models keep manual orbit and mobile reflow in reduced motion", as
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 320, height: 900 });
-  await page.goto("/");
-  await page.getByRole("button", { name: "Explore 360°" }).click();
-  for (const model of ["A new car", "A better laptop", "A home"]) {
-    await page.getByRole("button", { name: model, exact: true }).click();
+  for (const model of ["car", "laptop", "house"]) {
+    await page.goto(`/tests/browser/harness.html?view=detail&phase=claimed&model=${model}`);
     await expect(
       page.getByRole("button", { name: "Rotate 360°", exact: true }),
     ).toBeDisabled();
