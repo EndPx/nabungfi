@@ -7,6 +7,7 @@ import "@fontsource/work-sans/latin-500.css";
 import "@fontsource/work-sans/latin-600.css";
 import { registerPwa } from "./pwa";
 import { Logo } from "./ui";
+import { AppSplash } from "./LoadingState";
 import "./styles.css";
 import { isAppRoute } from "./app-routes";
 
@@ -39,7 +40,7 @@ if (
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Suspense
-      fallback={
+      fallback={appRoute ? <AppSplash /> :
         <div className="app" style={{ padding: 32 }}>
           <Logo />
           <p role="status" style={{ marginTop: 24 }}>

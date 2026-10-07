@@ -13,7 +13,8 @@ import {
 import { Button } from "./ui";
 import { Shell } from "./Shell";
 import { LoginPage } from "./LoginPage";
-import { hasVerifiedSession } from "./auth-gate";
+import { appStartupPhase, hasVerifiedSession } from "./auth-gate";
+import { AppSplash, LoadingState } from "./LoadingState";
 import { appHref, loginHref, loginReturnTarget, readAppRoute, replaceAppLocation } from "./app-routes";
 import { formatUsdc } from "./live-api";
 import { supportedChains } from "./live-config";
@@ -80,6 +81,8 @@ function AuthenticatedApp() {
     selected,
     history,
     loading,
+    initialReadSettled,
+    openingGoal,
     busy,
     error,
     notice,
@@ -130,6 +133,8 @@ function AuthenticatedApp() {
       replaceAppLocation(loginReturnTarget(location.search));
     }
   }, [ready, authenticated, verified, destination]);
+  const startup=appStartupPhase({ready,authenticated,verified,initialReadSettled,offline:pwa.offline,error});
+  if (startup === "splash") return <AppSplash />;
   if (!verified) {
     return <LoginPage
       status={!ready ? "initializing" : authenticated ? "verifying" : "ready"}
@@ -226,14 +231,16 @@ function AuthenticatedApp() {
               Verifying your session and reading your goals…
             </div>
           ) : destination === "goals" ? (
-            selected ? (
+            openingGoal && openingGoal.userId===user?.id && openingGoal.id===readAppRoute(location).goalId ? (
+              <LoadingState message="Creating your goal…" description={`Getting ${openingGoal.name} ready for you.`} />
+            ) : selected ? (
               <GoalDetail
                 goal={selected}
                 history={history}
                 reducedMotion={reducedMotion}
                 back={() => navigate("goals")}
                 refresh={() => void load()}
-                busy={hasPending || pwa.offline}
+                busy={hasPending || pwa.offline || loading}
                 refreshing={loading}
                 deposit={() => setDepositing(true)}
                 step={(action, network, amountRaw) =>
@@ -248,7 +255,7 @@ function AuthenticatedApp() {
                   scope={unavailableCount
                     ? `Verified balances · ${unavailableCount} unavailable`
                     : `Across ${goals.length} goal${goals.length === 1 ? "" : "s"}`}
-                  blocked={hasPending || pwa.offline || !session}
+                  blocked={hasPending || pwa.offline || loading || !session}
                   create={() => setCreating(true)}
                   open={id => navigate("goals", id)}
                   activity={() => navigate("activity")}

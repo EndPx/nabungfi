@@ -2,6 +2,7 @@
 // No API calls, Privy session, wallet SDK, signatures or chain transactions.
 import "../../src/wallet-compat";
 import { useState } from "react";
+import { LoadingState } from "../../src/LoadingState";
 import { createRoot } from "react-dom/client";
 import type {
   GoalDTO,
@@ -102,7 +103,9 @@ const allocationExample = [
 ].map(share=>({network:share.network,assetsRaw:params.get("collected") === "1" ? "0" : share.amount,claimedRaw:params.get("collected") === "1" ? share.amount : "0"}));
 
 function Harness() {
-  const [selectedGoal, setSelectedGoal] = useState(goal);
+  const [selectedGoal, setSelectedGoal] = useState<GoalDTO>(params.has("waiting-read") ? {...goal,chainStatus:"unavailable",chainState:null} : goal);
+  const [pendingRead,setPendingRead]=useState(params.has("waiting-read"));
+  const [createCount,setCreateCount]=useState(0);
   const exampleGoals: GoalDTO[] = params.get("empty") === "1" ? [] : (["car", "laptop", "house"] as const).map(model => ({ ...goal, id: model, name: `My ${model}`, model,
     chainState: model === "house" && params.get("mixed") === "1" ? { ...goal.chainState!, phase: "achieved", achievedTotalRaw: targetRaw } : goal.chainState }));
   const [destination, setDestination] = useState<Destination>(
@@ -134,14 +137,17 @@ function Harness() {
         {params.get("presentation") === "1" ? "Example savings goals · For illustration" : "Component acceptance fixture. All balances are examples; no API or wallet is connected."}
       </p>
       {destination === "goals" &&
-        (params.get("view") === "allocation" ? <section className="live-panel goal-chain-panel"><h2>Where your pieces are</h2><ChainAllocation positions={allocationExample} /></section> : detail ? (
+        (params.get("view") === "allocation" ? <section className="live-panel goal-chain-panel"><h2>Where your pieces are</h2><ChainAllocation positions={allocationExample} /></section> : detail && pendingRead && params.has("creating-read") ? (
+          <LoadingState message="Creating your goal…" description={`Getting ${selectedGoal.name} ready for you.`} />
+        ) : detail ? (
           <GoalDetail
             goal={selectedGoal}
             history={history}
             reducedMotion={params.get("motion") !== "on"}
             back={() => setDetail(false)}
             refresh={() => setAction("refresh")}
-            busy={false}
+            busy={pendingRead}
+            refreshing={pendingRead}
             deposit={() => setModal("deposit")}
             step={recordStep}
           />
@@ -198,7 +204,15 @@ function Harness() {
           busy={false}
           onClose={() => setModal(null)}
           create={async (body) => {
+            setCreateCount(value=>value+1);
             setAction(JSON.stringify(body));
+            if(params.has("slow-create")){
+              await new Promise(resolve=>setTimeout(resolve,1800));
+              setSelectedGoal({...goal,id:"fixture-created",name:body.name,chainStatus:"unavailable",chainState:null,
+                binding:{...goal.binding,initialized:false,participants:goal.binding.participants.map(participant=>({...participant,vault:undefined}))}});
+              setPendingRead(true);
+              setDetail(true);
+            }
             setModal(null);
           }}
         />
@@ -261,6 +275,12 @@ function Harness() {
         requests={[]} busy={false} offline={false} reconcile={async()=>setAction("reconcile-original")}
         retry={async()=>{}} resume={async()=>setAction("inspect-original")} closeUnsent={async()=>setAction("attest-wallet-not-invoked")} resolveExpired={async()=>setAction("resolve-expired-original")} />}
       <output aria-label="Fixture requested action">{action}</output>
+      <output data-testid="example-create-count">{createCount}</output>
+      {pendingRead && <div className="fixture-controls">
+        <button onClick={()=>{setPendingRead(false);setSelectedGoal(prior=>({...prior,chainStatus:"unprovisioned",binding:{...prior.binding,initialized:false},
+          chainState:{...goal.chainState!,phase:"saving",totalAssetsRaw:"0",totalClaimedRaw:"0",achievedTotalRaw:"0",canPrepare:false,claimable:false,positions:[]}}));}}>Complete example goal read</button>
+        <button onClick={()=>setPendingRead(false)}>Fail example goal read</button>
+      </div>}
     </Shell>
   );
 }

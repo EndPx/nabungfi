@@ -1,11 +1,24 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { SessionDTO } from "@nabungfi/shared/application";
-import { hasVerifiedSession } from "../src/auth-gate";
+import { appStartupPhase, hasVerifiedSession } from "../src/auth-gate";
 import { appHref, isAppRoute, loginHref, loginReturnTarget, readAppRoute, safeAppReturnTarget } from "../src/app-routes";
 
 const session: SessionDTO = { user: { id: "database-user", privySubject: "did:privy:alice", wallets: [] }, profile: "testnet", privyAppId: "test-app", chains: ["solana", "base"] };
 const valid = { ready: true, authenticated: true, userId: "did:privy:alice", appId: "test-app", session };
+
+test("startup waits for real readiness and first reads without granting access from a loader",()=>{
+  const input={ready:true,authenticated:true,verified:true,initialReadSettled:true,offline:false,error:""};
+  assert.equal(appStartupPhase(input),"workspace");
+  assert.equal(appStartupPhase({...input,ready:false}),"splash");
+  assert.equal(appStartupPhase({...input,authenticated:false}),"login");
+  assert.equal(appStartupPhase({...input,verified:false}),"splash");
+  assert.equal(appStartupPhase({...input,initialReadSettled:false}),"splash");
+  assert.equal(appStartupPhase({...input,initialReadSettled:false,error:"Saved request needs attention"}),"splash");
+  assert.equal(appStartupPhase({...input,verified:false,error:"Verification failed"}),"login");
+  assert.equal(appStartupPhase({...input,ready:false,offline:true}),"login");
+  assert.equal(appStartupPhase({...input,verified:false,offline:true}),"login");
+});
 
 test("workspace access requires SDK readiness, real authentication and a matching backend session", () => {
   assert.equal(hasVerifiedSession(valid), true);

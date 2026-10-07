@@ -73,6 +73,8 @@ export function useLiveController() {
   );
   const [history, setHistory] = useState<GoalHistoryEntry[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialReadSettled, setInitialReadSettled] = useState(false);
+  const [openingGoal, setOpeningGoal] = useState<{id:string;name:string;userId:string}|null>(null);
   const [busy, setBusy] = useState(false);
   const [requestError, setError] = useState("");
   const [recoveryError, setRecoveryError] = useState("");
@@ -202,13 +204,20 @@ export function useLiveController() {
       if (
         identityRef.current === identity &&
         generation === readGeneration.current
-      )
+      ) {
+        setInitialReadSettled(true);
         setLoading(false);
+      }
     }
   }, [request, userId]);
 
   useEffect(() => {
     setSession(null);
+    setLoading(false);
+    setError("");
+    readGeneration.current++;
+    setInitialReadSettled(false);
+    setOpeningGoal(null);
     setGoals([]);
     setHistory([]);
     setWalletStep(null);
@@ -384,9 +393,14 @@ export function useLiveController() {
         );
       clearApiRequest(localStorage, record);
       refreshRecovery();
+      setOpeningGoal({id:goal.id,name:goal.name,userId:record.userId});
       setCreating(false);
       navigate("goals", result.goal.id);
-      await load();
+      try { await load(); }
+      finally {
+        if (identityRef.current === record.userId)
+          setOpeningGoal(current=>current?.id===goal.id && current.userId===record.userId ? null : current);
+      }
       return;
     }
     const result = await request<{ step: GoalStepDTO }>(record.path, {
@@ -454,9 +468,10 @@ export function useLiveController() {
     network: AppNetwork,
     amountRaw?: string,
   ) => {
-    if (!userId || hasPending || pwa.offline) {
+    if (!userId || hasPending || loading || pwa.offline) {
       setError(
-        "Reconnect and reconcile previous requests before starting a new transaction.",
+        loading ? "Wait for your goal to finish loading before starting a transaction."
+          : "Reconnect and reconcile previous requests before starting a new transaction.",
       );
       return;
     }
@@ -903,6 +918,8 @@ export function useLiveController() {
     selected,
     history,
     loading,
+    initialReadSettled,
+    openingGoal,
     busy,
     error,
     notice,

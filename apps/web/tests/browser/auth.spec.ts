@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test("login artwork animates the approved N, pauses and continues during verification", async ({page}) => {
+test("login artwork animates and pauses before handing off to the verification splash", async ({page}) => {
   await page.emulateMedia({reducedMotion:"no-preference"});
   await page.setViewportSize({width:1280,height:900});
   await page.goto("/tests/browser/auth.html");
@@ -22,8 +22,8 @@ test("login artwork animates the approved N, pauses and continues during verific
   await expect(artwork).toHaveAttribute("data-running","true");
   await page.getByRole("button",{name:"Continue with Google",exact:true}).click();
   await page.getByRole("button",{name:"Complete example Google sign-in"}).click();
-  await expect(page.getByRole("heading",{name:"Verifying your account"})).toBeVisible();
-  await expect(artwork).toHaveAttribute("data-running","true");
+  await expect(page.getByRole("heading",{name:"Opening NabungFi…"})).toBeVisible();
+  await expect(page.locator(".app-splash")).toBeVisible();
   await expect(page.getByRole("navigation",{name:"Main navigation"})).toHaveCount(0);
 });
 
@@ -56,7 +56,7 @@ test("email OTP and backend identity verification precede any workspace", async 
   await expect(page.getByRole("alert")).toContainText("incorrect");
   await page.getByLabel("Verification code", { exact: true }).fill("123456");
   await page.getByRole("button", { name: "Verify and continue" }).click();
-  await expect(page.getByRole("heading", { name: "Verifying your account" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Opening NabungFi…" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
   await page.getByRole("button", { name: "Return mismatched example session" }).click();
   await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
@@ -110,7 +110,7 @@ test("Google authentication still requires a matching backend identity and retai
   await page.goto("/tests/browser/auth.html?next=%2Fapp%2Fgoals%3Fgoal%3Dcar");
   await page.getByRole("button", { name: "Continue with Google", exact: true }).click();
   await page.getByRole("button", { name: "Complete example Google sign-in" }).click();
-  await expect(page.getByRole("heading", { name: "Verifying your account" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Opening NabungFi…" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
   await page.getByRole("button", { name: "Return mismatched example session" }).click();
   await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);

@@ -3,7 +3,8 @@ import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import type { SessionDTO } from "@nabungfi/shared/application";
 import { LoginPage } from "../../src/LoginPage";
-import { hasVerifiedSession } from "../../src/auth-gate";
+import { appStartupPhase, hasVerifiedSession } from "../../src/auth-gate";
+import { AppSplash } from "../../src/LoadingState";
 import { loginReturnTarget } from "../../src/app-routes";
 import { Shell } from "../../src/Shell";
 import "@fontsource/outfit/latin-500.css";
@@ -12,6 +13,9 @@ import "../../src/styles.css";
 import "../../src/live.css";
 
 function AuthFixture() {
+  const parameters=new URLSearchParams(location.search);
+  const [sdkReady,setSdkReady]=useState(!parameters.has("boot"));
+  const [initialReadSettled,setInitialReadSettled]=useState(!parameters.has("slow-goals"));
   const [authenticated, setAuthenticated] = useState(false);
   const [session, setSession] = useState<SessionDTO | null>(null);
   const [wallet, setWallet] = useState(false);
@@ -23,11 +27,12 @@ function AuthFixture() {
   const offline = new URLSearchParams(location.search).has("offline");
   const returnTo = loginReturnTarget(location.search);
   const grant = (subject: string) => setSession({ user: { id: "db-example", privySubject: subject, wallets: [] }, privyAppId: "fixture", profile: "testnet", chains: ["solana", "base"] });
-  const verified = hasVerifiedSession({ ready: true, authenticated, userId: "did:privy:example", appId: "fixture", session });
+  const verified = hasVerifiedSession({ ready: sdkReady, authenticated, userId: "did:privy:example", appId: "fixture", session });
+  const startup=appStartupPhase({ready:sdkReady,authenticated,verified,initialReadSettled,offline,error:""});
   return (
     <>
       <p className="fixture-note" role="status">Authentication state fixture. All codes and sessions are synthetic; no external sign-in occurs.</p>
-      {!verified ? <LoginPage
+      {startup==="splash" ? <AppSplash /> : !verified ? <LoginPage
         status={unavailable ? "unavailable" : authenticated ? "verifying" : "ready"}
         offline={offline}
         sendCode={async () => { await new Promise(resolve => setTimeout(resolve, 150)); setSent(value => value + 1); }}
@@ -41,6 +46,8 @@ function AuthFixture() {
         googleBusy={googlePending}
       /> : <Shell destination="goals" onNavigate={() => undefined} pending={false} account="Example account"><h1>Example verified workspace</h1><p data-testid="return-target">{returnTo}</p></Shell>}
       <div className="fixture-controls">
+        {!sdkReady && <button onClick={()=>setSdkReady(true)}>Finish example app initialization</button>}
+        {verified && !initialReadSettled && <button onClick={()=>setInitialReadSettled(true)}>Finish example goal reading</button>}
         <span data-testid="codes-sent">{sent}</span>
         <span data-testid="google-login-requests">{googleCalls}</span>
         {googlePending && <>

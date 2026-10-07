@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { LoginPage } from "./LoginPage";
+import { AppSplash } from "./LoadingState";
 import { usePwa } from "./pwa";
 
 const LiveApp = lazy(() => import("./LiveApp"));
@@ -11,7 +12,7 @@ export default function Entry() {
   // A cold offline launch has no authenticated cache. A running wallet session stays mounted.
   if (!requestedSdk) return <LoginPage status="ready" offline />;
   return (
-    <Suspense fallback={<LoginPage status="initializing" offline={pwa.offline} />}>
+    <Suspense fallback={<AppSplash />}>
       <LiveApp />
     </Suspense>
   );

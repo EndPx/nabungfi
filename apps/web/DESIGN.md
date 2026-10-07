@@ -1,5 +1,11 @@
 # NabungFi interface system
 
+## App startup and goal loading — 7 October 2026
+
+App routes show a full-screen NabungFi splash while their entry module, Privy readiness, authenticated backend verification and first goal-detail batch are pending. The shared LoadingState uses the canonical N with a subtle 1.6s block-opacity/rise sequence, existing studio/paper colors, a 120px emblem and the existing 20/32px typography. Reduced motion uses the complete static mark; hidden documents pause the sequence. It has a polite status landmark, no artificial minimum delay, no progress percentage and no balance placeholders. Cold offline or failed verification exposes the existing actionable login/retry UI rather than an endless splash. Public marketing routes retain their own neutral entry fallback.
+
+Goal creation has two real waiting phases: submitting the original idempotent create request, then reading the newly returned goal. The first phase replaces form fields with Creating your goal; the second replaces unavailable balance/build panels with the same inline loading state until the read settles. A creation marker is scoped to the original user and returned goal ID, and clears on success, failure or identity change. A failed read after loading still shows the actual unavailable state and retry; never fabricate funds or claim rights to make the loader disappear. Existing goals with no usable snapshot show Loading your goal while a read is active; normal refreshes retain the last presentation with financial controls blocked. Duplicate modal submissions are excluded synchronously. A successful metadata save still requires the existing owner-confirmed onchain vault setup afterward.
+
 ## Landing captions and login artwork — 7 October 2026
 
 The user removes the entire caption below the landing sculptures: no phase sentence, item title, colored selector dots or progress line. The same omission applies to loading/error posters. Keep the automatic build/rotation/reverse cycle and accessible artwork descriptions.

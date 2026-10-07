@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type FormEvent } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -39,6 +39,7 @@ import { actions, networks, phases, short } from "./live-config";
 import { nextPieceProgress, formatNativeGas } from "./savings-progress";
 import { ChainAllocation } from "./ChainAllocation";
 import { VaultAddress } from "./VaultAddress";
+import { LoadingState } from "./LoadingState";
 const CarWorkshop = lazy(() => import("./CarWorkshop"));
 const activityDateFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric", month: "short", year: "numeric",
@@ -208,7 +209,7 @@ export function GoalDetail({
   const positions = new Map(
     available ? state?.positions.map((position) => [position.network, position]) ?? [] : [],
   );
-  return (
+  const header = (
     <>
       <button className="live-back" type="button" onClick={back}>
         <ArrowLeft size={18} />
@@ -219,11 +220,18 @@ export function GoalDetail({
           <h1>{goal.name}</h1>
           <p>A build of your own, one deposit at a time.</p>
         </div>
-        <Button variant="secondary" onClick={refresh} disabled={busy} busy={refreshing}>
+        <Button variant="secondary" onClick={refresh} disabled={busy || refreshing} busy={refreshing}>
           <RefreshCw size={18} />
           Refresh
         </Button>
       </div>
+    </>
+  );
+  if (refreshing && (!available || !state))
+    return <>{header}<LoadingState message="Loading your goal…" description="We’re getting the latest savings for this goal." /></>;
+  return (
+    <>
+      {header}
       {refreshing && <p className="live-help" role="status">Updating balances. Showing the last verified read until the update finishes.</p>}
       <div className="live-detail-grid">
         <div className="goal-workshop-column">
@@ -547,8 +555,12 @@ export function CreateGoalModal({
   const selectedChains = new Set(chains);
   const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const submitFlight = useRef(false);
+  const waiting = busy || submitting;
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (waiting || submitFlight.current) return;
     setError("");
     try {
       rawAmount(target);
@@ -556,6 +568,8 @@ export function CreateGoalModal({
         throw new Error(
           "Name your goal, choose both verified owner wallets, and confirm the lock rules.",
         );
+      submitFlight.current = true;
+      setSubmitting(true);
       await create({
         name: name.trim(),
         targetAmount: decimalAmount(rawAmount(target)),
@@ -570,8 +584,16 @@ export function CreateGoalModal({
           ? failure.message
           : "Your goal could not be created.",
       );
+    } finally {
+      submitFlight.current = false;
+      setSubmitting(false);
     }
   };
+  if (waiting) return (
+    <Dialog title="Creating your goal" onClose={onClose}>
+      <LoadingState message="Creating your goal…" description="We’re preparing your new goal. Please wait a moment." />
+    </Dialog>
+  );
   return (
     <Dialog
       title="What are you building toward?"
