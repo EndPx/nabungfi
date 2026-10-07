@@ -1,5 +1,7 @@
 # Native VPS backend deployment
 
+**7 October browser acceptance:** the genuine frontend owner completed three goals across four testnets with 51 original transactions and 12 claims. The VPS keeper's 118 new original intents were delivered; public Scan independently confirmed 103 distinct packets at their destinations. The final combined restart audit retained four goals and 128 intents with zero pending work. The [browser E2E record](BROWSER_E2E_ACCEPTANCE.md) and [sanitized evidence](../contracts/deployments/backend/browser-e2e-2026-10-07.json) supersede the historical browser-signing gate and coordinator counts below. The API financial release is `/opt/nabungfi/releases/e4b696d`. The separately audited Arbitrum gas-price ceiling adjustment preserved all original financial journals, budgets and signers. No real yield or mainnet execution is asserted.
+
 The testnet backend is live at **https://nabungfi-api.endpx.cloud**. The primary frontend is now **https://nabungfi.endpx.cloud**, published through the EndPx Vercel project on 7 October 2026. Both that exact origin and the original `https://nabungfi.vercel.app` origin remain permitted. The custom frontend reused the existing allowlist; this release did not restart the API or keeper. [Sanitized backend deployment evidence](../contracts/deployments/backend/vps-runtime.json) · [Frontend deployment evidence](../apps/web/DEPLOYMENT.md).
 
 ## Isolation and preservation

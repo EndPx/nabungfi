@@ -1,5 +1,7 @@
 # Frontend testnet acceptance — 2 October 2026
 
+**Current acceptance, 7 October:** the [live browser E2E run](BROWSER_E2E_ACCEPTANCE.md) completed three isolated goals on four testnets through the genuine Privy owner, with 51 confirmed original owner transactions, 12 claims and 103 independently delivered LayerZero packets. All remaining vault assets were zero and USDC returned to baseline on each chain. This supersedes the historical pending browser-finance and publication gates below. Physical-device/PWA installation, real yield and mainnet acceptance remain separate.
+
 The authenticated web/PWA implementation is committed with the multichain workshop. Its first code release is `8d6af65`. It prepares owner wallet actions against the existing authenticated API, supports independent concurrent goals, and keeps visual assembly separate from financial authority. Source implementation is not proof of a browser-signed financial lifecycle or production readiness.
 
 ## Implemented experience
