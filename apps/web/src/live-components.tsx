@@ -606,10 +606,10 @@ export function CreateGoalModal({
             value={model}
             onChange={(event) => setModel(event.target.value as GoalModel)}
           >
-            <option value="car">Car · Interactive 3D workshop</option>
-            <option value="laptop">Laptop · Interactive 3D workshop</option>
-            <option value="house">House · Interactive 3D workshop</option>
-            <option value="custom">Something else · Block sculpture</option>
+            <option value="car">Car</option>
+            <option value="laptop">Laptop</option>
+            <option value="house">House</option>
+            <option value="custom">Something else</option>
           </select>
         </label>
         <label className="live-field">
