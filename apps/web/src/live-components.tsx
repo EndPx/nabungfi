@@ -386,6 +386,10 @@ export function GoalDetail({
                   </Button>
                 )}
               </div>
+            ) : state?.phase === "claimed" ? (
+              <p className="live-help">
+                All savings have been collected. Your completed build stays here.
+              </p>
             ) : (
               <p className="live-help">
                 Your goal is achieved. Claim each chain’s available savings
@@ -413,7 +417,9 @@ export function GoalDetail({
                         <strong>{networks[network]}</strong>
                         <small>
                           {position?.initialized
-                            ? position.phase === "achieved"
+                            ? BigInt(position.claimedRaw) > 0n && BigInt(position.assetsRaw) === 0n
+                              ? "Collected"
+                              : position.phase === "achieved"
                               ? "Unlocked"
                               : "Goal-locked"
                             : available

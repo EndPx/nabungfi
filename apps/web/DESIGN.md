@@ -1,5 +1,7 @@
 # NabungFi interface system
 
+The verified `claimed` state is terminal for financial actions: use collected-state copy, show zero remaining chain assets, and preserve the completed 100-piece build. Do not instruct the user to claim again. A chain with confirmed claimed funds and zero remaining assets is labelled Collected; unfunded chains are not inferred to be collected.
+
 The API's portfolio endpoint is metadata-only. Financial UI must hydrate each goal from its authenticated detail endpoint with at most two concurrent reads. A selected goal is prioritized. A failed or mismatched detail preserves the goal name/target but withholds balances and actions; a previous cached achievement is never reused as a fresh read. User identity and read-generation checks still run after hydration. New unprovisioned goals become actionable only from a real detail snapshot, so setup can proceed without treating missing vaults as existing funds.
 
 ## Faucet navigation — 7 October 2026

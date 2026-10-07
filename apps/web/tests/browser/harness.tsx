@@ -43,13 +43,13 @@ const amount = params.get("amount") ?? "250000";
 const targetRaw = params.get("target") ?? "10000000";
 const positions = ["solana", "base"].map((network) => ({
   network,
-  assetsRaw: network === "solana" ? amount : "0",
+  assetsRaw: phase === "claimed" ? "0" : network === "solana" ? amount : "0",
   principalRaw: amount,
-  claimedRaw: "0",
+  claimedRaw: phase === "claimed" ? "5000000" : "0",
   claimableRaw: phase === "achieved" ? "5000000" : "0",
   walletUsdcRaw: "10000000",
   nativeBalanceRaw: "100000000",
-  phase: phase === "achieved" ? "achieved" : "locked",
+  phase: phase === "achieved" || phase === "claimed" ? "achieved" : "locked",
   initialized: true,
   registered: true,
   linked: true,
@@ -65,16 +65,18 @@ const goal = {
   chainState: {
     goalId: fixtures.binding.goalId,
     phase:
-      phase === "achieved"
+      phase === "claimed"
+        ? "claimed"
+        : phase === "achieved"
         ? "achieved"
         : phase === "preparing"
           ? "preparing"
           : "saving",
     observedAt: "2026-10-02T00:00:00Z",
     targetRaw,
-    totalAssetsRaw: amount,
-    achievedTotalRaw: phase === "achieved" ? targetRaw : "0",
-    totalClaimedRaw: "0",
+    totalAssetsRaw: phase === "claimed" ? "0" : amount,
+    achievedTotalRaw: phase === "achieved" || phase === "claimed" ? targetRaw : "0",
+    totalClaimedRaw: phase === "claimed" ? "10000000" : "0",
     linked: true,
     claimable: phase === "achieved",
     canPrepare: BigInt(amount) >= BigInt(targetRaw) && phase === "saving",

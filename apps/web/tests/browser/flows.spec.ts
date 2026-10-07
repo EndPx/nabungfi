@@ -1,6 +1,16 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test("a fully collected goal keeps its build and offers no further deposit or claim", async ({page}) => {
+  await page.goto("/tests/browser/harness.html?view=detail&phase=claimed");
+  await expect(page.getByText("All savings have been collected. Your completed build stays here.")).toBeVisible();
+  await expect(page.locator(".network-row-value")).toHaveText(["$0.00Cash USDC", "$0.00Cash USDC"]);
+  await expect(page.getByRole("button", {name:"Claim", exact:true})).toHaveCount(0);
+  await expect(page.getByRole("button", {name:"Add savings", exact:true})).toHaveCount(0);
+  await expect(page.getByRole("button", {name:"Prepare completion", exact:true})).toHaveCount(0);
+  await expect(page.locator(".goal-progress .is-filled")).toHaveCount(100);
+});
+
 test("an unknown Solana request offers a read-only expired-history check without another signature",async({page})=>{
   await page.goto("/tests/browser/harness.html?view=recovery&expired-solana=1");
   await page.getByRole("button",{name:"Check expired Solana request"}).click();
