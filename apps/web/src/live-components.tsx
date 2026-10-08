@@ -180,6 +180,7 @@ export function GoalDetail({
   busy,
   deposit,
   step,
+  setup,
 }: {
   goal: GoalDTO;
   history: GoalHistoryEntry[];
@@ -194,6 +195,7 @@ export function GoalDetail({
     network: AppNetwork,
     amountRaw?: string,
   ) => void;
+  setup?: () => void;
 }) {
   const state = goal.chainState;
   const achieved = state?.phase === "achieved" || state?.phase === "claimed";
@@ -325,6 +327,11 @@ export function GoalDetail({
                 The current chain state could not be read. Refresh before taking
                 a financial action.
               </p>
+            ) : !goal.binding.initialized && setup ? (
+              <div className="live-form">
+                <p>Finish setting up the vaults on your selected chains. Your wallet will confirm each remaining transaction.</p>
+                <Button variant="build" disabled={busy} onClick={setup}>Continue setup</Button>
+              </div>
             ) : !goal.binding.initialized ? (
               <>
                 <p className="live-help">
@@ -595,7 +602,7 @@ export function CreateGoalModal({
   return (
     <Dialog
       title="What are you building toward?"
-      description="Give this goal its own target and vaults. You will confirm setup transactions separately in your wallets."
+      description="Choose your goal and chains. We’ll set up the selected vaults next, with each transaction confirmed in your wallet."
       onClose={onClose}
     >
       <form className="live-form" onSubmit={(event) => void submit(event)}>
@@ -857,6 +864,7 @@ export function WalletStepModal({
   onClose,
   confirm,
   refreshPlan,
+  setupName,
 }: {
   step: GoalStepDTO;
   recovery?: WalletRecovery;
@@ -865,6 +873,7 @@ export function WalletStepModal({
   onClose: () => void;
   confirm: () => void;
   refreshPlan: () => void;
+  setupName?: string;
 }) {
   const plan = step.plan;
   const [clock, setClock] = useState(Date.now);
@@ -891,6 +900,7 @@ export function WalletStepModal({
     >
       <div className="live-form">
         <dl className="live-transaction-details">
+          {setupName && <div><dt>Goal setup</dt><dd>{setupName}</dd></div>}
           <div>
             <dt>Network</dt>
             <dd>{networks[step.network]}</dd>

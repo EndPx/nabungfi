@@ -29,6 +29,7 @@ import { useLiveController } from "./useLiveController";
 import { ActivityPage, WalletsPage, SettingsPage } from "./account-pages";
 import { GoalsOverview } from "./GoalsOverview";
 import { FaucetsPage } from "./FaucetsPage";
+import { GoalSetupPanel } from "./GoalSetupPanel";
 import "./live.css";
 import "./app-refinement.css";
 const solanaConnectors = toSolanaWalletConnectors();
@@ -114,6 +115,8 @@ function AuthenticatedApp() {
     closeUnsentRequest,
     resolveExpiredRequest,
     createMissingWallet,
+    goalSetup,
+    continueGoalSetup,
   } = useLiveController();
   const emailLogin = useLoginWithEmail();
   const googleLogin = useLoginWithOAuth();
@@ -233,7 +236,12 @@ function AuthenticatedApp() {
               Verifying your session and reading your goals…
             </div>
           ) : destination === "goals" ? (
-            openingGoal && openingGoal.userId===user?.id && openingGoal.id===readAppRoute(location).goalId ? (
+            goalSetup.intent && goalSetup.intent.goalId===readAppRoute(location).goalId ? (
+              <GoalSetupPanel name={goalSetup.intent.name} goal={goals.find(goal=>goal.id===goalSetup.intent?.goalId)}
+                paused={goalSetup.intent.paused} blocked={busy || loading || pwa.offline || unresolved.length>0 || apiRequests.length>0}
+                resume={() => { const goal=goals.find(goal=>goal.id===goalSetup.intent?.goalId); if(goal)continueGoalSetup(goal); }}
+                pause={goalSetup.pause} refresh={() => void load()} />
+            ) : openingGoal && openingGoal.userId===user?.id && openingGoal.id===readAppRoute(location).goalId ? (
               <LoadingState message="Creating your goal…" description={`Getting ${openingGoal.name} ready for you.`} />
             ) : selected ? (
               <GoalDetail
@@ -248,6 +256,7 @@ function AuthenticatedApp() {
                 step={(action, network, amountRaw) =>
                   void planStep(selected, action, network, amountRaw)
                 }
+                setup={() => continueGoalSetup(selected)}
               />
             ) : (
                 <GoalsOverview
@@ -323,7 +332,8 @@ function AuthenticatedApp() {
               recovery={recoveries.find(
                 (record) => record.stepId === walletStep.id,
               )}
-              onClose={() => setWalletStep(null)}
+              onClose={() => { goalSetup.pause(); setWalletStep(null); }}
+              setupName={goalSetup.intent?.goalId===walletStep.metadataGoalId ? goalSetup.intent.name : undefined}
               confirm={() => void sendWallet(walletStep)}
               refreshPlan={() => {
                 const original = recoveries.find(

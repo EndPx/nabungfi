@@ -1,5 +1,9 @@
 # NabungFi interface system
 
+## Selected-chain goal setup — 8 October 2026
+
+Create saves the original goal once, then starts one guided setup for its immutable selected chains. Reuse the existing transaction review and Privy wallet confirmation for each EVM vault, followed by Solana initialization. Show an inline GoalSetupPanel with the goal name, selected-chain marks and confirmed/pending/connected statuses instead of the finished goal detail while setup is active. Only fresh chain state with every selected vault initialized, registered and linked finishes the flow. Existing incomplete goals offer Continue setup. Closing review, rejecting signing, failed/unknown outcomes or leaving the goal pauses setup; original request recovery remains available and resume skips verified vaults. Reload restores a paused owner-scoped setup marker, never an automatically resent financial request. Reuse live-panel/live-form/live-amounts, approved loading feedback and existing buttons; introduce no new palette or motion.
+
 ## Automatic owner wallets — 8 October 2026
 
 Google/email/custom login and restored sessions explicitly prepare missing EVM and Solana owner wallets through the client Privy SDK. Reuse existing linked wallets; never create additional wallets or grant server signing access. Backend ownership must contain both families before workspace navigation appears. During provisioning, reuse the fullscreen canonical N LoadingState with Preparing your wallets… and Setting up your EVM and Solana wallets securely. SDK account refresh and bounded backend propagation checks precede the normal initial goal reads. A failure exposes the existing verification error/retry/sign-out controls; retries refresh ownership first and only create a still-missing family. Identity changes cancel the old flow, while offline mode creates no wallets. The existing workspace and transaction recovery rules remain authoritative.

@@ -48,6 +48,8 @@ import { readGoalSnapshots, retainGoalPresentation } from "./goal-snapshots";
 import { prepareEvmProvider, assertEvmProviderIdentity } from "./wallet-provider";
 import { useWalletOnboarding } from "./useWalletOnboarding";
 import { hasOwnerWallets } from "./wallet-onboarding";
+import { useGoalSetup } from "./useGoalSetup";
+import { goalSetupStage } from "./goal-setup";
 export function useLiveController() {
   const {
     ready,
@@ -297,6 +299,7 @@ export function useLiveController() {
   }, [authenticated, selectedId, request, userId, goals]);
 
   const navigate = (next: Destination, goal?: string) => {
+    if (goalSetup.intent && (next !== "goals" || goal !== goalSetup.intent.goalId)) goalSetup.pause();
     navigateApp(next, goal);
     setDestination(next);
     setSelectedId(goal ?? null);
@@ -325,7 +328,7 @@ export function useLiveController() {
       setBusy(false);
     }
   };
-  const saveStep = (step: GoalStepDTO, requestId: string) => {
+  const saveStep = (step: GoalStepDTO, requestId: string, present = true) => {
     if (!userId) throw new Error("Sign in again before using your wallet.");
     if (step.status === "planning" || (!step.plan && !step.transactionHash))
       throw new Error(
@@ -361,9 +364,9 @@ export function useLiveController() {
       setNotice(
         `${actions[step.action]} was already ${state}. Refresh the goal to inspect its current state.`,
       );
-    } else setWalletStep(step);
+    } else setWalletStep(present ? step : null);
   };
-  const doApiRequest = async (record: PendingApiRequest) => {
+  const doApiRequest = async (record: PendingApiRequest, presentStep = () => true) => {
     if (pwa.offline || identityRef.current !== record.userId)
       throw new Error("Reconnect and sign in to the original account first.");
     if (record.path === "/api/goals") {
@@ -407,6 +410,7 @@ export function useLiveController() {
       setOpeningGoal({id:goal.id,name:goal.name,userId:record.userId});
       setCreating(false);
       navigate("goals", result.goal.id);
+      goalSetup.start(goal);
       try { await load(); }
       finally {
         if (identityRef.current === record.userId)
@@ -437,12 +441,13 @@ export function useLiveController() {
       throw new Error(
         "The returned transaction step does not match your original request.",
       );
-    saveStep(result.step, record.requestId);
+    saveStep(result.step, record.requestId, presentStep());
     clearApiRequest(localStorage, record);
     refreshRecovery();
+    if (result.step.status === "confirmed") await load();
   };
   const createGoal = async (body: CreateGoalRequest) => {
-    if (!userId || hasPending)
+    if (!userId || hasPending || goalSetup.running)
       throw new Error(
         "Reconcile the previous wallet request before creating another goal.",
       );
@@ -478,14 +483,20 @@ export function useLiveController() {
     action: GoalStepAction,
     network: AppNetwork,
     amountRaw?: string,
+    setup = false,
   ) => {
     if (!userId || hasPending || loading || pwa.offline) {
       setError(
         loading ? "Wait for your goal to finish loading before starting a transaction."
           : "Reconnect and reconcile previous requests before starting a new transaction.",
       );
-      return;
+      return false;
     }
+    if (setup) {
+      const stage = goalSetupStage(goal);
+      if (!goalSetup.running || goalSetup.intent?.goalId !== goal.id || stage.kind !== "wallet" || stage.action !== action || stage.network !== network)
+        return false;
+    } else if (goalSetup.running) return false;
     const requestId = crypto.randomUUID();
     const record: PendingApiRequest = {
       userId,
@@ -500,7 +511,8 @@ export function useLiveController() {
     try {
       writeApiRequest(localStorage, record);
       refreshRecovery();
-      await doApiRequest(record);
+      await doApiRequest(record, setup ? () => goalSetup.isActive(goal.id) : undefined);
+      return true;
     } catch (failure) {
       if (
         failure instanceof ApiError &&
@@ -511,6 +523,7 @@ export function useLiveController() {
         refreshRecovery();
       }
       report(failure);
+      return false;
     } finally {
       setBusy(false);
     }
@@ -535,6 +548,7 @@ export function useLiveController() {
     );
     validateReceiptIdentity(record, result.step, hash);
     const status = result.step.status;
+    if (status === "failed" && goalSetup.intent?.goalId === record.goalId) goalSetup.pause();
     writeRecovery(localStorage, {
       ...record,
       transactionHash: hash,
@@ -761,6 +775,7 @@ export function useLiveController() {
       await reconcile(submitted);
     } catch (failure) {
       // Once the server marker starts, a client error alone cannot authorize a new plan.
+      if (goalSetup.intent?.goalId === step.metadataGoalId) goalSetup.pause();
       if (!markerStarted) {
         writeRecovery(localStorage, record);
         refreshRecovery();
@@ -834,6 +849,18 @@ export function useLiveController() {
     } finally {
       walletFlight.current = false;
     }
+  };
+
+  const goalSetup = useGoalSetup({
+    userId: authenticated ? userId : null, goals, initialReadSettled,
+    blocked: hasPending || loading || pwa.offline || !walletOnboarding.complete || Boolean(walletStep),
+    plan: (goal, action, network) => planStep(goal, action, network, undefined, true),
+    refresh: load, error: report,
+    ready: () => setNotice("All selected vaults are ready. Your goal setup is complete."),
+  });
+  const continueGoalSetup = (goal: GoalDTO) => {
+    if (hasPending || loading || pwa.offline) return;
+    setError(""); navigate("goals", goal.id); goalSetup.start(goal);
   };
 
   const total = useMemo(
@@ -945,7 +972,9 @@ export function useLiveController() {
     recoveries,
     apiRequests,
     unresolved,
-    hasPending,
+    hasPending: hasPending || goalSetup.running,
+    goalSetup,
+    continueGoalSetup,
     reducedMotion,
     setReducedMotion,
     total,
