@@ -18,6 +18,7 @@ export interface WalletOnboardingOptions {
   appId: string;
   isCurrent: () => boolean;
   isOnline: () => boolean;
+  profile?: WalletProfile;
   refreshUser: () => Promise<WalletProfile>;
   createEthereumWallet: () => Promise<unknown>;
   createSolanaWallet: () => Promise<unknown>;
@@ -40,6 +41,19 @@ async function prepareWallets(options: WalletOnboardingOptions) {
   const hasFamily = (profile: WalletProfile, family: WalletFamily) => profile.linkedAccounts.some(
     account => account.type === "wallet" && account.chainType === family && Boolean(account.address),
   );
+  active();
+  if (options.profile) {
+    if (options.profile.id !== options.userId) throw new Error("Wallet setup returned a different account.");
+    if (hasFamily(options.profile, "ethereum") && hasFamily(options.profile, "solana")) {
+      const session = await options.readSession();
+      active();
+      validateSessionIdentity(session, options.userId, options.appId);
+      const matchingOwners = ["ethereum", "solana"].every(family => session.user.wallets.some(wallet =>
+        wallet.chainType === family && options.profile!.linkedAccounts.some(account => account.type === "wallet" && account.chainType === family &&
+          (family === "ethereum" ? account.address?.toLowerCase() === wallet.address.toLowerCase() : account.address === wallet.address))));
+      if (hasOwnerWallets(session.user.wallets) && matchingOwners) return session;
+    }
+  }
   let profile = await refresh();
   for (const family of ["ethereum", "solana"] as const) {
     if (hasFamily(profile, family)) continue;

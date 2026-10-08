@@ -152,6 +152,7 @@ export function useLiveController() {
   );
   const walletOnboarding = useWalletOnboarding({
     userId, authenticated, ready,
+    profile: user ?? undefined,
     offline: pwa.offline, appId: import.meta.env.VITE_PRIVY_APP_ID,
     refreshUser, createEthereumWallet, createSolanaWallet,
     readSession: () => request<SessionDTO>("/api/session"),

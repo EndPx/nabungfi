@@ -37,3 +37,27 @@ The follow-up gives history a dedicated view with its own loading/error/retry st
 Thirteen focused history/repair browser checks passed after this correction; frontend unit tests remained 77/77 and the production build passed. Final evaluator acceptance is recorded separately after the deployed follow-up is tested.
 
 A subsequent targeted review caught a same-goal navigation race: View goal removed the activity fragment, but React could keep the history screen because destination and selected ID had not changed. History-view selection now has explicit reactive state, updated by both navigation and browser history events. The previous PARTIAL remains preserved; the correction requires live verification of View history → View goal on the same incomplete goal, not just a changed URL.
+
+## Final evaluator acceptance
+
+All five evaluators ultimately reported PASS for comprehension and PASS for the read-only navigation they inspected. Visitors 1–3 retained their original blind impressions and used focused follow-ups to verify corrections; visitors 4–5 first inspected the later release. This is iterative acceptance, not a claim that five new users all passed their first encounter with the final build.
+
+| Visitor | Initial revision verdict: comprehension / navigation | Latest observed verdict | Follow-up scope |
+|---|---|---|---|
+| 1 | PARTIAL / PASS | PASS / PASS | Completion explanation, collected-versus-assembled copy, creation/paused-setup return paths |
+| 2 | PASS / PARTIAL | PASS / PASS | Dedicated history and return paths, including 390px mobile |
+| 3 | PASS / PARTIAL | PASS / PASS | Incomplete-goal history, View goal, browser Back/Forward and return to Activity |
+| 4 | PASS / PASS | PASS / PASS | Main sections and sampled details/forms, including 320px mobile |
+| 5 | PASS / PASS | PASS / PASS | Main sections, filters/search, creation form, sampled details and history |
+
+Visitor 3 also encountered an account-verification rate limit on one fresh-tab attempt; that blocked PARTIAL/FAIL report remains preserved. A later fresh tab entered automatically after cooldown without Retry verification, then the same-goal navigation passed. Sustained provider availability is not established by that recovery.
+
+Minor observations remain: complete-looking template posters rely on nearby preview/funding labels, the mobile update banner occupies space, detail document titles say Dashboard, Reached includes already-collected goals, and mobile models precede the monetary summary as requested by the user. No final reviewer established an unresolved P1/P2 within the tested read-only paths. This does not establish a perfect numeric UI score.
+
+The five original context-free reviews and subsequent immutable reports/screenshots remain private in `.local/blind-recheck-2026-10-08`. They used an existing authenticated profile, not isolated new accounts. Setup execution, deposit/completion/claim success, fresh Google login and physical-device/PWA acceptance were not retested by these reviewers. UI-displayed receipt statuses are not independently verified transaction proof.
+
+## Restored-session request reduction
+
+The client previously refreshed the SDK user on every workspace open, even when its ready profile already listed both owners. A restored matching profile now first verifies a fresh backend session, including identity/app/network and matching EVM/Solana owners, and reuses those wallets without another SDK refresh. Missing/changed owners still follow the original provision/refresh/verify flow. Backend errors or wrong identities never grant access, and no substitute wallet is created to bypass an outage. This reduces redundant provider calls; it does not guarantee that external rate limits cannot occur.
+
+Frontend unit coverage is now 79/79, including restored-profile backend-failure/identity/owner checks. Three wallet-onboarding browser checks passed; production build and release-shell checks remain separate from live fresh-account financial acceptance.

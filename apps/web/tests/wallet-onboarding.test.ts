@@ -30,6 +30,26 @@ test("first custom login creates both owner wallets and verifies the backend bef
   assert.deepEqual(result.user.wallets, wallets);
   assert(hasOwnerWallets(result.user.wallets));
 });
+test("restored SDK owners still require fresh backend verification but avoid a redundant rate-limited SDK refresh",async()=>{
+ const f=fixture(wallets);let reads=0;
+ f.options.profile=f.profile;
+ f.options.refreshUser=async()=>{throw Error("Too many requests");};
+ f.options.readSession=async()=>{reads++;return f.session();};
+ assert.deepEqual((await createWalletOnboarding()(f.options)).user.wallets,wallets);
+ assert.equal(reads,1);assert.deepEqual(f.calls,[]);
+ f.options.readSession=async()=>({...f.session(),user:{...f.session().user,privySubject:"did:privy:someone-else"}});
+ await assert.rejects(createWalletOnboarding()(f.options),/does not match/);
+ f.options.readSession=async()=>{throw Error("Backend unavailable");};
+ await assert.rejects(createWalletOnboarding()(f.options),/Backend unavailable/);assert.deepEqual(f.calls,[]);
+});
+test("a mismatched restored owner cannot use the fast verification path",async()=>{
+ const f=fixture(wallets);f.options.profile=structuredClone(f.profile);let refreshes=0;
+ f.options.profile.linkedAccounts=[{type:"wallet",chainType:"ethereum",address:"0x"+"2".repeat(40)}, {type:"wallet",...wallets[1]}];
+ f.options.refreshUser=async()=>{refreshes++;return f.profile;};
+ await createWalletOnboarding()(f.options);assert.equal(refreshes,1);assert.deepEqual(f.calls,[]);
+ f.options.profile={...f.profile,id:"did:privy:other"};
+ await assert.rejects(createWalletOnboarding()(f.options),/different account/);
+});
 
 test("existing linked wallets are reused and a partial account creates only its missing family", async () => {
   for (const initial of [wallets, [wallets[0]], [wallets[1]]]) {
