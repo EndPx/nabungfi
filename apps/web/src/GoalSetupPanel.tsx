@@ -27,7 +27,7 @@ export function GoalSetupPanel({ goal, name, paused, blocked, resume, pause, ref
         <strong>{linked ? "Ready" : initialized ? "Connecting" : stage.kind === "wallet" && stage.network === network ? paused ? "Next step" : "Review in progress" : "Waiting"}</strong>
       </div>;
     })}
-    <p className="live-help">Each selected chain needs its gas token. Your wallet shows the fee before you confirm.</p>
+    <p className="live-help">Review each vault before confirming. Your wallet shows the network fee and any sponsorship.</p>
     {paused ? <Button variant="build" disabled={blocked || !goal} onClick={resume}>Continue setup</Button>
       : <Button variant="secondary" onClick={pause}>Pause setup</Button>}
     <Button variant="quiet" disabled={refreshing || offline} busy={refreshing} onClick={refresh}>Refresh setup</Button>
