@@ -7,8 +7,8 @@ export const FAUCETS: ReadonlyArray<{
   gasUrl: string;
 }> = [
   { network: "solana", gasSymbol: "SOL", walletFamily: "solana", gasUrl: "https://faucet.solana.com/" },
-  { network: "base", gasSymbol: "ETH", walletFamily: "ethereum", gasUrl: "https://www.alchemy.com/faucets/base-sepolia" },
-  { network: "arbitrum", gasSymbol: "ETH", walletFamily: "ethereum", gasUrl: "https://www.alchemy.com/faucets/arbitrum-sepolia" },
+  { network: "base", gasSymbol: "ETH", walletFamily: "ethereum", gasUrl: "https://faucet.quicknode.com/base/sepolia" },
+  { network: "arbitrum", gasSymbol: "ETH", walletFamily: "ethereum", gasUrl: "https://faucet.quicknode.com/arbitrum/sepolia" },
   { network: "ethereum", gasSymbol: "ETH", walletFamily: "ethereum", gasUrl: "https://cloud.google.com/application/web3/faucet/ethereum/sepolia" },
 ];
 export const USDC_FAUCET = "https://faucet.circle.com/";

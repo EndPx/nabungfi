@@ -15,8 +15,8 @@ for (const width of [320, 375, 768, 1280]) test(`faucets and five-destination na
 test("faucet destinations keep native gas networks separate", async ({page}) => {
   await page.goto("/tests/browser/harness.html?page=faucets");
   await expect(page.getByRole("link",{name:"Get SOL for Solana Devnet",exact:true})).toHaveAttribute("href","https://faucet.solana.com/");
-  await expect(page.getByRole("link",{name:"Get ETH for Base Sepolia",exact:true})).toHaveAttribute("href","https://www.alchemy.com/faucets/base-sepolia");
-  await expect(page.getByRole("link",{name:"Get ETH for Arbitrum Sepolia",exact:true})).toHaveAttribute("href","https://www.alchemy.com/faucets/arbitrum-sepolia");
+  await expect(page.getByRole("link",{name:"Get ETH for Base Sepolia",exact:true})).toHaveAttribute("href","https://faucet.quicknode.com/base/sepolia");
+  await expect(page.getByRole("link",{name:"Get ETH for Arbitrum Sepolia",exact:true})).toHaveAttribute("href","https://faucet.quicknode.com/arbitrum/sepolia");
   await expect(page.getByRole("link",{name:"Get ETH for Ethereum Sepolia",exact:true})).toHaveAttribute("href","https://cloud.google.com/application/web3/faucet/ethereum/sepolia");
 });
 test("missing faucet wallet leads to verified wallet setup", async ({page}) => {
