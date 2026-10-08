@@ -196,7 +196,7 @@ export function useLiveController() {
       setError("");
       const snapshots = await readGoalSnapshots(portfolio.goals, async id =>
         (await request<{goal: GoalDTO}>(`/api/goals/${encodeURIComponent(id)}`)).goal,
-        readAppRoute(location).goalId);
+        readAppRoute(location).goalId, {retryUnavailable: true});
       if (identityRef.current !== identity || generation !== readGeneration.current) return;
       setGoals(snapshots);
     } catch (failure) {
@@ -289,6 +289,8 @@ export function useLiveController() {
       return;
     }
     let active = true;
+    if (loading) return;
+    setHistory([]);
     void request<{ history: GoalHistoryEntry[] }>(
       `/api/goals/${encodeURIComponent(selectedId)}/history`,
     )
@@ -301,11 +303,11 @@ export function useLiveController() {
     return () => {
       active = false;
     };
-  }, [authenticated, selectedId, request, userId, goals]);
+  }, [authenticated, selectedId, request, userId, loading]);
 
-  const navigate = (next: Destination, goal?: string) => {
+  const navigate = (next: Destination, goal?: string, activity = false) => {
     if (goalSetup.intent && (next !== "goals" || goal !== goalSetup.intent.goalId)) goalSetup.pause();
-    navigateApp(next, goal);
+    navigateApp(next, goal, activity);
     setDestination(next);
     setSelectedId(goal ?? null);
   };
@@ -609,6 +611,38 @@ export function useLiveController() {
   const closeUnsentRequest = async (record: WalletRecovery) => {
     setBusy(true);
     try {await closeUnsent(record);setError("");await load();} catch (failure) {report(failure);} finally {setBusy(false);}
+  };
+  const cancelUnsignedRequest = async (record: WalletRecovery) => {
+    if (walletFlight.current || record.userId !== identityRef.current) return;
+    if (record.state !== "planned" || record.transactionHash) {
+      setError("Wallet confirmation already started. Check the original transaction before continuing.");
+      return;
+    }
+    walletFlight.current = true;
+    goalSetup.pause();
+    setBusy(true);
+    try {
+      const original = await request<{step: GoalStepDTO}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}`);
+      validateRecoveryStep(record, original.step);
+      if (!original.step.plan || original.step.transactionHash) throw new Error("The original wallet outcome must be checked.");
+      const result = await request<{step: GoalStepDTO}>(`/api/goals/${encodeURIComponent(record.goalId)}/steps/${encodeURIComponent(record.stepId)}/cancel-unsigned`, {body:{fingerprint:original.step.plan.fingerprint}});
+      validateRecoveryStep(record, result.step);
+      if (identityRef.current !== record.userId) return;
+      if (result.step.status !== "rejected" || result.step.transactionHash || result.step.reasonCode !== "UNSIGNED_PLAN_CANCELLED") throw new Error("The unsigned plan cancellation could not be confirmed. Keep the original request.");
+      clearRejectedRecovery(localStorage, record);
+      refreshRecovery();
+      setWalletStep(null);
+      setError("");
+      setNotice("Unsigned step cancelled. No wallet confirmation started. Your goal and confirmed vaults are saved; continue setup whenever you’re ready.");
+      await load();
+    } catch (failure) { report(failure); }
+    finally { setBusy(false); walletFlight.current = false; }
+  };
+  const closeWalletReview = () => {
+    goalSetup.pause();
+    const record = recoveries.find(record => record.stepId === walletStep?.id);
+    if (record?.state === "planned" && !record.transactionHash) void cancelUnsignedRequest(record);
+    else setWalletStep(null);
   };
   const resolveExpiredRequest = async (record: WalletRecovery) => {
     setBusy(true);
@@ -994,6 +1028,8 @@ export function useLiveController() {
     recoverRequest,
     resumeOriginal,
     closeUnsentRequest,
+    cancelUnsignedRequest,
+    closeWalletReview,
     resolveExpiredRequest,
     createMissingWallet,
   };

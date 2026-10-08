@@ -113,6 +113,7 @@ function Harness() {
   );
   const [reducedMotion, setReducedMotion] = useState(true);
   const [detail, setDetail] = useState(params.get("view") === "detail");
+  const [focusActivity, setFocusActivity] = useState(false);
   const [modal, setModal] = useState<"create" | "deposit" | "wallet" | null>(
     params.get("view") === "wallet" ? "wallet" : null,
   );
@@ -148,6 +149,7 @@ function Harness() {
             refresh={() => setAction("refresh")}
             busy={pendingRead}
             refreshing={pendingRead}
+            focusHistory={focusActivity}
             deposit={() => setModal("deposit")}
             step={recordStep}
           />
@@ -157,6 +159,8 @@ function Harness() {
               balance={`$${formatUsdc((BigInt(amount) * 3n).toString())}`}
               scope="Across 3 example goals"
               blocked={false}
+              refreshing={params.has("refreshing")}
+              refresh={() => setAction("refresh-balances")}
               create={() => setModal("create")}
               open={id => { setSelectedGoal(exampleGoals.find(item => item.id === id)!); setDetail(true); }}
               activity={() => setDestination("activity")}
@@ -172,6 +176,7 @@ function Harness() {
           openGoal={() => {
             setDestination("goals");
             setDetail(true);
+            setFocusActivity(true);
           }}
         />
       )}
@@ -197,6 +202,7 @@ function Harness() {
       {destination === "faucets" && <FaucetsPage wallets={params.get("missing-wallets") === "1" ? [] : [{chainType:"solana",address:goal.binding.owner.solana},{chainType:"ethereum",address:goal.binding.owner.evm}]} openWallets={() => setDestination("wallets")} />}
       {modal === "create" && (
         <CreateGoalModal
+          blockedReason={params.has("pending-draft") ? "Finish or cancel the saved step before creating another goal." : undefined}
           wallets={[
             { chainType: "solana", address: goal.binding.owner.solana },
             { chainType: "ethereum", address: goal.binding.owner.evm },
@@ -270,10 +276,10 @@ function Harness() {
       )}
       {walletBusy && <div role="dialog" aria-label="Example wallet confirmation"><p>Synthetic wallet portal. No transaction is signed.</p><button onClick={() => setAction("wallet-portal-approved")}>Example wallet approve</button></div>}
       {params.get("view") === "recovery" && <RecoveryPanel
-        recoveries={[{userId:"fixture-user",goalId:goal.id,stepId:"unsent",requestId:"fixture-request",action:"create-vault",network:params.get("expired-solana")==="1"?"solana":"ethereum",state:"awaiting-wallet",createdAt:walletExpiry},
+        recoveries={params.has("unsigned") ? [{userId:"fixture-user",goalId:goal.id,stepId:"planned",requestId:"fixture-unsigned",action:"create-vault",network:"base",state:"planned",createdAt:walletExpiry}] : [{userId:"fixture-user",goalId:goal.id,stepId:"unsent",requestId:"fixture-request",action:"create-vault",network:params.get("expired-solana")==="1"?"solana":"ethereum",state:"awaiting-wallet",createdAt:walletExpiry},
           {userId:"fixture-user",goalId:goal.id,stepId:"submitted",requestId:"submitted-request",action:"deposit",network:"base",state:"submitted",transactionHash:"0x"+"3".repeat(64),createdAt:walletExpiry}]}
         requests={[]} busy={false} offline={false} reconcile={async()=>setAction("reconcile-original")}
-        retry={async()=>{}} resume={async()=>setAction("inspect-original")} closeUnsent={async()=>setAction("attest-wallet-not-invoked")} resolveExpired={async()=>setAction("resolve-expired-original")} />}
+        retry={async()=>{}} resume={async()=>setAction("inspect-original")} cancelUnsigned={async()=>setAction("cancel-unsigned-plan")} closeUnsent={async()=>setAction("attest-wallet-not-invoked")} resolveExpired={async()=>setAction("resolve-expired-original")} />}
       <output aria-label="Fixture requested action">{action}</output>
       <output data-testid="example-create-count">{createCount}</output>
       {pendingRead && <div className="fixture-controls">

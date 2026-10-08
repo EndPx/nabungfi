@@ -172,6 +172,7 @@ export function WalletsPage({
       </div>
       <details className="wallet-extra-actions">
         <summary>External wallet options</summary>
+        <p className="live-help">Connect a wallet for this session, or link it to your account for future sign-ins. Neither changes the owner wallets of existing goals.</p>
         <div className="live-actions">
           <Button variant="secondary" onClick={connect} disabled={busy || blocked}>Connect external wallet</Button>
           <Button variant="secondary" onClick={link} disabled={busy || blocked}>Link external wallet</Button>

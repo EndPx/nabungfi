@@ -29,3 +29,13 @@ test("financial detail reads have bounded concurrency and empty portfolios make 
   await readGoalSnapshots(Array.from({length:7},(_,i)=>metadata(String(i))),read);
   assert.equal(calls,7);assert(max<=2);assert.deepEqual(await readGoalSnapshots([],read),[]);assert.equal(calls,7);
 });
+test("bounded read retry recovers a transient unavailable snapshot without retrying substituted identities",async()=>{
+ let calls=0;
+ const output=await readGoalSnapshots([metadata("car")],async()=>{calls++;return {...metadata("car"),chainStatus:calls===1?"unavailable":"unprovisioned"};},null,{retryUnavailable:true});
+ assert.equal(calls,2);assert.equal(output[0]?.chainStatus,"unprovisioned");
+ calls=0;
+ const changed=await readGoalSnapshots([metadata("car")],async()=>{calls++;return {...metadata("car"),targetRaw:"1"};},null,{retryUnavailable:true});
+ assert.equal(calls,1);assert.equal(changed[0]?.chainState,null);
+ calls=0;
+ await readGoalSnapshots([metadata("car")],async()=>{calls++;throw {status:401};},null,{retryUnavailable:true});assert.equal(calls,1);
+});

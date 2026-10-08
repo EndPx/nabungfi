@@ -19,7 +19,14 @@
 .live-shell .page-heading h1 { font-size: var(--app-heading); font-weight: 600; letter-spacing: -.025em; }
 .live-shell .page-heading p { margin-block-start: var(--space-2); font-size: var(--text-sm); }
 .live-shell .page-heading .page-eyebrow { margin-block: 0 var(--space-2); font-size: var(--text-xs); letter-spacing: .1em; font-weight: 500; }
-.live-shell .goals-heading { align-items: center; }
+.live-shell .goals-heading { align-items: center; flex-wrap: wrap; }
+.live-shell .goals-heading > div { min-inline-size: min(100%, 24ch); flex: 1; }
+.live-shell .goals-heading h1 { overflow-wrap: normal; word-break: normal; }
+.live-shell .overview-read-status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin-block-end: var(--space-4); }
+.live-shell .overview-read-status p { flex: 1; min-inline-size: min(100%, 28ch); }
+.live-shell .workshop-explanation { margin: var(--space-3) var(--space-6); color: var(--muted); font-size: var(--text-sm); line-height: 1.5; }
+.live-shell .goal-history-panel { scroll-margin-block-start: var(--space-6); }
+.live-shell .recovery-panel { margin-block-end: var(--space-6); }
 .live-shell .portfolio-summary { border: 1px solid var(--app-line); background: var(--app-pocket); border-radius: var(--radius-stage); padding: var(--space-6) var(--space-8); margin-block-end: var(--space-4); gap: var(--space-8); box-shadow: none; }
 .live-shell .portfolio-label { display: flex; align-items: center; gap: var(--space-3); }
 .live-shell .portfolio-label .icon-button { width: var(--touch-min); height: var(--touch-min); border: 0; background: transparent; }
@@ -178,8 +185,8 @@
   .live-shell .goals-heading { gap: var(--space-4); }
   .live-shell .page-heading h1 { font-size: var(--app-heading); }
   .live-shell .goals-heading > .button { padding-inline: var(--space-4); }
-  .live-shell .goals-heading > div { flex: 1; min-width: 0; }
-  .live-shell .goals-heading .page-eyebrow { display: none; }
+  .live-shell .goals-heading > div { flex: 1; min-width: min(100%, 24ch); }
+  .live-shell .goals-heading .page-eyebrow { display: block; letter-spacing: 0; }
   .live-shell .goals-heading .button { flex-shrink: 0; }
   .live-shell .portfolio-summary { padding: var(--space-5); gap: var(--space-4); }
   .live-shell .portfolio-balance > strong { font-size: 40px; }

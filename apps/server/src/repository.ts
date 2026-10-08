@@ -18,6 +18,7 @@ export interface ApplicationRepository {
  walletStart(ownerId:string,goalId:string,id:string,planFingerprint:string):Promise<GoalStepDTO>;
  walletRejected(ownerId:string,goalId:string,id:string,planFingerprint:string,providerCode:number):Promise<GoalStepDTO>;
  walletNotInvoked(ownerId:string,goalId:string,id:string,planFingerprint:string):Promise<GoalStepDTO>;
+ cancelUnsignedPlan(ownerId:string,goalId:string,id:string,planFingerprint:string):Promise<GoalStepDTO>;
  expireUntrackedSolana(ownerId:string,goalId:string,id:string,planFingerprint:string,proof:Record<string,unknown>):Promise<GoalStepDTO>;
  planFailed(ownerId:string,goalId:string,id:string,reason:string):Promise<void>;
  bindTransaction(ownerId:string,goalId:string,id:string,hash:string):Promise<GoalStepDTO>;
@@ -97,6 +98,17 @@ export function postgresRepository(db:Database):ApplicationRepository {
     if(r.status==='failed'&&r.reason_code==='EXPIRED_SOLANA_MESSAGE_NOT_EXECUTED')return stepRow(r,g);
     if(r.status!=='signing'||proof.kind!=='finalized-expired-message-absence'||proof.planFingerprint!==planFingerprint||proof.historyCoveredBeforeCreation!==true)throw new ApiError('ORIGINAL_EXPIRY_NOT_PROVEN',409,'The original signing outcome is not proven expired.');
     const updated=await tx.query("UPDATE nabungfi.goal_steps SET status='failed',receipt=$1,reason_code='EXPIRED_SOLANA_MESSAGE_NOT_EXECUTED',updated_at=now() WHERE id=$2 RETURNING *",[JSON.stringify(proof),id]);return stepRow(updated.rows[0]!,g);
+   });
+  },
+  async cancelUnsignedPlan(ownerId,goalId,id,planFingerprint){
+   const g=await goal(ownerId,goalId);return db.transaction(async tx=>{
+    const q=await tx.query('SELECT * FROM nabungfi.goal_steps WHERE id=$1 AND goal_id=$2 AND owner_id=$3 FOR UPDATE',[id,goalId,ownerId]);const r=q.rows[0];if(!r)throw notFound();
+    const original=r.plan as ChainPlan|null;
+    if(r.transaction_hash||!original||original.fingerprint!==planFingerprint)throw new ApiError('ORIGINAL_TRANSACTION_REQUIRED',409,'Keep the original wallet outcome; only an unsigned plan can be cancelled.');
+    if(r.status==='rejected'&&r.reason_code==='UNSIGNED_PLAN_CANCELLED')return stepRow(r,g);
+    if(r.status!=='planned')throw new ApiError('STEP_NOT_UNSIGNED',409,'Wallet confirmation already started. Check the original transaction instead of cancelling its plan.');
+    const receipt={kind:'cancelled-unsigned-plan',ownerId,stepId:id,planFingerprint,cancelledAtUtc:new Date().toISOString(),onchainProof:false};
+    const updated=await tx.query("UPDATE nabungfi.goal_steps SET status='rejected',receipt=$1,reason_code='UNSIGNED_PLAN_CANCELLED',updated_at=now() WHERE id=$2 RETURNING *",[JSON.stringify(receipt),id]);return stepRow(updated.rows[0]!,g);
    });
   },
   async walletNotInvoked(ownerId,goalId,id,planFingerprint){

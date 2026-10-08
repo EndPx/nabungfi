@@ -53,13 +53,14 @@ export function PortfolioSummary({ balance, scope }: { balance: string; scope: s
     <section className="portfolio-summary" aria-label="Savings across goals">
       <div className="portfolio-balance">
         <div className="portfolio-label">
-          <h2>Total saved</h2>
-          <IconButton label={hidden ? "Show total saved" : "Hide total saved"} aria-pressed={hidden} onClick={() => setHidden(value => !value)}>
+          <h2>Current savings</h2>
+          <IconButton label={hidden ? "Show current savings" : "Hide current savings"} aria-pressed={hidden} onClick={() => setHidden(value => !value)}>
             {hidden ? <Eye size={19} /> : <EyeOff size={19} />}
           </IconButton>
         </div>
         <strong aria-label={hidden ? "Balance hidden" : undefined}>{hidden ? "••••••" : balance}<span className="portfolio-currency">USDC</span></strong>
         <p>{scope}</p>
+        <p>Funds still in your goal vaults. Collected amounts stay on completed goal cards.</p>
       </div>
       <div className="portfolio-caption">
         <Box size={40} />
@@ -148,7 +149,7 @@ export function GoalCard({
               ? "—"
               : `$${formatUsdc(amount)}`}
           </strong>
-          <span>of ${formatUsdc(goal.targetRaw)}</span>
+          <span>{state?.phase === "claimed" ? "Collected" : "Total funded"} · Target ${formatUsdc(goal.targetRaw)}</span>
         </div>
         {available && (
           <div className="goal-progress" aria-hidden="true">
@@ -159,7 +160,7 @@ export function GoalCard({
         )}
         <div className="goal-card-foot">
           <span>
-            {available ? `${pieces} / 100 pieces` : "Progress unavailable"}
+            {available ? `${pieces} / 100 funded pieces` : "Progress unavailable"}
           </span>
           <span>
             {goal.binding.participants.length + 1} chains
@@ -182,6 +183,7 @@ export function GoalDetail({
   deposit,
   step,
   setup,
+  focusHistory = false,
 }: {
   goal: GoalDTO;
   history: GoalHistoryEntry[];
@@ -197,7 +199,20 @@ export function GoalDetail({
     amountRaw?: string,
   ) => void;
   setup?: () => void;
+  focusHistory?: boolean;
 }) {
+  const activityRef = useRef<HTMLElement>(null);
+  const activityFocused = useRef<string | null>(null);
+  useEffect(() => {
+    if (!focusHistory) { activityFocused.current = null; return; }
+    if (activityFocused.current === goal.id || !activityRef.current) return;
+    const frame = requestAnimationFrame(() => {
+      activityRef.current?.focus({ preventScroll: true });
+      activityRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
+      activityFocused.current = goal.id;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [focusHistory, goal.id, refreshing]);
   const state = goal.chainState;
   const achieved = state?.phase === "achieved" || state?.phase === "claimed";
   const total = achieved
@@ -264,8 +279,7 @@ export function GoalDetail({
               <TriangleAlert size={28} />
               <h2>Your build is waiting for a fresh read</h2>
               <p>
-                Saved pieces are preserved. Reconnect or refresh to verify this
-                goal’s current savings.
+                We couldn’t verify this goal’s balances on its networks. Your saved build and goal are preserved. Check your connection, then retry the balance read.
               </p>
               <Button variant="secondary" onClick={refresh} disabled={busy}>
                 Refresh balance
@@ -287,8 +301,9 @@ export function GoalDetail({
                 : `$${formatUsdc(total)}`}
             </p>
             <span className="live-target">
-              of ${formatUsdc(goal.targetRaw)} USDC
+              {state?.phase === "claimed" ? "Total collected" : "Total funded"} · Target ${formatUsdc(goal.targetRaw)} USDC
             </span>
+            {available && BigInt(total) > BigInt(goal.targetRaw) && <p className="live-help">You saved beyond your target. Progress is capped at 100%; the full amount is included.</p>}
             {available &&
               !achieved &&
               BigInt(total) >= BigInt(goal.targetRaw) && (
@@ -481,7 +496,7 @@ export function GoalDetail({
             </p>
           </section>
         </aside>
-        <section className="live-panel goal-history-panel">
+        <section ref={activityRef} id="goal-activity" tabIndex={-1} className="live-panel goal-history-panel" aria-label="Goal activity">
           <h2>Goal activity</h2>
           <HistoryList history={history} />
         </section>
@@ -541,12 +556,14 @@ export function CreateGoalModal({
   busy,
   onClose,
   create,
+  blockedReason,
 }: {
   wallets: SessionDTO["user"]["wallets"];
   availableModels?: GoalModel[];
   busy: boolean;
   onClose: () => void;
   create: (body: CreateGoalRequest) => Promise<void>;
+  blockedReason?: string;
 }) {
   const [name, setName] = useState("");
   const [target, setTarget] = useState("");
@@ -569,7 +586,7 @@ export function CreateGoalModal({
   const waiting = busy || submitting;
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (waiting || submitFlight.current) return;
+    if (waiting || blockedReason || submitFlight.current) return;
     setError("");
     try {
       rawAmount(target);
@@ -606,7 +623,7 @@ export function CreateGoalModal({
   return (
     <Dialog
       title="What are you building toward?"
-      description="Choose your goal and chains. We’ll set up the selected vaults next, with each transaction confirmed in your wallet."
+      description="Choose your goal and chains. We’ll set up the selected vaults next, with each transaction confirmed in your wallet. This workshop uses testnet USDC; earning is currently inactive."
       onClose={onClose}
     >
       <form className="live-form" onSubmit={(event) => void submit(event)}>
@@ -715,11 +732,12 @@ export function CreateGoalModal({
           even if that takes indefinitely. Earning is currently inactive.
         </label>
         {error && <FormError>{error}</FormError>}
+        {blockedReason && <p className="live-help" role="status">{blockedReason}</p>}
         <Button
           type="submit"
           variant="build"
           busy={busy}
-          disabled={!accepted || chains.length < 2 || !solanaOwner || !evmOwner}
+          disabled={Boolean(blockedReason) || !accepted || chains.length < 2 || !solanaOwner || !evmOwner}
         >
           Create goal
           <ArrowRight size={18} />
@@ -976,7 +994,7 @@ export function WalletStepModal({
           <Wallet size={18} />
         </Button>
         <Button variant="quiet" disabled={busy} onClick={onClose}>
-          Close without a new transaction
+          {recovery?.state === "planned" ? "Cancel unsigned step" : "Close review"}
         </Button>
       </div>
     </Dialog>
@@ -992,6 +1010,7 @@ export function RecoveryPanel({
   retry,
   resume,
   closeUnsent,
+  cancelUnsigned,
   resolveExpired,
 }: {
   recoveries: WalletRecovery[];
@@ -1002,16 +1021,16 @@ export function RecoveryPanel({
   retry: (record: PendingApiRequest) => Promise<void>;
   resume: (record: WalletRecovery) => Promise<void>;
   closeUnsent: (record: WalletRecovery) => Promise<void>;
+  cancelUnsigned?: (record: WalletRecovery) => Promise<void>;
   resolveExpired: (record: WalletRecovery) => Promise<void>;
 }) {
   const [hashes, setHashes] = useState<Record<string, string>>({});
   const [notInvoked, setNotInvoked] = useState<Record<string, boolean>>({});
   return (
-    <section className="live-panel" style={{ marginBottom: 24 }}>
-      <h2>Check your original request</h2>
+    <section className="live-panel recovery-panel">
+      <h2>{requests.length === 0 && recoveries.every(record => record.state === "planned") ? "A saved step is waiting for your review" : "Check your original request"}</h2>
       <p className="live-help">
-        An interrupted response does not prove a transaction failed. Reconcile
-        the original request before starting another.
+        {requests.length === 0 && recoveries.every(record => record.state === "planned") ? "Wallet confirmation hasn’t started. Review the step to continue, or cancel it to resume other actions. Your goal stays saved." : "Check the original request before starting another transaction. An interrupted response doesn’t prove that it failed."}
       </p>
       {requests.map((record) => (
         <div className="recovery-row" key={record.requestId}>
@@ -1075,14 +1094,16 @@ export function RecoveryPanel({
             )}
           </div>
           {record.state === "planned" ? (
-            <Button
+            <div className="live-actions"><Button
               variant="secondary"
               busy={busy}
               disabled={offline}
               onClick={() => void resume(record)}
             >
-              Review original step
+              Review saved step
             </Button>
+            {cancelUnsigned && <Button variant="quiet" busy={busy} disabled={offline} onClick={() => void cancelUnsigned(record)}>Cancel unsigned step</Button>}
+            </div>
           ) : (
             <div className="live-actions">
               {!record.transactionHash && (

@@ -228,15 +228,15 @@ export async function appRequest<T>(
     });
   } catch {
     throw new ApiError(
-      "The connection was interrupted. Check the original request before trying another transaction.",
-      "UNKNOWN_OUTCOME",
+      options.body === undefined ? "The balance service couldn’t be reached. Check your connection and refresh balances." : "The connection was interrupted. Check the original request before trying another transaction.",
+      options.body === undefined ? "READ_UNAVAILABLE" : "UNKNOWN_OUTCOME",
       0,
     );
   }
   const data = await response.json().catch(() => {
     throw new ApiError(
-      "The service response could not be read. Your wallet transaction may still be pending.",
-      "UNKNOWN_OUTCOME",
+      options.body === undefined ? "The balance response couldn’t be read. Retry the balance read." : "The service response could not be read. Your wallet transaction may still be pending.",
+      options.body === undefined ? "READ_UNAVAILABLE" : "UNKNOWN_OUTCOME",
       response.status,
     );
   });

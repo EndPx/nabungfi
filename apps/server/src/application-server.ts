@@ -10,6 +10,7 @@ import {ApiError,notFound} from './errors.js';
 import type {AppConfig} from './config.js';
 import {boundedChainRead} from './server-runtime.js';
 import type {ExpiredSolanaResolution} from './chain/expired-solana.js';
+import {inFlightReads} from './in-flight-reads.js';
 
 export interface ChainServices {
  deriveGoalBinding(input:{goalId:string;targetRaw:string;owner:{solana:string;evm:string};networks:typeof APP_NETWORKS[number][]}):GoalBinding;
@@ -50,6 +51,7 @@ function metadataGoal(r:GoalRecord):GoalDTO{return{id:r.id,goalId:r.goalId,name:
 function respond(res:ServerResponse,status:number,value:unknown){if(res.destroyed||res.writableEnded)return;res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(value));}
 export function applicationServer(config:AppConfig,repo:ApplicationRepository,auth:Authentication,chain:ChainServices,runtime?:ApplicationRuntime){
  const requests=new Map<string,{count:number;reset:number}>();
+ const readDetail=inFlightReads<GoalDTO>();
  const server=createServer(async(req,res)=>{const correlation=randomUUID();try{
   const origin=req.headers.origin;if(origin&&!config.origins.includes(origin))throw new ApiError('ORIGIN_REJECTED',403,'This origin is not allowed.');
   if(origin){res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type, Idempotency-Key');}
@@ -70,8 +72,8 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
    const targetRaw=parseGoalTarget(input.targetAmount),binding=chain.deriveGoalBinding({goalId:'0x'+randomBytes(32).toString('hex'),targetRaw,owner:owners,networks:input.chains});
    const g=await repo.createGoal(user.id,{name:input.name,model:input.model,targetRaw,binding,requestId:id,fingerprint:fingerprint({name:input.name,model:input.model,targetRaw,owner:owners,chains:input.chains})});return respond(res,201,{goal:metadataGoal(g)});
   }
-  const match=path.match(/^\/api\/goals\/([0-9a-f-]+)(?:\/(history|steps)(?:\/([0-9a-f-]+)(?:\/(reconcile|refresh|wallet-start|wallet-rejected|wallet-not-invoked|resolve-expired-solana))?)?)?$/i);if(!match||!uuid(match[1]))throw notFound();
-  const gid=match[1],g=await repo.goal(user.id,gid);if(!match[2]&&req.method==='GET')return respond(res,200,{goal:await boundedChainRead(()=>viewGoal(g,chain))});
+  const match=path.match(/^\/api\/goals\/([0-9a-f-]+)(?:\/(history|steps)(?:\/([0-9a-f-]+)(?:\/(reconcile|refresh|wallet-start|wallet-rejected|wallet-not-invoked|cancel-unsigned|resolve-expired-solana))?)?)?$/i);if(!match||!uuid(match[1]))throw notFound();
+  const gid=match[1],g=await repo.goal(user.id,gid);if(!match[2]&&req.method==='GET')return respond(res,200,{goal:await readDetail(fingerprint({owner:user.id,id:gid,binding:g.binding}),()=>boundedChainRead(()=>viewGoal(g,chain)))});
   if(match[2]==='history'&&req.method==='GET'){const history=await repo.history(user.id,gid);return respond(res,200,{history,entries:history});}
   if(match[2]==='steps'&&req.method==='GET'&&uuid(match[3])&&!match[4])return respond(res,200,{step:await repo.step(user.id,gid,match[3])});
   if(match[2]==='steps'&&req.method==='POST'&&!match[3]){
@@ -90,6 +92,10 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
    let result:ExpiredSolanaResolution;try{result=await boundedChainRead(()=>chain.resolveExpiredSolanaPlan!(g.binding,prior.plan!));}catch(error){if(error instanceof ApiError)throw error;const code=(error as {code?:string}).code;throw new ApiError(code&&/^[A-Z_]{1,80}$/.test(code)?code:'ORIGINAL_HISTORY_UNAVAILABLE',code==='ORIGINAL_STILL_LIVE'||code==='ORIGINAL_HISTORY_LIMIT'?409:503,'The original message could not be proven expired without execution. Keep this request and its original signature.');}
    if(result.kind==='located')return respond(res,200,{step:prior,transactionHash:result.transactionHash});
    return respond(res,200,{step:await repo.expireUntrackedSolana(user.id,gid,prior.id,prior.plan.fingerprint,result.proof)});
+  }
+  if(match[2]==='steps'&&req.method==='POST'&&uuid(match[3])&&match[4]==='cancel-unsigned'){
+   requireGoalWallets(identity,g.binding.owner);const v=await body(req);fields(v,['fingerprint']);if(typeof v.fingerprint!=='string'||!v.fingerprint||v.fingerprint.length>200)throw new ApiError('INVALID_FINGERPRINT',400,'Use the original unsigned plan fingerprint.');
+   return respond(res,200,{step:await repo.cancelUnsignedPlan(user.id,gid,match[3],v.fingerprint)});
   }
   if(match[2]==='steps'&&req.method==='POST'&&uuid(match[3])&&match[4]==='wallet-not-invoked'){
    requireGoalWallets(identity,g.binding.owner);const v=await body(req);fields(v,['fingerprint','attestation']);if(typeof v.fingerprint!=='string'||!v.fingerprint||v.fingerprint.length>200||!['wallet-sdk-never-invoked','wallet-approval-never-invoked'].includes(String(v.attestation)))throw new ApiError('EXPLICIT_NOT_INVOKED_ATTESTATION_REQUIRED',400,'Attest only that no wallet approval or signing call was invoked for this original plan.');

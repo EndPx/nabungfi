@@ -41,8 +41,8 @@ export function readAppRoute(location: RouteLocation) {
   };
 }
 
-export function appHref(destination: Destination, goalId?: string) {
-  return `/app/${destination}${destination === "goals" && goalId ? `?goal=${encodeURIComponent(goalId)}` : ""}`;
+export function appHref(destination: Destination, goalId?: string, activity = false) {
+  return `/app/${destination}${destination === "goals" && goalId ? `?goal=${encodeURIComponent(goalId)}${activity ? "#goal-activity" : ""}` : ""}`;
 }
 
 export function safeAppReturnTarget(value: string | null | undefined) {
@@ -52,7 +52,7 @@ export function safeAppReturnTarget(value: string | null | undefined) {
     const url = new URL(value, "https://app.invalid");
     if (url.origin !== "https://app.invalid" || !/^\/app(?:\/(goals|activity|wallets|faucets|settings))?\/?$/.test(url.pathname)) return fallback;
     const route = readAppRoute(url);
-    return appHref(route.destination, route.goalId ?? undefined);
+    return appHref(route.destination, route.goalId ?? undefined, url.hash === "#goal-activity");
   } catch { return fallback; }
 }
 
@@ -70,8 +70,8 @@ export function replaceAppLocation(href: string) {
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
-export function navigateApp(destination: Destination, goalId?: string) {
-  const next = appHref(destination, goalId);
+export function navigateApp(destination: Destination, goalId?: string, activity = false) {
+  const next = appHref(destination, goalId, activity);
   if (location.pathname + location.search + location.hash === next) return;
   history.pushState(null, "", next);
   // pushState does not emit an event. Use the same read path as browser Back.

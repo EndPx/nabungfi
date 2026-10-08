@@ -838,13 +838,13 @@ export default function CarWorkshop({
           <div>
             <strong>
               {displayCount}
-              <span> / 100 pieces</span>
+              <span> / 100 {preview ? "pieces" : "assembled"}</span>
             </strong>
             <p>
               {celebrating ? "You built your goal!" : active
                 ? `Building ${pieces[Math.min(built, 99)].label.toLowerCase()}…`
                 : unbuilt > 0
-                  ? `${unbuilt} new ${unbuilt === 1 ? "piece is" : "pieces are"} ready to build`
+                  ? `${funded} funded · ${unbuilt} ready to assemble`
                   : achieved
                     ? "You built something worth saving for."
                     : preview
@@ -879,6 +879,7 @@ export default function CarWorkshop({
           )}
         </Button>
       </div>
+      {!preview && <p className="workshop-explanation">{funded} / 100 pieces funded by this goal. Assembly is visual; it doesn’t change your savings or unlock funds.</p>}
       {nextPiece && !active && (
         <div className="next-piece-tray">
           <div>

@@ -96,7 +96,6 @@ function AuthenticatedApp() {
     depositDraft,
     setDepositing,
     walletStep,
-    setWalletStep,
     recoveries,
     apiRequests,
     unresolved,
@@ -114,6 +113,8 @@ function AuthenticatedApp() {
     recoverRequest,
     resumeOriginal,
     closeUnsentRequest,
+    cancelUnsignedRequest,
+    closeWalletReview,
     resolveExpiredRequest,
     createMissingWallet,
     goalSetup,
@@ -219,6 +220,7 @@ function AuthenticatedApp() {
               retry={recoverRequest}
               resume={resumeOriginal}
               closeUnsent={closeUnsentRequest}
+              cancelUnsigned={cancelUnsignedRequest}
               resolveExpired={resolveExpiredRequest}
             />
           )}
@@ -240,6 +242,8 @@ function AuthenticatedApp() {
             goalSetup.intent && goalSetup.intent.goalId===readAppRoute(location).goalId ? (
               <GoalSetupPanel name={goalSetup.intent.name} goal={goals.find(goal=>goal.id===goalSetup.intent?.goalId)}
                 paused={goalSetup.intent.paused} blocked={busy || loading || pwa.offline || unresolved.length>0 || apiRequests.length>0}
+                requestPending={unresolved.length>0 || apiRequests.length>0}
+                refreshing={loading} offline={pwa.offline}
                 resume={() => { const goal=goals.find(goal=>goal.id===goalSetup.intent?.goalId); if(goal)continueGoalSetup(goal); }}
                 pause={goalSetup.pause} refresh={() => void load()} />
             ) : openingGoal && openingGoal.userId===user?.id && openingGoal.id===readAppRoute(location).goalId ? (
@@ -258,16 +262,18 @@ function AuthenticatedApp() {
                   void planStep(selected, action, network, amountRaw)
                 }
                 setup={() => continueGoalSetup(selected)}
+                focusHistory={location.hash === "#goal-activity"}
               />
             ) : (
                 <GoalsOverview
                   goals={goals}
-                  balance={goals.length > 0 && unavailableCount === goals.length
+                  balance={unavailableCount > 0
                     ? "—" : `$${formatUsdc(total)}`}
                   scope={unavailableCount
                     ? `Verified balances · ${unavailableCount} unavailable`
                     : `Across ${goals.length} goal${goals.length === 1 ? "" : "s"}`}
-                  blocked={hasPending || pwa.offline || loading || !session}
+                  blocked={busy || pwa.offline || !session}
+                  refreshing={loading} offline={pwa.offline} refresh={() => void load()}
                   create={() => setCreating(true)}
                   open={id => navigate("goals", id)}
                   activity={() => navigate("activity")}
@@ -292,7 +298,7 @@ function AuthenticatedApp() {
               loading={loading}
               offline={pwa.offline}
               refresh={() => void load()}
-              openGoal={(id) => navigate("goals", id)}
+              openGoal={(id) => navigate("goals", id, true)}
             />
           ) : (
             <SettingsPage
@@ -305,6 +311,7 @@ function AuthenticatedApp() {
               wallets={session.user.wallets}
               availableModels={goalModels}
               busy={busy}
+              blockedReason={pwa.offline ? "Reconnect before creating your goal." : hasPending ? "Finish or cancel the saved step in the recovery panel before creating another goal. Your draft can stay open." : undefined}
               onClose={() => setCreating(false)}
               create={createGoal}
             />
@@ -334,7 +341,7 @@ function AuthenticatedApp() {
               recovery={recoveries.find(
                 (record) => record.stepId === walletStep.id,
               )}
-              onClose={() => { goalSetup.pause(); setWalletStep(null); }}
+              onClose={closeWalletReview}
               setupName={goalSetup.intent?.goalId===walletStep.metadataGoalId ? goalSetup.intent.name : undefined}
               confirm={() => void sendWallet(walletStep)}
               refreshPlan={() => {

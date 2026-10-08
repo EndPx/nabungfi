@@ -11,7 +11,7 @@ export function retainGoalPresentation(metadata:GoalDTO[], prior:GoalDTO[]):Goal
 }
 
 /** List metadata carries no financial authority; hydrate each goal from its detail read. */
-export async function readGoalSnapshots(metadata: GoalDTO[], read: (id: string) => Promise<GoalDTO>, selectedId?: string | null): Promise<GoalDTO[]> {
+export async function readGoalSnapshots(metadata: GoalDTO[], read: (id: string) => Promise<GoalDTO>, selectedId?: string | null, options: {retryUnavailable?: boolean} = {}): Promise<GoalDTO[]> {
   const result = metadata.map(goal => ({ ...goal, chainState: null, chainStatus: "unavailable" as const })) as GoalDTO[];
   const order = metadata.map((_, index) => index).sort((a, b) => Number(metadata[b]?.id === selectedId) - Number(metadata[a]?.id === selectedId));
   let cursor = 0;
@@ -19,11 +19,19 @@ export async function readGoalSnapshots(metadata: GoalDTO[], read: (id: string) 
     while (cursor < order.length) {
       const index = order[cursor++]!;
       const original = metadata[index]!;
-      try {
-        const detail = await read(original.id);
-        if (!sameIdentity(detail,original)) throw new Error("Goal detail identity differs");
-        result[index] = detail;
-      } catch { /* Keep this goal's metadata; a failed or mismatched read cannot reuse a stale balance. */ }
+      for (let attempt = 0; attempt < (options.retryUnavailable ? 2 : 1); attempt++) {
+        try {
+          const detail = await read(original.id);
+          if (!sameIdentity(detail,original)) break;
+          result[index] = detail;
+          if (detail.chainStatus !== "unavailable") break;
+        } catch (failure) {
+          const status = (failure as {status?: number})?.status;
+          if (status && status >= 400 && status < 500 && status !== 429) break;
+          // Read retries cannot sign, resend a plan or reuse a stale financial balance.
+        }
+        if (options.retryUnavailable && attempt === 0) await new Promise(resolve => setTimeout(resolve, 600));
+      }
     }
   };
   await Promise.all(Array.from({length: Math.min(2, metadata.length)}, worker));

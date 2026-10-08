@@ -22,10 +22,10 @@ test("balance privacy hides and restores only the portfolio presentation", async
   await page.goto("/tests/browser/harness.html");
   const amount = page.locator(".portfolio-balance > strong");
   await expect(amount).toContainText("$0.75");
-  await page.getByRole("button", { name: "Hide total saved" }).click();
+  await page.getByRole("button", { name: "Hide current savings" }).click();
   await expect(amount).toHaveAttribute("aria-label", "Balance hidden");
   await expect(page.getByRole("button", { name: /My car/ })).toContainText("$0.25");
-  await page.getByRole("button", { name: "Show total saved" }).click();
+  await page.getByRole("button", { name: "Show current savings" }).click();
   await expect(amount).toContainText("$0.75");
 });
 

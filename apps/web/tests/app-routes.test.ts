@@ -61,3 +61,8 @@ test("goal links encode the entire identity without introducing another route or
   assert.equal(readAppRoute(url).goalId, id);
   assert.equal(appHref("settings", id), "/app/settings");
 });
+test("history destinations retain the selected goal and persist the activity anchor",()=>{
+ const href=appHref("goals","house",true);
+ assert.equal(href,"/app/goals?goal=house#goal-activity");
+ assert.deepEqual(readAppRoute(new URL(href,"https://example.test")),{destination:"goals",goalId:"house"});
+});
