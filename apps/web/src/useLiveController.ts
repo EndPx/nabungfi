@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { usePrivy, useWallets, useCreateWallet, useUser } from "@privy-io/react-auth";
+import { usePrivy, useWallets, useCreateWallet, useUser, useSendTransaction } from "@privy-io/react-auth";
 import {
   useWallets as useSolanaWallets,
   useSignAndSendTransaction,
@@ -66,6 +66,7 @@ export function useLiveController() {
   const { wallets: solanaWallets } = useSolanaWallets();
   const { refreshUser } = useUser();
   const { signAndSendTransaction } = useSignAndSendTransaction();
+  const { sendTransaction: sendSponsoredEvmTransaction } = useSendTransaction();
   const { createWallet: createEthereumWallet } = useCreateWallet();
   const { createWallet: createSolanaWallet } = useCreateSolanaWallet();
   const pwa = usePwa();
@@ -725,12 +726,14 @@ export function useLiveController() {
           throw new Error(
             "Connect the EVM owner wallet shown in this goal before confirming.",
           );
+        if (plan.gasPayment && wallet.walletClientType !== "privy")
+          throw new Error("Use the original linked Privy wallet for this sponsored step.");
         const provider = await prepareEvmProvider(wallet, plan.owner, transaction.chainId);
         if (identityRef.current !== userId)
           throw new Error(
             "The signed-in account changed. Keep the original request and reconnect.",
           );
-        writeRecovery(localStorage, { ...record, state: "awaiting-wallet" });
+        writeRecovery(localStorage, { ...record, gasPayment:plan.gasPayment, state: "awaiting-wallet" });
         refreshRecovery();
         markerStarted = true;
         hash = await guardWalletStart(
@@ -749,6 +752,13 @@ export function useLiveController() {
                 "The selected owner wallet or chain changed before signing. Inspect the original request before continuing.",
               );
             sdkInvoked = true;
+            if (plan.gasPayment === "privy-testnet") {
+              const result = await callWalletSdk(() => sendSponsoredEvmTransaction({
+                to: transaction.to, data: transaction.data,
+                value: BigInt(transaction.value), chainId: transaction.chainId,
+              }, { address: plan.owner, sponsor: true, uiOptions: { showWalletUIs: true } }));
+              return result.hash;
+            }
             return (await callWalletSdk(() =>
               provider.request({
                 method: "eth_sendTransaction",
@@ -781,7 +791,7 @@ export function useLiveController() {
           throw new Error(
             "The signed-in account changed. Keep the original request and reconnect.",
           );
-        writeRecovery(localStorage, { ...record, state: "awaiting-wallet" });
+        writeRecovery(localStorage, { ...record, gasPayment:plan.gasPayment, state: "awaiting-wallet" });
         refreshRecovery();
         markerStarted = true;
         const result = await guardWalletStart(
@@ -804,7 +814,7 @@ export function useLiveController() {
                 transaction,
                 wallet,
                 chain: "solana:devnet",
-                options: { skipSimulation: false },
+                options: { skipSimulation: false, ...(plan.gasPayment === "privy-testnet" ? { sponsor: true } : {}) },
               }),
             );
           },
@@ -813,6 +823,7 @@ export function useLiveController() {
       }
       const submitted = {
         ...record,
+        gasPayment:plan.gasPayment,
         transactionHash: step.network === "solana" ? hash : hash.toLowerCase(),
         state: "submitted" as const,
       };

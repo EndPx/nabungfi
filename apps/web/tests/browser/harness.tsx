@@ -254,6 +254,7 @@ function Harness() {
               updatedAt: walletExpiry,
               plan: {
                 ...fixtures.plans["deposit-base"],
+                ...(params.get("sponsored") === "1" ? {gasPayment:"privy-testnet" as const} : {}),
                 expiresAt: walletExpiry,
               },
             } as import("@nabungfi/shared/application").GoalStepDTO

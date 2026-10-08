@@ -11,6 +11,7 @@ import type {AppConfig} from './config.js';
 import {boundedChainRead} from './server-runtime.js';
 import type {ExpiredSolanaResolution} from './chain/expired-solana.js';
 import {inFlightReads} from './in-flight-reads.js';
+import {testnetGasPayment,assertGasEligibility} from './gas-policy.js';
 
 export interface ChainServices {
  deriveGoalBinding(input:{goalId:string;targetRaw:string;owner:{solana:string;evm:string};networks:typeof APP_NETWORKS[number][]}):GoalBinding;
@@ -54,17 +55,19 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
  const readDetail=inFlightReads<GoalDTO>();
  const server=createServer(async(req,res)=>{const correlation=randomUUID();try{
   const origin=req.headers.origin;if(origin&&!config.origins.includes(origin))throw new ApiError('ORIGIN_REJECTED',403,'This origin is not allowed.');
-  if(origin){res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type, Idempotency-Key');}
+  if(origin){res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type, Idempotency-Key, X-NabungFi-Plan-Version');}
   if(req.method==='OPTIONS'){res.writeHead(204);res.end();return;}
   const path=new URL(req.url??'/','http://localhost').pathname;
   if(req.method==='GET'&&path==='/api/health')return respond(res,200,{ok:true,mode:'testnet-app',financialAuthority:'contracts'});
   if(req.method==='GET'&&path==='/api/config'){
    let coordination:CoordinationStatus={configured:false,available:false,capacity:0,registered:0,reasonCode:'OPERATOR_NOT_CONFIGURED'};
    if(runtime)try{const status=await runtime.coordinationStatus();coordination={configured:status.configured===true,available:status.available===true,capacity:Number.isInteger(status.capacity)&&status.capacity>=0?status.capacity:0,registered:Number.isInteger(status.registered)&&status.registered>=0?status.registered:0,...(status.reasonCode&&/^[A-Z_]{1,80}$/.test(status.reasonCode)?{reasonCode:status.reasonCode}:{})};}catch{coordination={configured:true,available:false,capacity:0,registered:0,reasonCode:'OPERATOR_UNAVAILABLE'};}
-   return respond(res,200,{profile:'testnet',privyAppId:config.privyAppId,chains:APP_NETWORKS,goalModels:GOAL_TEMPLATES.map(template=>template.id),coordinationAvailable:coordination.available,coordination});
+   return respond(res,200,{profile:'testnet',privyAppId:config.privyAppId,chains:APP_NETWORKS,goalModels:GOAL_TEMPLATES.map(template=>template.id),gasSponsorship:config.testnetGasSponsorship===true?'privy-testnet':null,coordinationAvailable:coordination.available,coordination});
   }
   const ip=req.socket.remoteAddress??'unknown',now=Date.now(),limit=requests.get(ip);if(limit&&limit.reset>now){if(++limit.count>180)throw new ApiError('RATE_LIMITED',429,'Please wait before making more requests.');}else requests.set(ip,{count:1,reset:now+60000});if(requests.size>10000)for(const[k,v]of requests)if(v.reset<now)requests.delete(k);
   const identity=await auth.authenticate(req.headers.authorization);const user=await repo.user(identity.subject);
+  // Old installed PWA clients send direct transactions and must never receive a bundler-only plan.
+  const clientSponsorship=config.testnetGasSponsorship===true&&req.headers['x-nabungfi-plan-version']==='gas-v1';
   if(req.method==='GET'&&path==='/api/session'){const session:SessionDTO={user:{id:user.id,privySubject:identity.subject,wallets:identity.wallets},profile:'testnet',privyAppId:config.privyAppId,chains:[...APP_NETWORKS]};return respond(res,200,session);}
   if(req.method==='GET'&&path==='/api/goals'){const goals=await repo.goals(user.id);return respond(res,200,{goals:goals.map(metadataGoal),financialReads:'detail-only'});}
   if(req.method==='POST'&&path==='/api/goals'){
@@ -79,7 +82,7 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
   if(match[2]==='steps'&&req.method==='POST'&&!match[3]){
    requireGoalWallets(identity,g.binding.owner);const input=stepInput(await body(req));const result=await repo.reserveStep(user.id,gid,input);if(!result.isNew)return respond(res,200,{step:result.step});
    let admitted=false;try{
-    const plan=await boundedChainRead(()=>chain.planGoalStep(g.binding,{id:result.step.id,action:input.action,network:input.network,...(input.amountRaw?{amountRaw:input.amountRaw}:{})}));
+    const plan=await boundedChainRead(()=>chain.planGoalStep(g.binding,{id:result.step.id,action:input.action,network:input.network,...(testnetGasPayment(clientSponsorship,identity,g.binding,input.network)?{gasPayment:testnetGasPayment(clientSponsorship,identity,g.binding,input.network)}:{}),...(input.amountRaw?{amountRaw:input.amountRaw}:{})}));
     if(input.action==='create-vault'&&runtime){await runtime.assertCoordinationAdmission(g.binding);admitted=true;}
     return respond(res,201,{step:await repo.savePlan(user.id,gid,result.step.id,plan,admitted)});
    }catch(error){const reason=typeof(error as {code?:unknown}).code==='string'?(error as {code:string}).code:'CHAIN_PLAN_UNAVAILABLE';await repo.planFailed(user.id,gid,result.step.id,reason);if(admitted)try{await repo.releaseUnusedCoordinationAdmission(g.goalId);}catch{/* Ambiguous DB state retains the slot. */}if(error instanceof ApiError)throw error;throw new ApiError(reason,409,'The chain could not prepare this step. Refresh its original status before retrying.');}
@@ -109,12 +112,13 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
    requireGoalWallets(identity,g.binding.owner);const v=await body(req);fields(v,['fingerprint']);if(typeof v.fingerprint!=='string'||!v.fingerprint||v.fingerprint.length>200)throw new ApiError('INVALID_FINGERPRINT',400,'Use the original transaction plan fingerprint.');
    if(match[4]==='wallet-start'){
     const original=await repo.step(user.id,gid,match[3]);if(original.status!=='planned'||original.transactionHash||!original.plan||original.plan.fingerprint!==v.fingerprint)throw new ApiError('WALLET_START_REJECTED',409,'Refresh an unsigned expired plan or reconcile the original wallet outcome.');
+    assertGasEligibility(clientSponsorship,identity,g.binding,original.plan);
     if(original.action==='create-vault'&&runtime)await runtime.assertCoordinationAdmission(g.binding);
     try{await boundedChainRead(()=>chain.assertPlanUsable(g.binding,original.plan!));}catch(error){if(error instanceof ApiError)throw error;const code=(error as{code?:string}).code;throw new ApiError(code&&/^[A-Z_]{1,80}$/.test(code)?code:'CHAIN_PLAN_UNAVAILABLE',409,'The original plan is unusable or could not be checked. Refresh only an unsigned plan; no wallet action was started.');}
     return respond(res,200,{step:await repo.walletStart(user.id,gid,match[3],v.fingerprint)});
    }
    const prior=await repo.step(user.id,gid,match[3]);if(prior.status!=='planned'||prior.transactionHash||!prior.plan||prior.plan.fingerprint!==v.fingerprint)throw new ApiError('STEP_NOT_UNSIGNED',409,'Reconcile the original wallet outcome before another plan can be made.');
-   const plan=await boundedChainRead(()=>chain.planGoalStep(g.binding,{id:prior.id,action:prior.action,network:prior.network,...(prior.amountRaw?{amountRaw:prior.amountRaw}:{})}));if(prior.action==='create-vault'&&runtime)await runtime.assertCoordinationAdmission(g.binding);return respond(res,200,{step:await repo.refreshPlan(user.id,gid,prior.id,v.fingerprint,plan)});
+   const plan=await boundedChainRead(()=>chain.planGoalStep(g.binding,{id:prior.id,action:prior.action,network:prior.network,...(testnetGasPayment(clientSponsorship,identity,g.binding,prior.network)?{gasPayment:testnetGasPayment(clientSponsorship,identity,g.binding,prior.network)}:{}),...(prior.amountRaw?{amountRaw:prior.amountRaw}:{})}));if(prior.action==='create-vault'&&runtime)await runtime.assertCoordinationAdmission(g.binding);return respond(res,200,{step:await repo.refreshPlan(user.id,gid,prior.id,v.fingerprint,plan)});
   }
   if(match[2]==='steps'&&req.method==='POST'&&uuid(match[3])&&match[4]==='reconcile'){
    requireGoalWallets(identity,g.binding.owner);const v=await body(req);fields(v,['transactionHash']);const prior=await repo.step(user.id,gid,match[3]);const h=v.transactionHash;

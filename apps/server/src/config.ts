@@ -2,7 +2,7 @@ import { loadEnvFile } from 'node:process';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-export interface AppConfig { privyAppId: string; privyAppSecret: string; databaseUrl: string; origins: string[]; port: number; host: string; production: boolean; keeperRegistryFile?:string;keeperStatusFile?:string }
+export interface AppConfig { privyAppId: string; privyAppSecret: string; databaseUrl: string; origins: string[]; port: number; host: string; production: boolean; keeperRegistryFile?:string;keeperStatusFile?:string;testnetGasSponsorship?:boolean }
 export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const required = (key: string) => { const value = env[key]?.trim(); if(!value) throw new Error(`Required application setting missing: ${key}`); return value; };
   const production=env.NODE_ENV==='production';
@@ -14,6 +14,6 @@ export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const keeperRegistryFile=env.NABUNGFI_KEEPER_REGISTRY_FILE?.trim();
   const keeperStatusFile=env.NABUNGFI_KEEPER_STATUS_FILE?.trim();
   if(keeperRegistryFile&&!resolve(keeperRegistryFile).split(/[\\/]/).includes('.local'))throw new Error('Invalid private operator registry configuration');
-  return {privyAppId:required('PRIVY_APP_ID'),privyAppSecret:required('PRIVY_APP_SECRET'),databaseUrl,origins,port,host:env.NABUNGFI_API_HOST??'127.0.0.1',production,...(keeperRegistryFile?{keeperRegistryFile}:{}),...(keeperStatusFile?{keeperStatusFile}:{})};
+  return {privyAppId:required('PRIVY_APP_ID'),privyAppSecret:required('PRIVY_APP_SECRET'),databaseUrl,origins,port,host:env.NABUNGFI_API_HOST??'127.0.0.1',production,testnetGasSponsorship:env.NABUNGFI_TESTNET_GAS_SPONSORSHIP==='true',...(keeperRegistryFile?{keeperRegistryFile}:{}),...(keeperStatusFile?{keeperStatusFile}:{})};
 }
 export function loadLocalEnvironment(): void { const path=resolve(import.meta.dirname,'../.env');if(existsSync(path))loadEnvFile(path); }

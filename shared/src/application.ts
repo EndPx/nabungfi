@@ -14,7 +14,7 @@ export function isGoalModel(value: unknown): value is GoalModel {
   return value === 'custom' || GOAL_TEMPLATES.some(template => template.id === value);
 }
 export type GoalStepAction = 'create-vault' | 'initialize' | 'approve' | 'deposit' | 'prepare' | 'abort' | 'claim';
-export interface VerifiedWallet { chainType: 'ethereum' | 'solana'; address: string; walletId?: string }
+export interface VerifiedWallet { chainType: 'ethereum' | 'solana'; address: string; walletId?: string; walletClientType?: 'privy' }
 export interface SessionDTO { user: { id: string; privySubject: string; wallets: VerifiedWallet[] }; profile: 'testnet'; privyAppId: string; chains: AppNetwork[] }
 export interface CreateGoalRequest { name: string; targetAmount: string; model: GoalModel; solanaOwner: string; evmOwner: string; chains: AppNetwork[] }
 export interface GoalDTO {

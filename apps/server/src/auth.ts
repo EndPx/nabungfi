@@ -14,6 +14,7 @@ export function authoritativeWallets(user: PrivyUserShape): VerifiedWallet[] {
     if(w.chain_type==='ethereum'){if(!/^0x[0-9a-f]{40}$/i.test(address)||BigInt(address)===0n)continue;address=address.toLowerCase();}
     else {try{if(new PublicKey(address).toBase58()!==address)continue;}catch{continue;}}
     const wallet: VerifiedWallet={chainType:w.chain_type as 'ethereum'|'solana',address};if(typeof w.id==='string')wallet.walletId=w.id;
+    if(w.wallet_client_type==='privy'&&typeof w.id==='string')wallet.walletClientType='privy';
     if(!wallets.some(x=>x.chainType===wallet.chainType&&x.address===wallet.address))wallets.push(wallet);
   }
   return wallets;

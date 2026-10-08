@@ -7,6 +7,8 @@ import type { RpcTransport } from './rpc.js';
 const canonical = (value: unknown): unknown => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => [k, canonical(v)])) : value;
 export function planFingerprint(plan: Omit<ChainPlan, 'fingerprint'>): string { return '0x' + createHash('sha256').update(JSON.stringify(canonical(plan))).digest('hex'); }
 export function assertPlan(binding: GoalBinding, plan: ChainPlan): void {
+    if (plan.gasPayment !== undefined && plan.gasPayment !== 'privy-testnet')
+        throw new ChainValidationError('PLAN_SUBSTITUTION', 'Unsupported gas payment mode.');
     const { fingerprint, ...unsigned } = plan;
     if (fingerprint !== planFingerprint(unsigned) || plan.goalId !== binding.goalId || plan.owner !== (plan.network === 'solana' ? binding.owner.solana : binding.owner.evm))
         throw new ChainValidationError('PLAN_SUBSTITUTION', 'Transaction plan does not match the stored owner and goal.');
@@ -84,7 +86,7 @@ export async function assertUsablePlan(rpc: RpcTransport, binding: GoalBinding, 
             throw new ChainValidationError('PLAN_EXPIRED', 'The original blockhash is no longer valid.');
         const unsigned = VersionedTransaction.deserialize(Buffer.from(plan.transaction.base64, 'base64'));
         const simulation = await rpc.solana.simulateTransaction(unsigned, { sigVerify: false, commitment: 'confirmed' });
-        if (simulation.value.err)
+        if (simulation.value.err && !(plan.gasPayment === 'privy-testnet' && sponsoredFeeSimulationError(simulation.value.err)))
             throw new ChainValidationError('SIMULATION_FAILED', 'Goal state or wallet gas changed before signing; refresh the unsigned plan.');
     }
     else {
@@ -94,7 +96,7 @@ export async function assertUsablePlan(rpc: RpcTransport, binding: GoalBinding, 
         const p = binding.participants.find(p => p.network === network)!;
         await validateRoute(rpc, p, 'latest');
         await rpc.call(network, 'eth_call', [{ from: plan.owner, to: plan.transaction.to, data: plan.transaction.data, value: '0x0' }, 'latest']);
-        await assertEvmGasFunds(rpc, network, plan.owner, { to: plan.transaction.to, data: plan.transaction.data, value: '0x0' });
+        if (!plan.gasPayment) await assertEvmGasFunds(rpc, network, plan.owner, { to: plan.transaction.to, data: plan.transaction.data, value: '0x0' });
     }
 }
 export function assertActionState(state: GoalChainState, input: GoalStepInput): void {
@@ -122,10 +124,11 @@ export function assertActionState(state: GoalChainState, input: GoalStepInput): 
 }
 export async function buildPlan(rpc: RpcTransport, b: GoalBinding, input: GoalStepInput): Promise<ChainPlan> {
     validateBinding(b);
+    if (input.gasPayment !== undefined && input.gasPayment !== 'privy-testnet') throw new ChainValidationError('PLAN_SUBSTITUTION', 'Unsupported gas payment mode.');
     if (!input.id || !['create-vault', 'initialize', 'approve', 'deposit', 'prepare', 'abort', 'claim'].includes(input.action))
         throw new ChainValidationError('INVALID_ACTION', 'Unsupported wallet action.');
     const createdAt = new Date().toISOString(), expiresAt = new Date(Date.now() + 300000).toISOString(), owner = input.network === 'solana' ? b.owner.solana : b.owner.evm;
-    const base: Omit<ChainPlan, 'fingerprint' | 'transaction'> = { id: input.id, goalId: b.goalId, action: input.action, network: input.network, owner, createdAt, expiresAt, ...(input.amountRaw !== undefined ? { amountRaw: rawAmount(input.amountRaw).toString() } : {}) };
+    const base: Omit<ChainPlan, 'fingerprint' | 'transaction'> = { id: input.id, goalId: b.goalId, action: input.action, network: input.network, owner, createdAt, expiresAt, ...(input.gasPayment ? { gasPayment: input.gasPayment } : {}), ...(input.amountRaw !== undefined ? { amountRaw: rawAmount(input.amountRaw).toString() } : {}) };
     if (input.network !== 'solana') {
         const p = b.participants.find(p => p.network === input.network);
         if (!p)
@@ -163,10 +166,10 @@ export async function buildPlan(rpc: RpcTransport, b: GoalBinding, input: GoalSt
             }
         }
         const native = BigInt(await rpc.call<string>(network, 'eth_getBalance', [owner, 'latest']));
-        if (native === 0n)
+        if (native === 0n && !input.gasPayment)
             throw new ChainValidationError('INSUFFICIENT_GAS', 'Add testnet gas to this wallet.');
         await rpc.call(network, 'eth_call', [{ from: owner, to, data, value: '0x0' }, 'latest']);
-        await assertEvmGasFunds(rpc, network, owner, { to, data, value: '0x0' });
+        if (!input.gasPayment) await assertEvmGasFunds(rpc, network, owner, { to, data, value: '0x0' });
         const plan = { ...base, transaction: { kind: 'evm' as const, chainId: EVM_DEPLOYMENTS[network].chainId, to, data, value: '0' } };
         return { ...plan, fingerprint: planFingerprint(plan) };
     }
@@ -196,8 +199,14 @@ export async function buildPlan(rpc: RpcTransport, b: GoalBinding, input: GoalSt
     if (tx.serialize().length > 1232)
         throw new ChainValidationError('TRANSACTION_SIZE', 'The transaction exceeds the supported Solana wire size.');
     const simulation = await rpc.solana.simulateTransaction(tx, { sigVerify: false, commitment: 'confirmed' });
-    if (simulation.value.err)
+    if (simulation.value.err && !(input.gasPayment === 'privy-testnet' && sponsoredFeeSimulationError(simulation.value.err)))
         throw new ChainValidationError('SIMULATION_FAILED', 'Wallet transaction could not simulate; check gas and current goal state.');
     const plan = { ...base, expiresAt: new Date(Date.now() + 60000).toISOString(), transaction: { kind: 'solana' as const, chainId: 'solana-devnet' as const, base64: Buffer.from(tx.serialize()).toString('base64'), blockhash: lifetime.blockhash, lastValidBlockHeight: lifetime.lastValidBlockHeight } };
     return { ...plan, fingerprint: planFingerprint(plan) };
+}
+
+/** Only the pre-execution fee check may be deferred to Privy's mandatory sponsored simulation.
+ * Instruction failures, including custom-program rent, are never treated as successful simulation. */
+export function sponsoredFeeSimulationError(error: unknown): boolean {
+    return error === 'InsufficientFundsForFee' || error === 'AccountNotFound';
 }

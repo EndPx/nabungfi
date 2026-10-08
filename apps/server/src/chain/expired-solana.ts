@@ -7,6 +7,7 @@ export type ExpiredSolanaResolution = {kind:'located';transactionHash:string} | 
 /** Finalized payer history plus an invalid original lifetime proves that this exact message cannot execute later. */
 export async function resolveExpiredSolana(rpc:RpcTransport,b:GoalBinding,plan:ChainPlan):Promise<ExpiredSolanaResolution>{
   assertPlan(b,plan);
+  if(plan.gasPayment)throw new ChainValidationError('SPONSORED_ORIGINAL_SIGNATURE_REQUIRED','Sponsorship changes the blockhash. Keep the original signature; the unsigned lifetime cannot prove non-execution.');
   if(plan.transaction.kind!=='solana')throw new ChainValidationError('SOLANA_ORIGINAL_REQUIRED','This recovery only checks an original Solana message.');
   if(await rpc.solana.getGenesisHash()!==SOLANA_DEPLOYMENT.genesis)throw new ChainValidationError('WRONG_CHAIN','Expected Solana Devnet.');
   const tx=plan.transaction,finalizedHeight=await rpc.solana.getBlockHeight('finalized');

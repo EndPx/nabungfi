@@ -58,6 +58,8 @@ export function validateWalletPlan(
   >,
 ): ChainPlan {
   const plan = step.plan;
+  if (plan?.gasPayment !== undefined && plan.gasPayment !== 'privy-testnet')
+    throw new Error("This plan uses an unsupported gas payment mode.");
   if (step.status !== "planned" || step.transactionHash || plan?.id !== step.id)
     throw new Error(
       "Only the original unsigned planned step can open your wallet.",
@@ -217,6 +219,7 @@ export async function appRequest<T>(
       cache: "no-store",
       headers: {
         Authorization: `Bearer ${token}`,
+        "X-NabungFi-Plan-Version": "gas-v1",
         ...(options.body === undefined
           ? {}
           : { "Content-Type": "application/json" }),
@@ -325,6 +328,7 @@ export interface WalletRecovery {
   requestId: string;
   action: string;
   amountRaw?: string;
+  gasPayment?: 'privy-testnet';
   transactionHash?: string;
   state: "planned" | "awaiting-wallet" | "submitted" | "confirmed" | "failed";
   createdAt: string;

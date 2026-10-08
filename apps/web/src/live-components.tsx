@@ -928,7 +928,7 @@ export function WalletStepModal({
   return (
     <Dialog
       title={actions[step.action]}
-      description="Review this step before your wallet opens. The wallet will show network fees and ask for your confirmation."
+      description={plan?.gasPayment ? "Review this step before your wallet opens. NabungFi requests testnet gas sponsorship; your wallet still asks for confirmation." : "Review this step before your wallet opens. The wallet will show network fees and ask for your confirmation."}
       onClose={onClose}
     >
       <div className="live-form">
@@ -950,6 +950,7 @@ export function WalletStepModal({
           )}
           {plan && (
             <>
+              <div><dt>Network fee</dt><dd>{plan.gasPayment ? "Sponsored by NabungFi" : "Paid by your wallet"}</dd></div>
               <div>
                 <dt>Owner</dt>
                 <dd className="address">{plan.owner}</dd>
@@ -977,6 +978,7 @@ export function WalletStepModal({
             deposit funds.
           </p>
         )}
+        {plan?.gasPayment && step.network === "solana" && step.action === "initialize" && <p className="live-help">Solana account creation can still require SOL for rent. Network fee sponsorship does not change your goal’s account funding.</p>}
         {!canSign && (
           <p className="live-help">
             This request already started or its plan expired. Keep its original
@@ -1141,7 +1143,7 @@ export function RecoveryPanel({
                   Close unsent request
                 </Button>
               )}
-              {!record.transactionHash && record.network === "solana" && record.state === "awaiting-wallet" && (
+              {!record.transactionHash && !record.gasPayment && record.network === "solana" && record.state === "awaiting-wallet" && (
                 <Button variant="secondary" busy={busy} disabled={offline} onClick={() => void resolveExpired(record)}>
                   Check expired Solana request
                 </Button>

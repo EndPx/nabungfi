@@ -21,8 +21,21 @@ const binding=(targetRaw='4000000')=>deriveGoalBinding({goalId:'0x'+randomBytes(
 const plan=(step:{id:string;goalId:string;action:any;network:any;amountRaw?:string}):ChainPlan=>({id:step.id,goalId:step.goalId,action:step.action,network:step.network,...(step.amountRaw?{amountRaw:step.amountRaw}:{}),owner:owner.evm,fingerprint:'test-only-'+step.id,createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+300000).toISOString(),transaction:{kind:'evm',chainId:84532,to:'0x'+'2'.repeat(40),data:'0x',value:'0'}});
 let server:ReturnType<typeof applicationServer>|undefined;let succeeded=false;
 try{
- await migrateDatabase(db);await migrateDatabase(db);const migration=await db.query('SELECT version FROM nabungfi.schema_migrations ORDER BY version');assert.deepEqual(migration.rows.map(r=>r.version),[1,2,3,4,5,6,7,8,9,10]);pass();
+ await migrateDatabase(db);await migrateDatabase(db);const migration=await db.query('SELECT version FROM nabungfi.schema_migrations ORDER BY version');assert.deepEqual(migration.rows.map(r=>r.version),[1,2,3,4,5,6,7,8,9,10,11]);pass();
  const templateOwner=await repo.user(namespace+'-templates');owners.push(templateOwner.id);
+ // One bundle can verify distinct sponsored operations, but an operation cannot verify a second action.
+ const sponsoredBundle='0x'+randomBytes(32).toString('hex'),operationA='0x'+randomBytes(32).toString('hex'),operationB='0x'+randomBytes(32).toString('hex');
+ for(let i=0;i<3;i++){
+  const testOwner=await repo.user(namespace+'-sponsored-'+i);owners.push(testOwner.id);const sb=binding();
+  const sg=await repo.createGoal(testOwner.id,{name:'Sponsored identity fixture',model:'car',targetRaw:sb.targetRaw,binding:sb,requestId:randomUUID(),fingerprint:fingerprint({i})});
+  const ss=(await repo.reserveStep(testOwner.id,sg.id,{requestId:randomUUID(),action:'deposit',network:'base',amountRaw:'1000000'})).step;
+  await repo.savePlan(testOwner.id,sg.id,ss.id,{...plan(ss),gasPayment:'privy-testnet'});await repo.bindTransaction(testOwner.id,sg.id,ss.id,sponsoredBundle);
+  const evidence={network:'base' as const,block:'123',transactionHash:sponsoredBundle,observedAt:new Date().toISOString(),userOperationHash:i===1?operationB:operationA};
+  if(i===0)await assert.rejects(()=>repo.reconciled(testOwner.id,sg.id,ss.id,{status:'confirmed',transactionHash:sponsoredBundle}));
+  if(i===2)await assert.rejects(()=>repo.reconciled(testOwner.id,sg.id,ss.id,{status:'confirmed',transactionHash:sponsoredBundle,receipt:evidence}),{code:'TRANSACTION_ALREADY_VERIFIED'});
+  else assert.equal((await repo.reconciled(testOwner.id,sg.id,ss.id,{status:i===0?'confirmed':'failed',transactionHash:sponsoredBundle,receipt:evidence})).status,i===0?'confirmed':'failed');
+ }
+ pass();
  for(const template of GOAL_TEMPLATES){const b=binding('1000000');const saved=await repo.createGoal(templateOwner.id,{name:template.label,model:template.id,targetRaw:b.targetRaw,binding:b,requestId:randomUUID(),fingerprint:fingerprint({template:template.id})});assert.equal((await repo.goal(templateOwner.id,saved.id)).model,template.id);pass();}
  const alice=await repo.user(namespace+'-alice'),bob=await repo.user(namespace+'-bob');owners.push(alice.id,bob.id);
  const createId=randomUUID(),b=binding();const input={name:'Laptop',model:'laptop' as const,targetRaw:b.targetRaw,binding:b,requestId:createId,fingerprint:fingerprint({target:b.targetRaw,name:'Laptop'})};
@@ -105,14 +118,14 @@ try{
  if((await repo.step(alice.id,httpGoal,race.id)).status==='signing'){assert.equal((await call('/api/goals/'+httpGoal+'/steps/'+race.id+'/cancel-unsigned','alice-test',raceBody)).status,409);await repo.walletNotInvoked(alice.id,httpGoal,race.id,race.plan.fingerprint);}pass();
  assert.equal((await call('/api/goals/'+httpGoal+'/steps/'+existing.id+'/cancel-unsigned','alice-test',{fingerprint:existing.plan.fingerprint})).status,409);assert.equal((await repo.step(alice.id,httpGoal,existing.id)).status,'pending');pass();
  const spoof=await call('/api/goals','alice-test',{name:'Spoof',model:'car',targetAmount:'1',solanaOwner:owner.solana,evmOwner:'0x'+'3'.repeat(40),chains:['solana','base']},{'Idempotency-Key':randomUUID()});assert.equal(spoof.status,403);pass();
- console.log(JSON.stringify({checks,realNeon:true,migrationVersions:[1,2,3,4,5,6,7,8,9,10],financialTransactions:0,providerFixtures:'HTTP auth/chain adapters only; no fabricated chain balances'}));
+ console.log(JSON.stringify({checks,realNeon:true,migrationVersions:[1,2,3,4,5,6,7,8,9,10,11],financialTransactions:0,providerFixtures:'HTTP auth/chain adapters only; no fabricated chain balances'}));
  succeeded=true;
 }catch{console.error('Backend database integration failed after '+checks+' checks; provider details withheld.');process.exitCode=1;}
 finally{
  if(server){server.closeAllConnections();await new Promise<void>(r=>server!.close(()=>r()));}
  try{
   if(owners.length)await db.transaction(async tx=>{await tx.query('DELETE FROM nabungfi.goal_steps WHERE owner_id=ANY($1::uuid[])',[owners]);await tx.query('DELETE FROM nabungfi.operator_admissions WHERE goal_id IN (SELECT goal_id FROM nabungfi.goals WHERE owner_id=ANY($1::uuid[]))',[owners]);await tx.query('DELETE FROM nabungfi.goals WHERE owner_id=ANY($1::uuid[])',[owners]);await tx.query('DELETE FROM nabungfi.users WHERE id=ANY($1::uuid[]) AND privy_subject LIKE $2',[owners,namespace+'%']);});
-  if(succeeded){const reportPath=resolve(import.meta.dirname,'../../../.local/backend-database-test-report.json');await mkdir(dirname(reportPath),{recursive:true});await writeFile(reportPath,JSON.stringify({checkedAtUtc:new Date().toISOString(),checks,realNeon:true,migrationVersions:[1,2,3,4,5,6,7,8,9,10],financialTransactions:0,cleanup:'completed; unique test owner rows only'},null,2));}
+  if(succeeded){const reportPath=resolve(import.meta.dirname,'../../../.local/backend-database-test-report.json');await mkdir(dirname(reportPath),{recursive:true});await writeFile(reportPath,JSON.stringify({checkedAtUtc:new Date().toISOString(),checks,realNeon:true,migrationVersions:[1,2,3,4,5,6,7,8,9,10,11],financialTransactions:0,cleanup:'completed; unique test owner rows only'},null,2));}
  }catch{console.error('Test-only cleanup failed; preserve unique test owner identities for private inspection.');process.exitCode=1;}
  finally{await db.close();}
 }

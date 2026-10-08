@@ -4,6 +4,7 @@ import { ABI, addressWord, solanaAddressWord, configurationHash, ownerAta, valid
 import { assertPlan } from './planner.js';
 import { validateRoute, validateEvmVault } from './state.js';
 import type { RpcTransport } from './rpc.js';
+import {sponsoredEvmReceipt,assertSponsoredSolanaMessage} from './sponsored-receipt.js';
 const TRANSFER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef', APPROVAL = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925', VAULT_CREATED = '0x9d4c56aa1ee57230854bc61ae127f007cc16fbe66b8d5c088c2d3112708c9cc6';
 export interface EvmLog {
     address: string;
@@ -45,8 +46,11 @@ export function creationPatch(binding: GoalBinding, network: EvmNetwork, receipt
     return { network, vault, configHash: hash, creationHash: receipt.transactionHash.toLowerCase() };
 }
 export function assertTokenEvent(binding: GoalBinding, plan: ChainPlan, receipt: EvmReceipt): void {
-    if (!['approve', 'deposit', 'claim'].includes(plan.action))
+    if (!['approve', 'deposit', 'claim'].includes(plan.action)) {
+        if (plan.gasPayment && receipt.logs.some(l => [TRANSFER,APPROVAL].includes(l.topics[0]?.toLowerCase() ?? '') && (l.topics[1]?.toLowerCase() === '0x'+addressWord(binding.owner.evm) || l.topics[2]?.toLowerCase() === '0x'+addressWord(binding.owner.evm))))
+            throw new ChainValidationError('TOKEN_CONSERVATION','Sponsorship must not add token payments to vault creation.');
         return;
+    }
     const p = binding.participants.find(p => p.network === plan.network)!;
     if (!p.vault)
         throw new ChainValidationError('MISSING_VAULT', 'Actual vault is missing.');
@@ -54,6 +58,11 @@ export function assertTokenEvent(binding: GoalBinding, plan: ChainPlan, receipt:
     const events = receipt.logs.filter(l => !l.removed && l.address.toLowerCase() === p.asset && l.topics[0]?.toLowerCase() === (approval ? APPROVAL : TRANSFER) && l.topics[1]?.toLowerCase() === '0x' + addressWord(from) && l.topics[2]?.toLowerCase() === '0x' + addressWord(to) && /^0x[0-9a-f]{64}$/i.test(l.data));
     if (events.length !== 1 || BigInt(events[0]!.data) !== amount)
         throw new ChainValidationError('TOKEN_CONSERVATION', 'Exact USDC approval/transfer was not present in the original receipt.');
+    if (plan.gasPayment) {
+        const scoped = receipt.logs.filter(l => !l.removed && [TRANSFER,APPROVAL].includes(l.topics[0]?.toLowerCase() ?? '')
+            && (l.topics[1]?.toLowerCase() === '0x' + addressWord(binding.owner.evm) || l.topics[1]?.toLowerCase() === '0x' + addressWord(p.vault!) || l.topics[2]?.toLowerCase() === '0x' + addressWord(binding.owner.evm)));
+        if (scoped.length !== 1 || scoped[0] !== events[0]) throw new ChainValidationError('TOKEN_CONSERVATION', 'Sponsorship must not add a token payment or approval to the owner action.');
+    }
 }
 function validSolanaSignature(value: string): boolean {
     const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -97,12 +106,8 @@ export async function reconcile(rpc: RpcTransport, b: GoalBinding, plan: ChainPl
             return { status: reconcileObservation('missing', !tx && Date.now() > Date.parse(plan.expiresAt)), transactionHash: hash, reasonCode: 'ORIGINAL_RECEIPT_UNAVAILABLE' };
         if (tx.hash.toLowerCase() !== hash || receipt.transactionHash.toLowerCase() !== hash)
             return attention('WRONG_RECEIPT_HASH');
-        try {
-            assertEvmEnvelope(plan, tx);
-        }
-        catch {
-            return attention('TRANSACTION_SUBSTITUTION');
-        }
+        // Direct envelopes can be checked immediately. Sponsored envelopes are checked only against a canonical block below.
+        if (!plan.gasPayment) try { assertEvmEnvelope(plan, tx); } catch { return attention('TRANSACTION_SUBSTITUTION'); }
         if (!['0x0', '0x1'].includes(receipt.status))
             return attention('INVALID_RECEIPT_STATUS');
         const block = await rpc.call<{
@@ -116,25 +121,37 @@ export async function reconcile(rpc: RpcTransport, b: GoalBinding, plan: ChainPl
         const latest = BigInt(await rpc.call<string>(network, 'eth_blockNumber', []));
         if (latest < BigInt(receipt.blockNumber) + 1n)
             return { status: 'pending', transactionHash: hash, reasonCode: 'AWAITING_CONFIRMATIONS' };
-        if (receipt.status === '0x0')
-            return { status: 'failed', transactionHash: hash, reasonCode: 'ONCHAIN_TRANSACTION_FAILED' };
+        let verifiedReceipt = receipt, userOperationHash: string | undefined, operationSucceeded = true;
+        if (plan.gasPayment) {
+            try {
+                const operation = await sponsoredEvmReceipt(rpc,plan,tx,receipt);
+                verifiedReceipt = operation.receipt; userOperationHash = operation.userOperationHash; operationSucceeded = operation.success;
+            } catch (error) {
+                if (error instanceof ChainValidationError && error.code === 'CHAIN_UNAVAILABLE') throw error;
+                return attention('TRANSACTION_SUBSTITUTION');
+            }
+        }
+        const evidence = {network,block:BigInt(receipt.blockNumber).toString(),transactionHash:hash,observedAt,...(userOperationHash?{userOperationHash}:{})};
+        if (receipt.status === '0x0' || !operationSucceeded)
+            return { status: 'failed', transactionHash: hash, receipt:evidence, reasonCode: 'ONCHAIN_TRANSACTION_FAILED' };
         await validateRoute(rpc, p, 'latest');
         let patch: ReconcileResult['bindingPatch'];
         try {
             if (plan.action === 'create-vault') {
-                patch = creationPatch(b, network, receipt);
+                assertTokenEvent(b,plan,verifiedReceipt);
+                patch = creationPatch(b, network, verifiedReceipt);
                 if ('network' in patch)
                     await validateEvmVault(rpc, b, { ...p, vault: patch.vault, configHash: patch.configHash }, 'latest');
             }
             else {
                 await validateEvmVault(rpc, b, p, 'latest');
-                assertTokenEvent(b, plan, receipt);
+                assertTokenEvent(b, plan, verifiedReceipt);
             }
         }
         catch (error) {
             return attention(error instanceof ChainValidationError ? error.code : 'INVALID_RECEIPT');
         }
-        return { status: 'confirmed', transactionHash: hash, receipt: { network, block: BigInt(receipt.blockNumber).toString(), transactionHash: hash, observedAt }, ...(patch ? { bindingPatch: patch } : {}) };
+        return { status: 'confirmed', transactionHash: hash, receipt: evidence, ...(patch ? { bindingPatch: patch } : {}) };
     }
     if (plan.transaction.kind !== 'solana')
         return attention('WRONG_TRANSACTION_TYPE');
@@ -146,8 +163,10 @@ export async function reconcile(rpc: RpcTransport, b: GoalBinding, plan: ChainPl
         return { status: reconcileObservation('missing', height > plan.transaction.lastValidBlockHeight), transactionHash: hash, reasonCode: 'ORIGINAL_RECEIPT_UNAVAILABLE' };
     }
     const expected = VersionedTransaction.deserialize(Buffer.from(plan.transaction.base64, 'base64'));
-    if (!Buffer.from(tx.transaction.message.serialize()).equals(Buffer.from(expected.message.serialize())) || tx.transaction.signatures[0] !== hash || tx.transaction.message.staticAccountKeys[0]?.toBase58() !== b.owner.solana)
-        return attention('TRANSACTION_SUBSTITUTION');
+    if (tx.transaction.signatures[0] !== hash) return attention('TRANSACTION_SUBSTITUTION');
+    if (plan.gasPayment) {
+        try { assertSponsoredSolanaMessage(plan,tx.transaction.message as import('@solana/web3.js').MessageV0); } catch { return attention('TRANSACTION_SUBSTITUTION'); }
+    } else if (!Buffer.from(tx.transaction.message.serialize()).equals(Buffer.from(expected.message.serialize())) || tx.transaction.message.staticAccountKeys[0]?.toBase58() !== b.owner.solana) return attention('TRANSACTION_SUBSTITUTION');
     if (tx.blockTime === null || tx.blockTime === undefined)
         return { status: 'pending', transactionHash: hash, reasonCode: 'RECEIPT_TIME_UNAVAILABLE' };
     if (tx.blockTime * 1000 < Date.parse(plan.createdAt) - 30000)

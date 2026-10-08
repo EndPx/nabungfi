@@ -43,6 +43,8 @@ export interface ChainPlan {
     action: ChainAction;
     network: ChainNetwork;
     owner: string;
+    /** Sealed by the server from an authoritative Privy embedded-wallet identity. Absent on legacy direct plans. */
+    gasPayment?: 'privy-testnet';
     amountRaw?: string;
     fingerprint: string;
     createdAt: string;
@@ -121,6 +123,7 @@ export interface GoalStepInput {
     action: ChainAction;
     network: ChainNetwork;
     amountRaw?: string;
+    gasPayment?: 'privy-testnet';
 }
 export interface ReconcileResult {
     status: 'confirmed' | 'pending' | 'failed' | 'attention';
@@ -131,6 +134,7 @@ export interface ReconcileResult {
         block: string;
         transactionHash: string;
         observedAt: string;
+        userOperationHash?: string;
     };
     bindingPatch?: {
         network: EvmNetwork;
