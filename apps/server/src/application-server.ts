@@ -1,6 +1,6 @@
 import {createServer,type IncomingMessage,type ServerResponse} from 'node:http';
 import {randomBytes,randomUUID} from 'node:crypto';
-import {parseGoalTarget,type CreateGoalRequest,type GoalDTO,type GoalStepRequest,type SessionDTO,APP_NETWORKS} from '@nabungfi/shared/application';
+import {parseGoalTarget,type CreateGoalRequest,type GoalDTO,type GoalStepRequest,type SessionDTO,APP_NETWORKS,GOAL_TEMPLATES,isGoalModel} from '@nabungfi/shared/application';
 import {rawAmount,type GoalBinding,type ChainPlan,type GoalChainState,type GoalStepInput,type ReconcileResult} from '@nabungfi/shared/chain';
 import type {ApplicationRepository,GoalRecord} from './repository.js';
 import {fingerprint} from './repository.js';
@@ -31,7 +31,7 @@ function fields(v:Record<string,unknown>,allowed:string[]){if(Object.keys(v).som
 function requestId(v:unknown):string{if(!uuid(v))throw new ApiError('REQUEST_ID_REQUIRED',400,'Use a UUID request ID.');return v;}
 function createInput(v:Record<string,unknown>):CreateGoalRequest {
  fields(v,['name','targetAmount','model','solanaOwner','evmOwner','chains']);
- if(typeof v.name!=='string'||!v.name.trim()||v.name.trim().length>100||!['car','laptop','house','custom'].includes(String(v.model))||typeof v.solanaOwner!=='string'||typeof v.evmOwner!=='string')throw new ApiError('INVALID_GOAL',400,'Enter a name, model and linked owner wallets.');
+ if(typeof v.name!=='string'||!v.name.trim()||v.name.trim().length>100||!isGoalModel(v.model)||typeof v.solanaOwner!=='string'||typeof v.evmOwner!=='string')throw new ApiError('INVALID_GOAL',400,'Enter a name, model and linked owner wallets.');
  if(!Array.isArray(v.chains)||v.chains.length<2||v.chains.length>4||!v.chains.includes('solana')||new Set(v.chains).size!==v.chains.length||v.chains.some(c=>!APP_NETWORKS.includes(c)))throw new ApiError('INVALID_CHAINS',400,'Choose Solana and at least one supported EVM chain.');
  try{parseGoalTarget(v.targetAmount);}catch{throw new ApiError('INVALID_TARGET',400,'Enter a positive USDC target with at most six decimals.');}
  return {name:v.name.trim(),targetAmount:v.targetAmount as string,model:v.model as CreateGoalRequest['model'],solanaOwner:v.solanaOwner,evmOwner:v.evmOwner.toLowerCase(),chains:APP_NETWORKS.filter(c=>(v.chains as unknown[]).includes(c))};
@@ -59,7 +59,7 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
   if(req.method==='GET'&&path==='/api/config'){
    let coordination:CoordinationStatus={configured:false,available:false,capacity:0,registered:0,reasonCode:'OPERATOR_NOT_CONFIGURED'};
    if(runtime)try{const status=await runtime.coordinationStatus();coordination={configured:status.configured===true,available:status.available===true,capacity:Number.isInteger(status.capacity)&&status.capacity>=0?status.capacity:0,registered:Number.isInteger(status.registered)&&status.registered>=0?status.registered:0,...(status.reasonCode&&/^[A-Z_]{1,80}$/.test(status.reasonCode)?{reasonCode:status.reasonCode}:{})};}catch{coordination={configured:true,available:false,capacity:0,registered:0,reasonCode:'OPERATOR_UNAVAILABLE'};}
-   return respond(res,200,{profile:'testnet',privyAppId:config.privyAppId,chains:APP_NETWORKS,coordinationAvailable:coordination.available,coordination});
+   return respond(res,200,{profile:'testnet',privyAppId:config.privyAppId,chains:APP_NETWORKS,goalModels:GOAL_TEMPLATES.map(template=>template.id),coordinationAvailable:coordination.available,coordination});
   }
   const ip=req.socket.remoteAddress??'unknown',now=Date.now(),limit=requests.get(ip);if(limit&&limit.reset>now){if(++limit.count>180)throw new ApiError('RATE_LIMITED',429,'Please wait before making more requests.');}else requests.set(ip,{count:1,reset:now+60000});if(requests.size>10000)for(const[k,v]of requests)if(v.reset<now)requests.delete(k);
   const identity=await auth.authenticate(req.headers.authorization);const user=await repo.user(identity.subject);

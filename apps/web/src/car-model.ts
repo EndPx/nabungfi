@@ -7,6 +7,7 @@ export interface CarPiece {
   rotation?: Point3;
   color: string;
   studs?: boolean;
+  hubCap?: boolean;
   attachment?: "front-gable" | "back-gable" | "laptop-lid";
   label: string;
 }

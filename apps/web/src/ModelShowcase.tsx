@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import type { WorkshopModel } from "./goal-models";
+import { GOAL_TEMPLATES } from "@nabungfi/shared/application";
 import { Button, Logo } from "./ui";
 import "./live.css";
 const Workshop = lazy(() => import("./CarWorkshop"));
@@ -23,7 +24,7 @@ export default function ModelShowcase() {
       </div>
       <div className="live-form">
         <div className="live-actions">
-          {(["car", "laptop", "house", "custom"] as WorkshopModel[]).map(
+          {([...GOAL_TEMPLATES.map(template=>template.id), "custom"] as WorkshopModel[]).map(
             (choice) => (
               <Button
                 key={choice}

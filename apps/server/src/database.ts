@@ -17,7 +17,7 @@ export async function migrateDatabase(db:Database):Promise<void> {
     await tx.query("SELECT pg_advisory_xact_lock(hashtext('nabungfi_application_migrations_v1'))");
     await tx.query('CREATE SCHEMA IF NOT EXISTS nabungfi');
     await tx.query('CREATE TABLE IF NOT EXISTS nabungfi.schema_migrations(version integer PRIMARY KEY,checksum text NOT NULL,applied_at timestamptz NOT NULL DEFAULT now())');
-    for(const [version,file]of [[1,'001_application.sql'],[2,'002_binding_guards.sql'],[3,'003_wallet_start.sql'],[4,'004_active_wallet_lane.sql'],[5,'005_owner_wallet_lane.sql'],[6,'006_verified_receipt_hash.sql'],[7,'007_coordination_admission.sql'],[8,'008_wallet_rejection.sql'],[9,'009_retired_admissions.sql']] as const){
+    for(const [version,file]of [[1,'001_application.sql'],[2,'002_binding_guards.sql'],[3,'003_wallet_start.sql'],[4,'004_active_wallet_lane.sql'],[5,'005_owner_wallet_lane.sql'],[6,'006_verified_receipt_hash.sql'],[7,'007_coordination_admission.sql'],[8,'008_wallet_rejection.sql'],[9,'009_retired_admissions.sql'],[10,'010_goal_templates.sql']] as const){
       const source=await readFile(new URL(`../migrations/${file}`,import.meta.url),'utf8');
       const checksum=migrationChecksum(source);
       const prior=await tx.query('SELECT checksum FROM nabungfi.schema_migrations WHERE version=$1',[version]);

@@ -1,5 +1,7 @@
 import { CAR_PIECES, type CarPiece, type Point3 } from "./car-model";
-export type WorkshopModel = "car" | "laptop" | "house" | "custom";
+import type { GoalModel } from "@nabungfi/shared/application";
+import { EXTRA_GOAL_MODELS } from "./extra-goal-models";
+export type WorkshopModel = GoalModel;
 const palette = {
   lime: "#c4dc6b",
   light: "#dceb9e",
@@ -233,6 +235,7 @@ export const WORKSHOP_MODELS: Readonly<
   laptop: laptop(),
   house: house(),
   custom: custom(),
+  ...EXTRA_GOAL_MODELS,
 });
 for (const [name, pieces] of Object.entries(WORKSHOP_MODELS))
   if (pieces.length !== 100)

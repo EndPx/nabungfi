@@ -3,6 +3,7 @@
 import { chromium } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { GOAL_TEMPLATES, isGoalModel } from "@nabungfi/shared/application";
 const base = process.argv[2] ?? "http://127.0.0.1:5190";
 if (!/^http:\/\/127\.0\.0\.1:\d+$/.test(base))
   throw new Error("Use an isolated local Vite server.");
@@ -18,7 +19,8 @@ try {
     deviceScaleFactor: 1,
     reducedMotion: "reduce",
   });
-  for (const model of ["car", "laptop", "house", "custom"]) {
+  for (const model of (process.argv[3]?.split(',') ?? [...GOAL_TEMPLATES.map(template=>template.id), "custom"])) {
+    if (!isGoalModel(model)) throw new Error('Unknown model');
     await page.goto(`${base}/tests/browser/posters.html?model=${model}`, {
       waitUntil: "networkidle",
     });

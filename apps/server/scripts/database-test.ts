@@ -11,6 +11,7 @@ import {deriveGoalBinding} from '../src/chain/codec.js';
 import {applicationServer,type ChainServices} from '../src/application-server.js';
 import {ApiError} from '../src/errors.js';
 import type {ChainPlan} from '@nabungfi/shared/chain';
+import { GOAL_TEMPLATES } from '@nabungfi/shared/application';
 
 loadLocalEnvironment();const config=loadAppConfig(),db=neonDatabase(config.databaseUrl),repo=postgresRepository(db);
 const namespace='backend-test-'+randomUUID(),owners:string[]=[];let checks=0;
@@ -20,7 +21,9 @@ const binding=(targetRaw='4000000')=>deriveGoalBinding({goalId:'0x'+randomBytes(
 const plan=(step:{id:string;goalId:string;action:any;network:any;amountRaw?:string}):ChainPlan=>({id:step.id,goalId:step.goalId,action:step.action,network:step.network,...(step.amountRaw?{amountRaw:step.amountRaw}:{}),owner:owner.evm,fingerprint:'test-only-'+step.id,createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+300000).toISOString(),transaction:{kind:'evm',chainId:84532,to:'0x'+'2'.repeat(40),data:'0x',value:'0'}});
 let server:ReturnType<typeof applicationServer>|undefined;let succeeded=false;
 try{
- await migrateDatabase(db);await migrateDatabase(db);const migration=await db.query('SELECT version FROM nabungfi.schema_migrations ORDER BY version');assert.deepEqual(migration.rows.map(r=>r.version),[1,2,3,4,5,6,7,8,9]);pass();
+ await migrateDatabase(db);await migrateDatabase(db);const migration=await db.query('SELECT version FROM nabungfi.schema_migrations ORDER BY version');assert.deepEqual(migration.rows.map(r=>r.version),[1,2,3,4,5,6,7,8,9,10]);pass();
+ const templateOwner=await repo.user(namespace+'-templates');owners.push(templateOwner.id);
+ for(const template of GOAL_TEMPLATES){const b=binding('1000000');const saved=await repo.createGoal(templateOwner.id,{name:template.label,model:template.id,targetRaw:b.targetRaw,binding:b,requestId:randomUUID(),fingerprint:fingerprint({template:template.id})});assert.equal((await repo.goal(templateOwner.id,saved.id)).model,template.id);pass();}
  const alice=await repo.user(namespace+'-alice'),bob=await repo.user(namespace+'-bob');owners.push(alice.id,bob.id);
  const createId=randomUUID(),b=binding();const input={name:'Laptop',model:'laptop' as const,targetRaw:b.targetRaw,binding:b,requestId:createId,fingerprint:fingerprint({target:b.targetRaw,name:'Laptop'})};
  const parallel=await Promise.all(Array.from({length:8},()=>repo.createGoal(alice.id,input)));assert.equal(new Set(parallel.map(g=>g.id)).size,1);pass();
@@ -67,6 +70,7 @@ try{
  assert.equal((await call('/api/goals','invalid')).status,401);assert.equal((await call('/api/goals/'+laptop.id,'bob-test')).status,404);assert.equal((await call('/api/goals','alice-test',undefined,{Origin:'https://untrusted.example'})).status,403);pass();
  const list=await call('/api/goals');assert.equal(list.value.goals.length,3);assert.ok(list.value.goals.every((g:any)=>g.chainState===null&&g.chainStatus==='unavailable'));assert.equal(list.value.financialReads,'detail-only');assert.equal(readCalls,0);pass();
  const session=await call('/api/session');assert.equal(session.value.user.id,alice.id);assert.equal(session.value.user.privySubject,namespace+'-alice');pass();
+ for(const template of GOAL_TEMPLATES){const result=await call('/api/goals','alice-test',{name:'Template '+template.label,model:template.id,targetAmount:'1',solanaOwner:owner.solana,evmOwner:owner.evm,chains:['solana','base']},{'Idempotency-Key':randomUUID()});assert.equal(result.status,201);assert.equal(result.value.goal.model,template.id);pass();}
  const httpGoal=siblings[1]!.id;const publicConfig=await call('/api/config');assert.equal(publicConfig.value.coordinationAvailable,false);assert.equal(JSON.stringify(publicConfig.value).includes('MUST_NOT_PUBLISH'),false);assert.equal((await call('/api/goals/'+httpGoal+'/steps','alice-test',{requestId:randomUUID(),action:'create-vault',network:'base'})).status,503);assert.equal(plannedCalls,1);pass();
  admissionBlocked=false;const creation=(await call('/api/goals/'+httpGoal+'/steps','alice-test',{requestId:randomUUID(),action:'create-vault',network:'base'})).value.step;assert.ok(creation.plan);admissionBlocked=true;assert.equal((await call('/api/goals/'+httpGoal+'/steps/'+creation.id+'/wallet-start','alice-test',{fingerprint:creation.plan.fingerprint})).status,503);assert.equal((await repo.step(alice.id,httpGoal,creation.id)).status,'planned');admissionBlocked=false;pass();
  const admissionsBefore=await db.query('SELECT count(*)::integer AS count FROM nabungfi.operator_admissions WHERE retired=false');let unusedGoalId='';
@@ -93,14 +97,14 @@ try{
  await assert.rejects(()=>repo.expireUntrackedSolana(alice.id,laptop.id,expiredStep.id,expiredPlan.fingerprint,expiryProof),{code:'ORIGINAL_EXPIRY_NOT_PROVEN'});await repo.walletStart(alice.id,laptop.id,expiredStep.id,expiredPlan.fingerprint);await assert.rejects(()=>repo.expireUntrackedSolana(alice.id,laptop.id,expiredStep.id,expiredPlan.fingerprint,{...expiryProof,historyCoveredBeforeCreation:false}),{code:'ORIGINAL_EXPIRY_NOT_PROVEN'});await assert.rejects(()=>repo.expireUntrackedSolana(bob.id,laptop.id,expiredStep.id,expiredPlan.fingerprint,expiryProof),{code:'NOT_FOUND'});pass();
  assert.equal((await repo.expireUntrackedSolana(alice.id,laptop.id,expiredStep.id,expiredPlan.fingerprint,expiryProof)).reasonCode,'EXPIRED_SOLANA_MESSAGE_NOT_EXECUTED');assert.equal((await repo.expireUntrackedSolana(alice.id,laptop.id,expiredStep.id,expiredPlan.fingerprint,expiryProof)).transactionHash,null);await assert.rejects(()=>repo.walletStart(alice.id,laptop.id,expiredStep.id,expiredPlan.fingerprint),{code:'WALLET_START_REJECTED'});await repo.reserveStep(alice.id,laptop.id,{requestId:randomUUID(),action:'deposit',network:'solana',amountRaw:'2'});pass();
  const spoof=await call('/api/goals','alice-test',{name:'Spoof',model:'car',targetAmount:'1',solanaOwner:owner.solana,evmOwner:'0x'+'3'.repeat(40),chains:['solana','base']},{'Idempotency-Key':randomUUID()});assert.equal(spoof.status,403);pass();
- console.log(JSON.stringify({checks,realNeon:true,migrationVersions:[1,2,3,4,5,6,7,8,9],financialTransactions:0,providerFixtures:'HTTP auth/chain adapters only; no fabricated chain balances'}));
+ console.log(JSON.stringify({checks,realNeon:true,migrationVersions:[1,2,3,4,5,6,7,8,9,10],financialTransactions:0,providerFixtures:'HTTP auth/chain adapters only; no fabricated chain balances'}));
  succeeded=true;
 }catch{console.error('Backend database integration failed after '+checks+' checks; provider details withheld.');process.exitCode=1;}
 finally{
  if(server){server.closeAllConnections();await new Promise<void>(r=>server!.close(()=>r()));}
  try{
   if(owners.length)await db.transaction(async tx=>{await tx.query('DELETE FROM nabungfi.goal_steps WHERE owner_id=ANY($1::uuid[])',[owners]);await tx.query('DELETE FROM nabungfi.operator_admissions WHERE goal_id IN (SELECT goal_id FROM nabungfi.goals WHERE owner_id=ANY($1::uuid[]))',[owners]);await tx.query('DELETE FROM nabungfi.goals WHERE owner_id=ANY($1::uuid[])',[owners]);await tx.query('DELETE FROM nabungfi.users WHERE id=ANY($1::uuid[]) AND privy_subject LIKE $2',[owners,namespace+'%']);});
-  if(succeeded){const reportPath=resolve(import.meta.dirname,'../../../.local/backend-database-test-report.json');await mkdir(dirname(reportPath),{recursive:true});await writeFile(reportPath,JSON.stringify({checkedAtUtc:new Date().toISOString(),checks,realNeon:true,migrationVersions:[1,2,3,4,5,6,7,8,9],financialTransactions:0,cleanup:'completed; unique test owner rows only'},null,2));}
+  if(succeeded){const reportPath=resolve(import.meta.dirname,'../../../.local/backend-database-test-report.json');await mkdir(dirname(reportPath),{recursive:true});await writeFile(reportPath,JSON.stringify({checkedAtUtc:new Date().toISOString(),checks,realNeon:true,migrationVersions:[1,2,3,4,5,6,7,8,9,10],financialTransactions:0,cleanup:'completed; unique test owner rows only'},null,2));}
  }catch{console.error('Test-only cleanup failed; preserve unique test owner identities for private inspection.');process.exitCode=1;}
  finally{await db.close();}
 }

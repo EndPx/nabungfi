@@ -1,5 +1,9 @@
 # NabungFi interface system
 
+## Expanded build templates — 8 October 2026
+
+Defer AI/custom-prompt generation. Create Goal offers nine named templates: car, laptop, house, game console, camera, motorcycle, bicycle, smartphone and travel suitcase. Keep legacy custom sculptures renderable for existing goals. Use a native model select with the actual renderer-captured poster beneath it; the selected template still has exactly 100 stable primary parts. New 3D materials may use the existing blue/yellow/red, ivory, graphite and rubber palette, with exposed studs, rounded plastic edges and distinct functional silhouettes. Existing app car/laptop/house geometry and the independent landing sculptures stay intact. The API advertises its supported models so a frontend release cannot offer templates before its server/database supports them.
+
 ## Selected-chain goal setup — 8 October 2026
 
 Create saves the original goal once, then starts one guided setup for its immutable selected chains. Reuse the existing transaction review and Privy wallet confirmation for each EVM vault, followed by Solana initialization. Show an inline GoalSetupPanel with the goal name, selected-chain marks and confirmed/pending/connected statuses instead of the finished goal detail while setup is active. Only fresh chain state with every selected vault initialized, registered and linked finishes the flow. Existing incomplete goals offer Continue setup. Closing review, rejecting signing, failed/unknown outcomes or leaving the goal pauses setup; original request recovery remains available and resume skips verified vaults. Reload restores a paused owner-scoped setup marker, never an automatically resent financial request. Reuse live-panel/live-form/live-amounts, approved loading feedback and existing buttons; introduce no new palette or motion.

@@ -85,6 +85,8 @@ const MODEL_TARGETS: Record<WorkshopModel, [number, number, number]> = {
   laptop: [0, 1.15, 0],
   house: [0, 1.35, 0],
   custom: [0, 0.75, 0],
+  console: [0, 1.15, .2], camera: [0, 1.1, .15], motorcycle: [0, .9, 0],
+  bicycle: [0, .9, 0], phone: [0, 1.35, 0], travel: [0, 1.5, 0],
 };
 const MODEL_HOME: [number,number,number] = [0,0.06,0];
 
@@ -208,7 +210,7 @@ const PieceGeometry = memo(function PieceGeometry({
       <group rotation={[Math.PI / 2, 0, 0]}>
         <mesh geometry={geometry} material={material} dispose={null} castShadow={!ghost} receiveShadow />
         {!ghost && piece.kind === "tire" && <TireTread piece={piece} material={material} />}
-        {!ghost && piece.kind === "hub" && (
+        {!ghost && piece.kind === "hub" && piece.hubCap !== false && (
           <mesh
             geometry={hubCapGeometry}
             material={hubCapMaterial}
@@ -735,7 +737,8 @@ export default function CarWorkshop({
               ? "Home"
               : model === "laptop"
                 ? "Laptop"
-                : "Your sculpture"}{" "}
+                : model === "console" ? "Game console" : model === "camera" ? "Camera" : model === "motorcycle" ? "Motorcycle"
+                : model === "bicycle" ? "Bicycle" : model === "phone" ? "Smartphone" : model === "travel" ? "Travel suitcase" : "Your sculpture"}{" "}
           / 100 pieces
         </span>
       </div>

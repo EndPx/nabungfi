@@ -523,6 +523,8 @@ html {
   background: var(--paper);
   min-width: 0;
 }
+.live-model-preview .goal-illustration { height: var(--template-preview-height); background: var(--studio); border-radius: var(--radius-surface); }
+.live-model-preview img { width: 100%; height: 100%; object-fit: contain; }
 .live-panel .network-mark {
   background: var(--studio-light);
 }

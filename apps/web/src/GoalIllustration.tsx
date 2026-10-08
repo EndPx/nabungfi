@@ -1,6 +1,7 @@
 // Posters are captured from the same procedural renderer as the live models.
 // Savings detail renders the live interactive model separately.
 import { MODEL_POSTER_REVISION } from "./brick-details";
+import { isGoalModel } from "@nabungfi/shared/application";
 export function GoalIllustration({
   model,
   compact = false,
@@ -10,7 +11,7 @@ export function GoalIllustration({
   compact?: boolean;
   priority?: boolean;
 }) {
-  const key = ["car", "laptop", "house", "custom"].includes(model)
+  const key = isGoalModel(model)
     ? model
     : "custom";
   return (

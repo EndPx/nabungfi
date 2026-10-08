@@ -25,6 +25,7 @@ import type {
   SessionDTO,
 } from "@nabungfi/shared/application";
 import { EVM_DEPLOYMENTS } from "@nabungfi/shared/chain";
+import { GOAL_TEMPLATES } from "@nabungfi/shared/application";
 import { Button, Dialog, FormError, IconButton, NetworkMark, WorkshopBoundary } from "./ui";
 import { GoalIllustration } from "./Shell";
 import {
@@ -536,11 +537,13 @@ export function HistoryList({ history }: { history: GoalHistoryEntry[] }) {
 
 export function CreateGoalModal({
   wallets,
+  availableModels = GOAL_TEMPLATES.map(template=>template.id),
   busy,
   onClose,
   create,
 }: {
   wallets: SessionDTO["user"]["wallets"];
+  availableModels?: GoalModel[];
   busy: boolean;
   onClose: () => void;
   create: (body: CreateGoalRequest) => Promise<void>;
@@ -548,6 +551,7 @@ export function CreateGoalModal({
   const [name, setName] = useState("");
   const [target, setTarget] = useState("");
   const [model, setModel] = useState<GoalModel>("car");
+  useEffect(() => { if (!availableModels.includes(model) && availableModels[0]) setModel(availableModels[0]); }, [availableModels, model]);
   const [solanaOwner, setSolanaOwner] = useState(
     () =>
       wallets.find((wallet) => wallet.chainType === "solana")?.address ?? "",
@@ -569,7 +573,7 @@ export function CreateGoalModal({
     setError("");
     try {
       rawAmount(target);
-      if (!name.trim() || !accepted || !solanaOwner || !evmOwner)
+      if (!name.trim() || !accepted || !solanaOwner || !evmOwner || !availableModels.includes(model))
         throw new Error(
           "Name your goal, choose both verified owner wallets, and confirm the lock rules.",
         );
@@ -630,15 +634,17 @@ export function CreateGoalModal({
         <label className="live-field">
           Build model
           <select
+            aria-label="Build model"
             value={model}
             onChange={(event) => setModel(event.target.value as GoalModel)}
           >
-            <option value="car">Car</option>
-            <option value="laptop">Laptop</option>
-            <option value="house">House</option>
-            <option value="custom">Something else</option>
+            {GOAL_TEMPLATES.filter(template=>availableModels.includes(template.id)).map(template=><option key={template.id} value={template.id}>{template.label}</option>)}
           </select>
         </label>
+        <div className="live-model-preview">
+          <GoalIllustration model={model} compact priority />
+          <p className="live-help">{GOAL_TEMPLATES.find(template=>template.id===model)?.label} · 100 pieces</p>
+        </div>
         <label className="live-field">
           Solana owner
           <select

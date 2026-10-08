@@ -48,6 +48,7 @@ import { readGoalSnapshots, retainGoalPresentation } from "./goal-snapshots";
 import { prepareEvmProvider, assertEvmProviderIdentity } from "./wallet-provider";
 import { useWalletOnboarding } from "./useWalletOnboarding";
 import { hasOwnerWallets } from "./wallet-onboarding";
+import { GOAL_TEMPLATES, type GoalModel } from "@nabungfi/shared/application";
 import { useGoalSetup } from "./useGoalSetup";
 import { goalSetupStage } from "./goal-setup";
 export function useLiveController() {
@@ -73,6 +74,7 @@ export function useLiveController() {
   );
   const [session, setSession] = useState<SessionDTO | null>(null);
   const [goals, setGoals] = useState<GoalDTO[]>([]);
+  const [goalModels, setGoalModels] = useState<GoalModel[]>(["car", "laptop", "house"]);
   const [selectedId, setSelectedId] = useState<string | null>(
     () => readAppRoute(location).goalId,
   );
@@ -170,9 +172,10 @@ export function useLiveController() {
     const generation = ++readGeneration.current;
     setLoading(true);
     try {
-      const [nextSession, portfolio] = await Promise.all([
+      const [nextSession, portfolio, config] = await Promise.all([
         request<SessionDTO>("/api/session"),
         request<{ goals: GoalDTO[] }>("/api/goals"),
+        request<{ goalModels?: string[] }>("/api/config"),
       ]);
       if (
         identityRef.current !== identity ||
@@ -187,6 +190,8 @@ export function useLiveController() {
       if (!hasOwnerWallets(nextSession.user.wallets))
         throw new Error("Your wallet ownership is still syncing. Retry verification to finish setup.");
       setSession(nextSession);
+      const available = Array.isArray(config.goalModels) ? config.goalModels : ["car", "laptop", "house"];
+      setGoalModels(GOAL_TEMPLATES.filter(template=>available.includes(template.id)).map(template=>template.id));
       setGoals(prior => retainGoalPresentation(portfolio.goals,prior));
       setError("");
       const snapshots = await readGoalSnapshots(portfolio.goals, async id =>
@@ -953,6 +958,7 @@ export function useLiveController() {
     destination,
     session,
     goals,
+    goalModels,
     selected,
     history,
     loading,

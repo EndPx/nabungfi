@@ -3,7 +3,16 @@ import type { GoalBinding, GoalChainState, ChainPlan } from './chain.js';
 
 export const APP_NETWORKS = ['solana', 'base', 'arbitrum', 'ethereum'] as const;
 export type AppNetwork = typeof APP_NETWORKS[number];
-export type GoalModel = 'car' | 'laptop' | 'house' | 'custom';
+export const GOAL_TEMPLATES = [
+  { id: 'car', label: 'Car' }, { id: 'laptop', label: 'Laptop' }, { id: 'house', label: 'House' },
+  { id: 'console', label: 'Game console' }, { id: 'camera', label: 'Camera' },
+  { id: 'motorcycle', label: 'Motorcycle' }, { id: 'bicycle', label: 'Bicycle' },
+  { id: 'phone', label: 'Smartphone' }, { id: 'travel', label: 'Travel suitcase' },
+] as const;
+export type GoalModel = typeof GOAL_TEMPLATES[number]['id'] | 'custom';
+export function isGoalModel(value: unknown): value is GoalModel {
+  return value === 'custom' || GOAL_TEMPLATES.some(template => template.id === value);
+}
 export type GoalStepAction = 'create-vault' | 'initialize' | 'approve' | 'deposit' | 'prepare' | 'abort' | 'claim';
 export interface VerifiedWallet { chainType: 'ethereum' | 'solana'; address: string; walletId?: string }
 export interface SessionDTO { user: { id: string; privySubject: string; wallets: VerifiedWallet[] }; profile: 'testnet'; privyAppId: string; chains: AppNetwork[] }

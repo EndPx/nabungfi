@@ -2,10 +2,11 @@
 import { createRoot } from "react-dom/client";
 import Workshop from "../../src/CarWorkshop";
 import type { WorkshopModel } from "../../src/goal-models";
+import { isGoalModel } from "@nabungfi/shared/application";
 import "../../src/styles.css";
 const requested = new URLSearchParams(location.search).get("model");
 const model: WorkshopModel =
-  requested === "laptop" || requested === "house" || requested === "custom"
+  isGoalModel(requested)
     ? requested
     : "car";
 createRoot(document.getElementById("root")!).render(

@@ -80,6 +80,7 @@ function AuthenticatedApp() {
     destination,
     session,
     goals,
+    goalModels,
     selected,
     history,
     loading,
@@ -302,6 +303,7 @@ function AuthenticatedApp() {
           {creating && session && (
             <CreateGoalModal
               wallets={session.user.wallets}
+              availableModels={goalModels}
               busy={busy}
               onClose={() => setCreating(false)}
               create={createGoal}
