@@ -78,6 +78,7 @@ export function useLiveController() {
   const [selectedId, setSelectedId] = useState<string | null>(
     () => readAppRoute(location).goalId,
   );
+  const [historyView, setHistoryView] = useState(() => location.hash === "#goal-activity");
   const [history, setHistory] = useState<GoalHistoryEntry[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState("");
@@ -255,6 +256,7 @@ export function useLiveController() {
       const route = readAppRoute(location);
       setDestination(route.destination);
       setSelectedId(route.goalId);
+      setHistoryView(route.destination === "goals" && Boolean(route.goalId) && location.hash === "#goal-activity");
     };
     window.addEventListener("hashchange", update);
     window.addEventListener("popstate", update);
@@ -314,6 +316,7 @@ export function useLiveController() {
     navigateApp(next, goal, activity);
     setDestination(next);
     setSelectedId(goal ?? null);
+    setHistoryView(next === "goals" && Boolean(goal) && activity);
   };
   const report = (failure: unknown) =>
     setError(
@@ -998,6 +1001,7 @@ export function useLiveController() {
     goals,
     goalModels,
     selected,
+    historyView,
     history,
     historyLoading, historyError, refreshHistory: () => setHistoryRevision(value => value + 1),
     loading,

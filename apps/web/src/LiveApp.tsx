@@ -82,6 +82,7 @@ function AuthenticatedApp() {
     goals,
     goalModels,
     selected,
+    historyView,
     history,
     historyLoading, historyError, refreshHistory,
     loading,
@@ -180,7 +181,7 @@ function AuthenticatedApp() {
   );
   return (
     <Shell
-      destination={destination === "goals" && selected && location.hash === "#goal-activity" ? "activity" : destination}
+      destination={destination === "goals" && selected && historyView ? "activity" : destination}
       onNavigate={navigate}
       pending={hasPending}
       account={account}
@@ -240,7 +241,7 @@ function AuthenticatedApp() {
               Verifying your session and reading your goals…
             </div>
           ) : destination === "goals" ? (
-            selected && location.hash === "#goal-activity" ? (
+            selected && historyView ? (
               <GoalHistoryPage goal={selected} history={history} loading={historyLoading} error={historyError}
                 offline={pwa.offline} refresh={refreshHistory} back={() => navigate("activity")} openGoal={() => navigate("goals", selected.id)} />
             ) : goalSetup.intent && goalSetup.intent.goalId===readAppRoute(location).goalId ? (
@@ -266,7 +267,7 @@ function AuthenticatedApp() {
                   void planStep(selected, action, network, amountRaw)
                 }
                 setup={() => continueGoalSetup(selected)}
-                focusHistory={location.hash === "#goal-activity"}
+                focusHistory={historyView}
               />
             ) : (
                 <GoalsOverview
