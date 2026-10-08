@@ -205,8 +205,8 @@ export function WalletsPage({
         <div>
           <strong>Your wallet confirms every financial action</strong>
           <p>
-            NabungFi does not ask for your seed phrase. Signing and transaction
-            fees stay in your wallet.
+            NabungFi does not ask for your seed phrase. You review and approve
+            every transaction in your wallet.
           </p>
         </div>
       </div>
