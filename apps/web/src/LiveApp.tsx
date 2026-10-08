@@ -26,7 +26,7 @@ import {
   RecoveryPanel,
 } from "./live-components";
 import { useLiveController } from "./useLiveController";
-import { ActivityPage, WalletsPage, SettingsPage } from "./account-pages";
+import { ActivityPage, GoalHistoryPage, WalletsPage, SettingsPage } from "./account-pages";
 import { GoalsOverview } from "./GoalsOverview";
 import { FaucetsPage } from "./FaucetsPage";
 import { GoalSetupPanel } from "./GoalSetupPanel";
@@ -83,6 +83,7 @@ function AuthenticatedApp() {
     goalModels,
     selected,
     history,
+    historyLoading, historyError, refreshHistory,
     loading,
     initialReadSettled,
     walletOnboarding,
@@ -179,7 +180,7 @@ function AuthenticatedApp() {
   );
   return (
     <Shell
-      destination={destination}
+      destination={destination === "goals" && selected && location.hash === "#goal-activity" ? "activity" : destination}
       onNavigate={navigate}
       pending={hasPending}
       account={account}
@@ -239,7 +240,10 @@ function AuthenticatedApp() {
               Verifying your session and reading your goals…
             </div>
           ) : destination === "goals" ? (
-            goalSetup.intent && goalSetup.intent.goalId===readAppRoute(location).goalId ? (
+            selected && location.hash === "#goal-activity" ? (
+              <GoalHistoryPage goal={selected} history={history} loading={historyLoading} error={historyError}
+                offline={pwa.offline} refresh={refreshHistory} back={() => navigate("activity")} openGoal={() => navigate("goals", selected.id)} />
+            ) : goalSetup.intent && goalSetup.intent.goalId===readAppRoute(location).goalId ? (
               <GoalSetupPanel name={goalSetup.intent.name} goal={goals.find(goal=>goal.id===goalSetup.intent?.goalId)}
                 paused={goalSetup.intent.paused} blocked={busy || loading || pwa.offline || unresolved.length>0 || apiRequests.length>0}
                 requestPending={unresolved.length>0 || apiRequests.length>0}

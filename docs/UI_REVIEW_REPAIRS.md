@@ -27,3 +27,11 @@ An accidentally broad browser run reached legacy landing tests that still expect
 The native API release is `/opt/nabungfi/api-releases/ui-repairs-da04770c224dff77`, copied from the previous API-only template release and overlaid with three public server files. Only the API WorkingDirectory drop-in and API process changed. Health was verified; the global current release pointer and keeper PID remained unchanged. No migration, keeper deployment, key/configuration change or signed transaction was required.
 
 Fresh live blind reviews are a separate acceptance step. Their verdicts must be preserved as given, with actual coverage and session-sharing limitations; synthetic scores cannot certify transaction execution or human usability.
+
+## Second review correction
+
+The first three new evaluators still found gaps: one comprehension PARTIAL and two navigation PARTIAL. Paused setup intercepted its history destination; a lazy 3D scene could shift a deep-linked history section; completion delivery lacked an obvious in-app explanation. The original frozen reports are preserved.
+
+The follow-up gives history a dedicated view with its own loading/error/retry state, dates/outcomes, Back to activity and View goal. It does not mount a 3D scene or resume setup, and it works for incomplete goals independently of balance availability. Normal goal details keep the requested mobile order. The commitment section explains reaching the target, Prepare completion, completion delivery and per-chain claims. Collected copy now says completed goal, without assuming visual assembly is finished. Paused network setup labels its next step without implying wallet confirmation has already started.
+
+Thirteen focused history/repair browser checks passed after this correction; frontend unit tests remained 77/77 and the production build passed. Final evaluator acceptance is recorded separately after the deployed follow-up is tested.

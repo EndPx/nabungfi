@@ -79,6 +79,9 @@ export function useLiveController() {
     () => readAppRoute(location).goalId,
   );
   const [history, setHistory] = useState<GoalHistoryEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
+  const [historyRevision, setHistoryRevision] = useState(0);
   const [loading, setLoading] = useState(false);
   const [initialReadSettled, setInitialReadSettled] = useState(false);
   const [openingGoal, setOpeningGoal] = useState<{id:string;name:string;userId:string}|null>(null);
@@ -286,11 +289,12 @@ export function useLiveController() {
   useEffect(() => {
     if (!authenticated || !selectedId || !userId) {
       setHistory([]);
+      setHistoryLoading(false); setHistoryError("");
       return;
     }
     let active = true;
-    if (loading) return;
     setHistory([]);
+    setHistoryLoading(true); setHistoryError("");
     void request<{ history: GoalHistoryEntry[] }>(
       `/api/goals/${encodeURIComponent(selectedId)}/history`,
     )
@@ -298,15 +302,15 @@ export function useLiveController() {
         if (active) setHistory(result.history);
       })
       .catch(() => {
-        if (active) setHistory([]);
-      });
+        if (active) { setHistory([]); setHistoryError("The goal’s activity couldn’t be read. Retry to load its recorded wallet steps."); }
+      }).finally(() => {if (active) setHistoryLoading(false);});
     return () => {
       active = false;
     };
-  }, [authenticated, selectedId, request, userId, loading]);
+  }, [authenticated, selectedId, request, userId, loading, historyRevision]);
 
   const navigate = (next: Destination, goal?: string, activity = false) => {
-    if (goalSetup.intent && (next !== "goals" || goal !== goalSetup.intent.goalId)) goalSetup.pause();
+    if (goalSetup.intent && (activity || next !== "goals" || goal !== goalSetup.intent.goalId)) goalSetup.pause();
     navigateApp(next, goal, activity);
     setDestination(next);
     setSelectedId(goal ?? null);
@@ -995,6 +999,7 @@ export function useLiveController() {
     goalModels,
     selected,
     history,
+    historyLoading, historyError, refreshHistory: () => setHistoryRevision(value => value + 1),
     loading,
     initialReadSettled,
     walletOnboarding,

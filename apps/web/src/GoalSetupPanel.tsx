@@ -24,7 +24,7 @@ export function GoalSetupPanel({ goal, name, paused, blocked, resume, pause, ref
       const linked = initialized && goal?.chainStatus === "available" && goal.chainState?.positions.some(position => position.network === network && position.initialized && position.registered && position.linked);
       return <div className="live-amounts" key={network}>
         <span><NetworkMark network={network} /> {networks[network]}</span>
-        <strong>{linked ? "Ready" : initialized ? "Connecting" : stage.kind === "wallet" && stage.network === network ? "Wallet confirmation" : "Waiting"}</strong>
+        <strong>{linked ? "Ready" : initialized ? "Connecting" : stage.kind === "wallet" && stage.network === network ? paused ? "Next step" : "Review in progress" : "Waiting"}</strong>
       </div>;
     })}
     <p className="live-help">Each selected chain needs its gas token. Your wallet shows the fee before you confirm.</p>

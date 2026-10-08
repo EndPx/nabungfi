@@ -1,7 +1,8 @@
-import type { GoalDTO, SessionDTO } from "@nabungfi/shared/application";
-import { useId, useState } from "react";
+import type { GoalDTO, GoalHistoryEntry, SessionDTO } from "@nabungfi/shared/application";
+import { useEffect, useId, useRef, useState } from "react";
 import {
   Box,
+  ArrowLeft,
   ChevronRight,
   Copy,
   ExternalLink,
@@ -16,6 +17,27 @@ import { Button, NetworkMark, PageHeading } from "./ui";
 import { InstallPanel } from "./Shell";
 import { phases } from "./live-config";
 import { WalletAddress } from "./WalletAddress";
+import { HistoryList } from "./live-components";
+
+export function GoalHistoryPage({goal,history,loading,error,offline,refresh,back,openGoal}: {
+  goal: GoalDTO; history: GoalHistoryEntry[]; loading: boolean; error: string; offline: boolean;
+  refresh: () => void; back: () => void; openGoal: () => void;
+}) {
+  const section = useRef<HTMLElement>(null);
+  useEffect(() => {section.current?.focus({preventScroll:true});section.current?.scrollIntoView({block:"start",behavior:"instant"});},[goal.id]);
+  return <>
+    <button type="button" className="live-back" onClick={back}><ArrowLeft size={18} />Back to activity</button>
+    <PageHeading title={goal.name} description="Goal activity · Recorded wallet steps, with their dates and outcomes.">
+      <Button variant="secondary" onClick={openGoal}>View goal<ChevronRight size={18} /></Button>
+    </PageHeading>
+    <section ref={section} tabIndex={-1} id="goal-activity" className="live-panel goal-history-panel" aria-label="Goal activity">
+      <h2>Goal activity</h2>
+      {loading ? <p className="live-help" role="status">Loading recorded wallet steps…</p> : error ? <p className="live-error" role="alert">{error}</p> : <HistoryList history={history} />}
+      <Button variant="quiet" disabled={loading || offline} busy={loading} onClick={refresh}><RefreshCw size={18} />{error ? "Retry history" : "Refresh history"}</Button>
+      {offline && <p className="live-help">Reconnect to read the latest activity.</p>}
+    </section>
+  </>;
+}
 
 export function ActivityPage({
   goals,

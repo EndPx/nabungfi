@@ -419,7 +419,7 @@ export function GoalDetail({
               </div>
             ) : state?.phase === "claimed" ? (
               <p className="live-help">
-                All savings have been collected. Your completed build stays here.
+                All savings have been collected. Your completed goal stays here. Assemble or replay its funded pieces anytime.
               </p>
             ) : (
               <p className="live-help">
@@ -494,6 +494,15 @@ export function GoalDetail({
               and your wallet balance do not count. No deadline guarantees an
               unlock.
             </p>
+            <details className="goal-completion-help">
+              <summary>How your savings unlock</summary>
+              <ol className="live-help">
+                <li>Save until this goal reaches its own target.</li>
+                <li>Choose Prepare completion. NabungFi verifies the goal and delivers completion messages to its vaults.</li>
+                <li>Claim savings on each chain when its completion message arrives. Each claim needs your wallet confirmation.</li>
+              </ol>
+              <p className="live-help">If a chain is still waiting, refresh its status. Arrival times can differ; a delay doesn’t send a new transaction or change your target.</p>
+            </details>
           </section>
         </aside>
         <section ref={activityRef} id="goal-activity" tabIndex={-1} className="live-panel goal-history-panel" aria-label="Goal activity">

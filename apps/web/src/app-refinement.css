@@ -27,6 +27,9 @@
 .live-shell .workshop-explanation { margin: var(--space-3) var(--space-6); color: var(--muted); font-size: var(--text-sm); line-height: 1.5; }
 .live-shell .goal-history-panel { scroll-margin-block-start: var(--space-6); }
 .live-shell .recovery-panel { margin-block-end: var(--space-6); }
+.live-shell .goal-completion-help { margin-block-start: var(--space-4); }
+.live-shell .goal-completion-help summary { cursor: pointer; min-block-size: var(--touch-min); padding-block: var(--space-3); }
+.live-shell .goal-completion-help li { margin-block: var(--space-3); }
 .live-shell .portfolio-summary { border: 1px solid var(--app-line); background: var(--app-pocket); border-radius: var(--radius-stage); padding: var(--space-6) var(--space-8); margin-block-end: var(--space-4); gap: var(--space-8); box-shadow: none; }
 .live-shell .portfolio-label { display: flex; align-items: center; gap: var(--space-3); }
 .live-shell .portfolio-label .icon-button { width: var(--touch-min); height: var(--touch-min); border: 0; background: transparent; }

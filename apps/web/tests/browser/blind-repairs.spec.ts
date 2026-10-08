@@ -31,6 +31,9 @@ test('history navigation focuses and reveals activity rather than the model',asy
  await page.getByRole('button',{name:'View history'}).click();
  await expect(page.locator('#goal-activity')).toBeFocused();
  await expect(page.locator('#goal-activity time').first()).toBeInViewport();
+ await expect(page.locator('.car-stage')).toHaveCount(0);
+ await page.getByRole('button',{name:'Back to activity'}).click();
+ await expect(page.getByRole('button',{name:'View history'})).toBeVisible();
 });
 
 test('visual assembly count is distinct from funded completion',async({page})=>{
@@ -39,6 +42,19 @@ test('visual assembly count is distinct from funded completion',async({page})=>{
  await expect(page.getByText(/100 \/ 100 pieces funded by this goal/)).toBeVisible();
  await expect(page.getByText(/Assembly is visual/)).toBeVisible();
  await expect(page.getByText(/Total collected · Target/)).toBeVisible();
+ await expect(page.getByText(/Your completed goal stays here/)).toBeVisible();
+ await page.getByText('How your savings unlock',{exact:true}).click();
+ await expect(page.getByText(/Choose Prepare completion/)).toBeVisible();
+ await expect(page.getByText(/Claim savings on each chain/)).toBeVisible();
+});
+
+test('history for an unavailable goal remains readable and history errors have a read-only retry',async({page})=>{
+ await page.goto('/tests/browser/harness.html?page=activity&history-error=1&history=1&available=0');
+ await page.getByRole('button',{name:'View history'}).click();
+ await expect(page.getByRole('alert')).toContainText('activity couldn’t be read');
+ await page.getByRole('button',{name:'Retry history'}).click();
+ await expect(page.locator('output[aria-label="Fixture requested action"]')).toHaveText('refresh-history');
+ await expect(page.locator('.car-stage')).toHaveCount(0);
 });
 
 test('unsigned review exposes cancellation while attempted transactions retain original-hash recovery',async({page})=>{

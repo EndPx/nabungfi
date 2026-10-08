@@ -22,6 +22,7 @@ import {
 } from "../../src/live-components";
 import {
   ActivityPage,
+  GoalHistoryPage,
   WalletsPage,
   SettingsPage,
 } from "../../src/account-pages";
@@ -140,6 +141,10 @@ function Harness() {
       {destination === "goals" &&
         (params.get("view") === "allocation" ? <section className="live-panel goal-chain-panel"><h2>Where your pieces are</h2><ChainAllocation positions={allocationExample} /></section> : detail && pendingRead && params.has("creating-read") ? (
           <LoadingState message="Creating your goal…" description={`Getting ${selectedGoal.name} ready for you.`} />
+        ) : detail && focusActivity ? (
+          <GoalHistoryPage goal={selectedGoal} history={history} loading={false} error={params.has("history-error") ? "The goal’s activity couldn’t be read. Retry to load its recorded wallet steps." : ""}
+            offline={false} refresh={() => setAction("refresh-history")} back={() => {setDestination("activity");setDetail(false);setFocusActivity(false);}}
+            openGoal={() => setFocusActivity(false)} />
         ) : detail ? (
           <GoalDetail
             goal={selectedGoal}
