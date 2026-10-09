@@ -76,6 +76,8 @@ const goal = {
         ? "achieved"
         : phase === "preparing"
           ? "preparing"
+          : phase === "aborting"
+            ? "aborting"
           : "saving",
     observedAt: "2026-10-02T00:00:00Z",
     targetRaw,
@@ -84,7 +86,7 @@ const goal = {
     totalClaimedRaw: phase === "claimed" ? "10000000" : "0",
     linked: true,
     claimable: phase === "achieved",
-    canPrepare: BigInt(amount) >= BigInt(targetRaw) && phase === "saving",
+    canPrepare: !params.has("syncing") && BigInt(amount) >= BigInt(targetRaw) && phase === "saving",
     positions,
   } as GoalChainState,
 } as GoalDTO;

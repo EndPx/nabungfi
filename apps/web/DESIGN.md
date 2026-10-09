@@ -1,5 +1,9 @@
 # NabungFi interface system
 
+## Completion and cancellation clarity — 9 October 2026
+
+At a funded target, make Prepare completion the primary action. Financial progress may be 100% while the model waits at 99 parts until verified achievement; explain this without implying funds are lost. Preparing says Verifying completion with a live status explaining that selected vaults, including zero-balance vaults, must confirm before claims unlock. Aborting says Cancelling completion and explains that funds stay in the vaults while acknowledgements return, after which the owner can prepare again. A funded saving goal awaiting eligibility says Syncing vault balances and asks for a read refresh, never a second signed transaction. Put the owner-initiated Cancel completion button behind a native Completion options disclosure and describe its effect in both the disclosure and wallet review. Do not show a disabled Add savings as the only action during these transitions. Reuse existing typography, status text, disclosure, button and surface tokens. No new automatic signatures, claim eligibility or keeper policy changes.
+
 ## Sponsored deposit entry
 
 Deposit entry derives sponsorship availability from the current server capability and authoritative linked embedded goal-owner wallets. Eligible sponsored owners may review a deposit with zero native gas; direct wallets retain their gas-balance requirement. USDC balance, immutable goal ownership, lock consent and the server's fresh canonical plan remain required. Draft values stay editable during background reads, while final plan actions show a visible waiting reason. Report plan failures inside the dialog rather than silently returning. Reuse the current labelled fields, status text, buttons and spacing tokens.

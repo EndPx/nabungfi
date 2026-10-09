@@ -388,35 +388,43 @@ export function GoalDetail({
               </p>
             ) : !achieved ? (
               <div className="live-form">
-                <Button
-                  variant="build"
-                  disabled={
-                    busy ||
-                    goal.chainStatus !== "available" ||
-                    state.phase !== "saving"
-                  }
-                  onClick={deposit}
-                >
-                  <Plus size={18} />
-                  Add savings
-                </Button>
+                {state.phase === "preparing" && <div role="status" className="completion-status">
+                  <strong>Verifying completion</strong>
+                  <p className="live-help">Your request is confirmed. We’re waiting for every selected vault to verify this goal before savings can be claimed. Even a chain with a zero balance must confirm.</p>
+                  <p className="live-help">Keep this completion running. Status updates automatically; you can also refresh. The final build piece appears after completion is verified.</p>
+                </div>}
+                {state.phase === "aborting" && <div role="status" className="completion-status">
+                  <strong>Cancelling completion</strong>
+                  <p className="live-help">The current completion round was cancelled. Your funds stay in your vaults while we wait for the selected chains to acknowledge the cancellation.</p>
+                  <p className="live-help">Once this finishes, Prepare completion becomes available again after balances are verified. Status updates automatically; you can also refresh.</p>
+                </div>}
+                {state.phase === "saving" && nextPiece.targetFunded && !state.canPrepare && <div role="status" className="completion-status">
+                  <strong>Syncing vault balances</strong>
+                  <p className="live-help">Your target is funded. We’re waiting for verified balances and ready vaults on every selected chain before you can prepare completion. Refresh to check the latest status.</p>
+                </div>}
                 {state?.canPrepare && (
                   <Button
+                    variant="build"
                     disabled={busy}
                     onClick={() => step("prepare", "solana")}
                   >
                     Prepare completion
                   </Button>
                 )}
-                {state?.phase === "preparing" && (
+                {state.phase === "saving" && <Button variant={state.canPrepare ? "secondary" : "build"} disabled={busy || goal.chainStatus !== "available"} onClick={deposit}>
+                  <Plus size={18} />Add savings
+                </Button>}
+                {state?.phase === "preparing" && <details className="goal-completion-help">
+                  <summary>Completion options</summary>
+                  <p className="live-help">Cancel only if you want to stop this completion round and return to saving. Cancellation needs your wallet confirmation and acknowledgements from the selected chains; it does not unlock or withdraw funds.</p>
                   <Button
                     variant="secondary"
                     disabled={busy}
                     onClick={() => step("abort", "solana")}
                   >
-                    Return to saving
+                    Cancel completion
                   </Button>
-                )}
+                </details>}
               </div>
             ) : state?.phase === "claimed" ? (
               <p className="live-help">
@@ -985,6 +993,7 @@ export function WalletStepModal({
             deposit funds.
           </p>
         )}
+        {step.action === "abort" && <p className="live-help">This cancels the current completion round. Funds stay locked in your vaults. Wait for every selected chain to acknowledge the cancellation before preparing again. This does not claim or withdraw savings.</p>}
         {plan?.gasPayment && step.network === "solana" && step.action === "initialize" && <p className="live-help">Your wallet will show any account-creation funding before you confirm.</p>}
         {!canSign && (
           <p className="live-help">

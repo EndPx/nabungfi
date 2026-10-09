@@ -16,14 +16,14 @@ export const actions: Record<GoalStepAction, string> = {
   approve: "Approve USDC",
   deposit: "Deposit USDC",
   prepare: "Prepare completion",
-  abort: "Return to saving",
+  abort: "Cancel completion",
   claim: "Claim savings",
 };
 export const phases: Record<string, string> = {
   unprovisioned: "Set up vaults",
   saving: "Saving",
-  preparing: "Preparing funds",
-  aborting: "Returning to saving",
+  preparing: "Verifying completion",
+  aborting: "Cancelling completion",
   achieved: "Goal achieved",
   claimed: "Collected",
 };
