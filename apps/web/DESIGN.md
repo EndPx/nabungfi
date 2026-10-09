@@ -1,5 +1,9 @@
 # NabungFi interface system
 
+## Sponsored deposit entry
+
+Deposit entry derives sponsorship availability from the current server capability and authoritative linked embedded goal-owner wallets. Eligible sponsored owners may review a deposit with zero native gas; direct wallets retain their gas-balance requirement. USDC balance, immutable goal ownership, lock consent and the server's fresh canonical plan remain required. Draft values stay editable during background reads, while final plan actions show a visible waiting reason. Report plan failures inside the dialog rather than silently returning. Reuse the current labelled fields, status text, buttons and spacing tokens.
+
 ## Sponsored recovery correction — 9 October 2026
 
 Wallet review distinguishes an expired unsigned plan, an already-started wallet request, and missing recovery data. An attempted request stays on its original receipt even when its unsigned plan expires; never describe it as an unsigned expiry or enable signing again. Its primary action opens the recovery panel. Recovery transaction references provide an explorer link, an explicit Copy transaction hash control, and a Full transaction hash disclosure using the existing address wrapping, controls and surface tokens. Clipboard failure reveals the complete selectable hash. These read-only controls remain available while an operation is unresolved; they never sign, resubmit, replace an original hash, or change goal ownership.
