@@ -13,4 +13,6 @@ The cover is an original generated illustration using the application's model ar
 
 Keep new claims tied to current source and dated acceptance evidence. The app is cash-only on testnets; the recorded four-chain browser lifecycle and the separate sponsored Base + Solana lifecycle have different scopes. Mainnet, earning, independent security review and sustained operation must not be inferred from those results.
 
+The Problem article includes external research on partitioned savings, voluntary withdrawal restrictions and goal visualization. Its study figures are not measured NabungFi outcomes. The future pitch's draft problem sequence, citations and claim boundaries are retained in [problem evidence](https://github.com/EndPx/nabungfi/blob/main/docs/pitch/problem-evidence.md); carry those contexts into slide captions and speaker notes.
+
 The GitBook connector can import these roots from the public repository. A one-time import is separate from configuring continuous Git Sync in the GitBook app. Make later published page edits through change requests, preserve stable slugs, and keep validation logs, credentials, signed wires and personal account data outside this source tree.
