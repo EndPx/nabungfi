@@ -125,6 +125,11 @@ test('Solana sponsored initialization accepts only an inbound rent prefix for th
  const keys=actual.staticAccountKeys,pre=keys.map(()=>0),post=[...pre];pre[0]=10000;post[0]=9300;
  post[keys.findIndex(key=>key.toBase58()===b.solanaGoal)]=400;post[keys.findIndex(key=>key.toBase58()===b.solanaCash)]=200;
  assertSponsorRentConservation(b,plan,keys,{preBalances:pre,postBalances:post,fee:100},600n);
+ const fundedPre=[...pre],fundedPost=[...post],ownerIndex=keys.findIndex(key=>key.toBase58()===plan.owner);
+ fundedPre[ownerIndex]=1000;fundedPost[ownerIndex]=1000;
+ assertSponsorRentConservation(b,plan,keys,{preBalances:fundedPre,postBalances:fundedPost,fee:100},600n);
+ fundedPre[ownerIndex]=200;fundedPost[ownerIndex]=0;fundedPost[0]=9500;
+ assertSponsorRentConservation(b,plan,keys,{preBalances:fundedPre,postBalances:fundedPost,fee:100},400n);
  assert.throws(()=>assertSponsorRentConservation(b,plan,keys,{preBalances:pre,postBalances:post,fee:100},601n));
  const changed=[...post];changed[0]=9200;assert.throws(()=>assertSponsorRentConservation(b,plan,keys,{preBalances:pre,postBalances:changed,fee:100},600n));
  assert.throws(()=>assertSponsoredSolanaMessage(sol,message(new PublicKey(owner.solana))));

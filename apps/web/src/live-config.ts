@@ -45,6 +45,7 @@ export const supportedChains = Object.entries(EVM_DEPLOYMENTS).map(
         ],
       },
     },
+    blockExplorers: { default: { name: `${networks[key as AppNetwork]} explorer`, url: chain.explorer } },
     testnet: true,
   }),
 );

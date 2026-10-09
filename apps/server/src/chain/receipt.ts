@@ -102,7 +102,7 @@ export function assertSponsorRentConservation(b:GoalBinding,plan:ChainPlan,keys:
     if(!accounts.length)reject();let rent=0n;
     for(const account of accounts){const index=keys.findIndex(key=>key.toBase58()===account);if(index<0||meta.preBalances[index]!==0||!meta.postBalances[index])reject();rent+=BigInt(meta.postBalances[index]!);}
     const deficit=rent>ownerBefore?rent-ownerBefore:0n;
-    if(grant!==deficit||payerDebit!==grant+BigInt(meta.fee)||ownerAfter!==ownerBefore+grant-rent)reject();
+    if((grant!==rent&&grant!==deficit)||payerDebit!==grant+BigInt(meta.fee)||ownerAfter!==ownerBefore+grant-rent)reject();
 }
 export async function reconcile(rpc: RpcTransport, b: GoalBinding, plan: ChainPlan, submitted: string): Promise<ReconcileResult> {
     validateBinding(b);
