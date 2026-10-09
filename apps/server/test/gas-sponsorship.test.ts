@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {Keypair,PublicKey,TransactionMessage,VersionedTransaction} from '@solana/web3.js';
+import {Keypair,PublicKey,SystemProgram,TransactionMessage,VersionedTransaction,MessageV0} from '@solana/web3.js';
 import {encodeAbiParameters,encodeEventTopics,encodeFunctionData,parseAbiParameters,type Hex} from 'viem';
 import {ENTRY_POINT,ENTRY_ABI,ACCOUNT_ABI,KERNEL_ABI,KERNEL_7702,sponsoredEvmReceipt,assertSponsoredSolanaMessage} from '../src/chain/sponsored-receipt.js';
-import {deriveGoalBinding,configurationHash,financialInstruction,ABI,word,addressWord,solanaAddressWord} from '../src/chain/codec.js';
+import {deriveGoalBinding,configurationHash,financialInstruction,initializeInstruction,ABI,word,addressWord,solanaAddressWord} from '../src/chain/codec.js';
 import {assertUsablePlan,assertPlan,planFingerprint,sponsoredFeeSimulationError} from '../src/chain/planner.js';
 import {resolveExpiredSolana} from '../src/chain/expired-solana.js';
-import {assertTokenEvent,type EvmReceipt,type EvmTransaction} from '../src/chain/receipt.js';
+import {assertTokenEvent,assertSponsorRentConservation,type EvmReceipt,type EvmTransaction} from '../src/chain/receipt.js';
 import {testnetGasPayment,assertGasEligibility} from '../src/gas-policy.js';
 import {authoritativeWallets} from '../src/auth.js';
 import type {RpcTransport} from '../src/chain/rpc.js';
@@ -109,6 +109,25 @@ test('Solana sponsorship permits only payer/blockhash changes while preserving o
 test('original unsigned blockhash expiry cannot close an unknown sponsored Solana outcome',async()=>{
  await assert.rejects(resolveExpiredSolana({} as RpcTransport,b,sol),(error:any)=>error.code==='SPONSORED_ORIGINAL_SIGNATURE_REQUIRED');
  assert.equal(sponsoredFeeSimulationError('InsufficientFundsForFee'),true);assert.equal(sponsoredFeeSimulationError({InstructionError:[0,'InsufficientFunds']}),false);
+});
+test('Solana sponsored initialization accepts only an inbound rent prefix for the exact canonical account deficit',()=>{
+ const instruction=initializeInstruction(b),payer=Keypair.generate().publicKey;
+ const unsigned=new VersionedTransaction(new TransactionMessage({payerKey:new PublicKey(owner.solana),recentBlockhash:b.solanaGoal,instructions:[instruction]}).compileToV0Message());
+ const plan=sealed({...solRaw,action:'initialize',amountRaw:undefined,transaction:{kind:'solana',chainId:'solana-devnet',base64:Buffer.from(unsigned.serialize()).toString('base64'),blockhash:b.solanaGoal,lastValidBlockHeight:1}});
+ const message=(recipient:PublicKey,amount=600n)=>new TransactionMessage({payerKey:payer,recentBlockhash:payer.toBase58(),instructions:[SystemProgram.transfer({fromPubkey:payer,toPubkey:recipient,lamports:amount}),instruction]}).compileToV0Message();
+ const actual=message(new PublicKey(owner.solana));assert.equal(assertSponsoredSolanaMessage(plan,actual),600n);
+ const order=actual.staticAccountKeys.map((_,index)=>index),start=order.length-actual.header.numReadonlyUnsignedAccounts;
+ order.splice(start,order.length-start,...order.slice(start).reverse());const remap=(index:number)=>order.indexOf(index);
+ const reordered=new MessageV0({header:{...actual.header},staticAccountKeys:order.map(index=>actual.staticAccountKeys[index]!),recentBlockhash:actual.recentBlockhash,addressTableLookups:[],compiledInstructions:actual.compiledInstructions.map(instruction=>({...instruction,programIdIndex:remap(instruction.programIdIndex),accountKeyIndexes:instruction.accountKeyIndexes.map(remap)}))});
+ assert.equal(assertSponsoredSolanaMessage(plan,reordered),600n);
+ reordered.header.numReadonlyUnsignedAccounts--;assert.throws(()=>assertSponsoredSolanaMessage(plan,reordered));
+ assert.throws(()=>assertSponsoredSolanaMessage(plan,message(Keypair.generate().publicKey)));
+ const keys=actual.staticAccountKeys,pre=keys.map(()=>0),post=[...pre];pre[0]=10000;post[0]=9300;
+ post[keys.findIndex(key=>key.toBase58()===b.solanaGoal)]=400;post[keys.findIndex(key=>key.toBase58()===b.solanaCash)]=200;
+ assertSponsorRentConservation(b,plan,keys,{preBalances:pre,postBalances:post,fee:100},600n);
+ assert.throws(()=>assertSponsorRentConservation(b,plan,keys,{preBalances:pre,postBalances:post,fee:100},601n));
+ const changed=[...post];changed[0]=9200;assert.throws(()=>assertSponsorRentConservation(b,plan,keys,{preBalances:pre,postBalances:changed,fee:100},600n));
+ assert.throws(()=>assertSponsoredSolanaMessage(sol,message(new PublicKey(owner.solana))));
 });
 test('sponsored wallet-start still checks sealed route and exact calldata with zero owner gas; direct mode still rejects',async()=>{
  let simulations=0,gasReads=0;const peer=b.participants[0]!;

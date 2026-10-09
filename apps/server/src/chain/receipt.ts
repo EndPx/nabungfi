@@ -92,6 +92,18 @@ function checkedHash(plan: ChainPlan, hash: string): string {
         throw new ChainValidationError('INVALID_TRANSACTION_HASH', 'Use the original Solana signature.');
     return hash;
 }
+export function assertSponsorRentConservation(b:GoalBinding,plan:ChainPlan,keys:PublicKey[],meta:{preBalances:number[];postBalances:number[];fee:number},grant:bigint):void {
+    const reject=()=>{throw new ChainValidationError('SPONSOR_RENT_CONSERVATION','Sponsor rent must fund only the exact canonical account deficit.');};
+    if(meta.preBalances.length!==keys.length||meta.postBalances.length!==keys.length||[...meta.preBalances,...meta.postBalances,meta.fee].some(value=>!Number.isSafeInteger(value)||value<0))reject();
+    const ownerIndex=keys.findIndex(key=>key.toBase58()===plan.owner);if(ownerIndex<0)reject();
+    const payerDebit=BigInt(meta.preBalances[0]!) - BigInt(meta.postBalances[0]!);
+    const ownerBefore=BigInt(meta.preBalances[ownerIndex]!),ownerAfter=BigInt(meta.postBalances[ownerIndex]!);
+    const accounts=plan.action==='initialize'?[b.solanaGoal,b.solanaCash]:plan.action==='claim'?[ownerAta(b.owner.solana)]:[];
+    if(!accounts.length)reject();let rent=0n;
+    for(const account of accounts){const index=keys.findIndex(key=>key.toBase58()===account);if(index<0||meta.preBalances[index]!==0||!meta.postBalances[index])reject();rent+=BigInt(meta.postBalances[index]!);}
+    const deficit=rent>ownerBefore?rent-ownerBefore:0n;
+    if(grant!==deficit||payerDebit!==grant+BigInt(meta.fee)||ownerAfter!==ownerBefore+grant-rent)reject();
+}
 export async function reconcile(rpc: RpcTransport, b: GoalBinding, plan: ChainPlan, submitted: string): Promise<ReconcileResult> {
     validateBinding(b);
     assertPlan(b, plan);
@@ -164,8 +176,9 @@ export async function reconcile(rpc: RpcTransport, b: GoalBinding, plan: ChainPl
     }
     const expected = VersionedTransaction.deserialize(Buffer.from(plan.transaction.base64, 'base64'));
     if (tx.transaction.signatures[0] !== hash) return attention('TRANSACTION_SUBSTITUTION');
+    let sponsorRentGrant = 0n;
     if (plan.gasPayment) {
-        try { assertSponsoredSolanaMessage(plan,tx.transaction.message as import('@solana/web3.js').MessageV0); } catch { return attention('TRANSACTION_SUBSTITUTION'); }
+        try { sponsorRentGrant=assertSponsoredSolanaMessage(plan,tx.transaction.message as import('@solana/web3.js').MessageV0); } catch { return attention('TRANSACTION_SUBSTITUTION'); }
     } else if (!Buffer.from(tx.transaction.message.serialize()).equals(Buffer.from(expected.message.serialize())) || tx.transaction.message.staticAccountKeys[0]?.toBase58() !== b.owner.solana) return attention('TRANSACTION_SUBSTITUTION');
     if (tx.blockTime === null || tx.blockTime === undefined)
         return { status: 'pending', transactionHash: hash, reasonCode: 'RECEIPT_TIME_UNAVAILABLE' };
@@ -175,6 +188,11 @@ export async function reconcile(rpc: RpcTransport, b: GoalBinding, plan: ChainPl
         return attention('MISSING_TRANSACTION_METADATA');
     if (tx.meta.err)
         return { status: 'failed', transactionHash: hash, reasonCode: 'ONCHAIN_TRANSACTION_FAILED' };
+    if (sponsorRentGrant > 0n) {
+        // Only a sponsor-funded rent deficit for canonical newly created accounts is permitted.
+        // This is not an exception for arbitrary SOL transfers or for owner-paid network fees.
+        try{assertSponsorRentConservation(b,plan,tx.transaction.message.staticAccountKeys,tx.meta,sponsorRentGrant);}catch{return attention('SPONSOR_RENT_CONSERVATION');}
+    }
     if (plan.action === 'initialize') {
         const account = (await rpc.solana.getAccountInfoAndContext(new PublicKey(b.solanaGoal), { commitment: 'confirmed', minContextSlot: tx.slot })).value;
         if (!account || account.owner.toBase58() !== 'FWfjDER6zJbP227GymMqTwGveJ5fjw7nKJvwLEAbXsZn')

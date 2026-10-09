@@ -980,7 +980,7 @@ export function WalletStepModal({
             deposit funds.
           </p>
         )}
-        {plan?.gasPayment && step.network === "solana" && step.action === "initialize" && <p className="live-help">Solana account creation can still require SOL for rent. Network fee sponsorship does not change your goal’s account funding.</p>}
+        {plan?.gasPayment && step.network === "solana" && step.action === "initialize" && <p className="live-help">Your wallet will show any account-creation funding before you confirm.</p>}
         {!canSign && (
           <p className="live-help">
             {unsigned && expired ? "This unsigned plan expired. Refresh the same step before opening your wallet."

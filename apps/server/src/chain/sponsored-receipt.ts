@@ -1,4 +1,4 @@
-import { PublicKey, TransactionMessage, VersionedTransaction, type MessageV0 } from '@solana/web3.js';
+import { PublicKey, SystemProgram, TransactionMessage, VersionedTransaction, type MessageV0 } from '@solana/web3.js';
 import { decodeFunctionData, decodeEventLog, encodeFunctionData, decodeAbiParameters, encodeAbiParameters, parseAbiParameters, parseAbi, type Hex } from 'viem';
 import { ChainValidationError, type ChainPlan } from '@nabungfi/shared/chain';
 import type { RpcTransport } from './rpc.js';
@@ -23,6 +23,18 @@ export const ACCOUNT_ABI = parseAbi([
   `function executeUserOp(${USER_OP_TUPLE} userOp,bytes32 userOpHash)`,
 ]);
 function bad(): never { throw new ChainValidationError('TRANSACTION_SUBSTITUTION', 'The sponsored operation does not prove this exact owner action.'); }
+function sameSolanaAccountsAndInstructions(expected:MessageV0,actual:MessageV0):boolean {
+  if(expected.staticAccountKeys.length!==actual.staticAccountKeys.length||new Set(actual.staticAccountKeys.map(key=>key.toBase58())).size!==actual.staticAccountKeys.length)return false;
+  for(let i=0;i<expected.staticAccountKeys.length;i++){
+    const index=actual.staticAccountKeys.findIndex(key=>key.equals(expected.staticAccountKeys[i]!));
+    if(index<0||actual.isAccountSigner(index)!==expected.isAccountSigner(i)||actual.isAccountWritable(index)!==expected.isAccountWritable(i))return false;
+  }
+  const a=TransactionMessage.decompile(expected).instructions,b=TransactionMessage.decompile(actual).instructions;
+  return a.length===b.length&&a.every((instruction,i)=>{
+    const received=b[i]!;
+    return instruction.programId.equals(received.programId)&&instruction.data.equals(received.data)&&instruction.keys.length===received.keys.length&&instruction.keys.every((key,j)=>key.pubkey.equals(received.keys[j]!.pubkey)&&key.isSigner===received.keys[j]!.isSigner&&key.isWritable===received.keys[j]!.isWritable);
+  });
+}
 
 /** ERC-4337 v0.7 + Alchemy's canonical 7702 account. Unsupported envelopes fail closed.
  * Sources: eth-infinitism/account-abstraction v0.7.0; alchemyplatform/modular-account v2.0.2; zerodevapp/kernel v3.3. */
@@ -92,19 +104,30 @@ export async function sponsoredEvmReceipt(rpc: RpcTransport, plan: ChainPlan, tx
 
 /** Recompile the same instruction/account permissions with only a replacement payer and blockhash.
  * Extra instructions, altered owner signer, lookup tables, amounts and recipients are rejected. */
-export function assertSponsoredSolanaMessage(plan: ChainPlan, actual: MessageV0): void {
+export function assertSponsoredSolanaMessage(plan: ChainPlan, actual: MessageV0): bigint {
   if (plan.gasPayment !== 'privy-testnet' || plan.transaction.kind !== 'solana' || actual.addressTableLookups.length) bad();
   const original = VersionedTransaction.deserialize(Buffer.from(plan.transaction.base64,'base64'));
   const payer = actual.staticAccountKeys[0];
   if (!payer || payer.toBase58() === plan.owner || !actual.isAccountSigner(0)) bad();
   const decompiled = TransactionMessage.decompile(original.message);
-  const expected = new TransactionMessage({payerKey:payer,recentBlockhash:actual.recentBlockhash,instructions:decompiled.instructions}).compileToV0Message();
+  const received = TransactionMessage.decompile(actual);
+  let grant = 0n;
+  let instructions = decompiled.instructions;
+  if (received.instructions.length === instructions.length + 1) {
+    const first = received.instructions[0]!;
+    if (!['initialize','claim'].includes(plan.action) || !first.programId.equals(SystemProgram.programId) || first.data.length !== 12 || first.data.readUInt32LE(0) !== 2 || first.keys.length !== 2 || !first.keys[0]!.pubkey.equals(payer) || first.keys[1]!.pubkey.toBase58() !== plan.owner) bad();
+    grant = first.data.readBigUInt64LE(4);
+    if (grant === 0n) bad();
+    instructions = [SystemProgram.transfer({fromPubkey:payer,toPubkey:new PublicKey(plan.owner),lamports:grant}),...instructions];
+  }
+  const expected = new TransactionMessage({payerKey:payer,recentBlockhash:actual.recentBlockhash,instructions}).compileToV0Message();
   const ownerIndex = actual.staticAccountKeys.findIndex(key => key.equals(new PublicKey(plan.owner)));
   if (ownerIndex < 0 || !actual.isAccountSigner(ownerIndex)) bad();
-  if (Buffer.from(expected.serialize()).equals(Buffer.from(actual.serialize()))) return;
+  if (sameSolanaAccountsAndInstructions(expected,actual)) return grant;
   // The original fee payer is implicitly writable. Recompiling may remove that implicit privilege
   // when the owner becomes a non-payer. This only narrows permission; all actual instructions remain identical.
-  const narrowed = decompiled.instructions.map(instruction => ({...instruction,keys:instruction.keys.map(key => key.pubkey.toBase58() === plan.owner ? {...key,isWritable:false} : key)}));
+  const narrowed = instructions.map(instruction => ({...instruction,keys:instruction.keys.map(key => key.pubkey.toBase58() === plan.owner ? {...key,isWritable:false} : key)}));
   const expectedNarrowed = new TransactionMessage({payerKey:payer,recentBlockhash:actual.recentBlockhash,instructions:narrowed}).compileToV0Message();
-  if (!Buffer.from(expectedNarrowed.serialize()).equals(Buffer.from(actual.serialize()))) bad();
+  if (!sameSolanaAccountsAndInstructions(expectedNarrowed,actual)) bad();
+  return grant;
 }
