@@ -6,7 +6,7 @@ description: "Responsibilities, execution authority and data boundaries."
 
 NabungFi separates wallet authorization, financial execution, application records and message coordination. The browser presents the goal and asks the owner to review actions. The API authenticates the account, issues exact unsigned plans and reconciles original receipts. Contracts enforce custody, identity, lifecycle and claims. The keeper services bounded state-derived messages without becoming the financial owner.
 
-![NabungFi component map](../assets/architecture.png)
+![NabungFi responsibilities and trust boundaries, drawn in Excalidraw](../assets/architecture-v2.png)
 
 ```mermaid
 flowchart TB

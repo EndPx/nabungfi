@@ -6,7 +6,7 @@ description: "From a named goal to verified completion and chain-local collectio
 
 A NabungFi goal connects an offchain name and model with an immutable onchain savings binding. The owner creates and funds that goal, while the API verifies receipts and the keeper delivers state-derived coordination messages.
 
-![NabungFi journey](../assets/journey.png)
+![NabungFi saving journey, drawn in Excalidraw](../assets/journey-v2.png)
 
 ## The complete journey
 

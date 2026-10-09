@@ -10,7 +10,7 @@ References: `apps/web/public/models/car.jpg`, `house.jpg` and `laptop.jpg`.
 
 ## Editable diagrams
 
-`documentation/assets/journey.excalidraw` and `architecture.excalidraw` are native Excalidraw version-2 scenes containing editable text, rectangles and arrows. Their SVG and PNG files were actually rendered through `@excalidraw/utils` 0.1.5 in an isolated local browser. They are not raster images relabelled as editable drawings.
+`documentation/assets/journey-v2.excalidraw` and `architecture-v2.excalidraw` are native Excalidraw version-2 scenes containing editable icons, text, shapes and arrows. They use Excalifont, hand-drawn outlines and the NabungFi blue/yellow/red accents. Their SVG and PNG files were actually rendered through `@excalidraw/utils` 0.1.5 in an isolated local browser, with the handwritten font embedded. Labels use ASCII-safe text to prevent the mojibake found in the superseded diagrams.
 
 The published articles embed the PNG exports. No per-image download strip is added to the articles. The original scenes remain in the repository for future edits.
 
