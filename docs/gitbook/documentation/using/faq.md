@@ -44,6 +44,8 @@ Eligible embedded owners can request configured testnet sponsorship. External di
 
 An explorer can lack a decoder or registered metadata for a custom program. That label alone does not establish failure. Inspect the transaction result, exact program/account identities and verified token effects; the app’s receipt checker also validates those boundaries.
 
+The current v2 programs have published Anchor/PMP interfaces. The 7 October verification showed a previously unknown successful claim decoded as `NabungfiMulti: Claim` in Solana Explorer without resubmitting it. Other explorers choose their own decoder/indexing support. Source: [program interface publication](https://github.com/EndPx/nabungfi/blob/main/docs/SOLANA_PROGRAM_METADATA.md).
+
 ## What if a wallet request was interrupted?
 
 Preserve the original request and hash. Use recovery to check its outcome. An expired unsigned plan can be refreshed; an attempted or uncertain transaction cannot simply be treated as never sent.

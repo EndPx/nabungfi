@@ -31,7 +31,7 @@ sequenceDiagram
 
 ## What is indexed offchain
 
-Neon records the app’s goal steps and accepted receipt references. It is not a complete index of every external transfer made by a wallet, and there is no Envio or other separate general chain indexer in this release. The keeper’s private journals track coordination intents rather than replacing owner history.
+Neon records the app’s goal steps and accepted receipt references. This history covers original application requests and their reconciled outcomes; it is not a complete index of every external wallet transfer. Fresh RPC snapshots establish current vault assets separately from recorded application steps. The keeper’s private journals track coordination intents separately from owner history.
 
 Concurrent identical reads can share one in-flight result. Settled reads are not retained as a stale authoritative financial cache. A failed read is unavailable; it must not be presented as a fabricated zero or a known subtotal as a complete portfolio.
 

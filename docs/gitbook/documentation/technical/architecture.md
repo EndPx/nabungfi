@@ -10,6 +10,8 @@ The shared Anchor core program owns each goal state PDA, derived from the owner 
 
 Creating a goal allocates accounts; it does not deploy a new executable program. The current state allocation is 824 bytes, including capacity for three EVM participants, and the legacy SPL cash account has 165 bytes. Storage reserves must be queried for the actual account sizes rather than treated as a permanent price quote.
 
+Anchor IDLs and PMP interfaces for the active v2 programs are published for instruction/account decoding. Solana Explorer decoding of an existing successful claim was verified separately from deployment bytecode checks. Interface metadata improves inspection; it is not an independent security-review badge. Source: [published program interfaces](https://github.com/EndPx/nabungfi/blob/main/docs/SOLANA_PROGRAM_METADATA.md).
+
 The active interface has no goal/cash-account close instruction. A successful USDC claim therefore does not establish rent reclamation.
 
 ## EVM factory and vaults

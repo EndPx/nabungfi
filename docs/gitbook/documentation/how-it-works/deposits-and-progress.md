@@ -6,7 +6,7 @@ description: "Confirmed goal-local USDC determines funded pieces."
 
 Choose a fully linked goal, select Add savings, choose a selected network and enter the USDC amount. The API verifies the owner, local vault state and wallet balance before issuing an unsigned plan. The wallet confirms the exact transaction.
 
-EVM deposits may require an approval first. Approval gives the goal vault permission for the reviewed amount; it is not itself a deposit. Solana transfers use the goal’s canonical USDC accounts. Only the confirmed deposit contributes to the goal’s current assets.
+EVM deposits may require an approval first. Approval gives the goal vault permission for the reviewed amount; it is not itself a deposit. Solana transfers use the goal’s canonical USDC accounts. The app records the original confirmed deposit and separately reads actual vault assets to establish funded progress. An allowance is not a vault balance.
 
 ## The construction rule
 
