@@ -1224,3 +1224,5 @@ html {
     font-size: var(--text-mobile-heading);
   }
 }
+.transaction-reference { min-width: 0; max-width: 100%; }
+.transaction-reference code { display: block; white-space: normal; overflow-wrap: anywhere; }

@@ -1,11 +1,15 @@
 import { PublicKey, TransactionMessage, VersionedTransaction, type MessageV0 } from '@solana/web3.js';
-import { decodeFunctionData, decodeEventLog, encodeFunctionData, parseAbi, type Hex } from 'viem';
+import { decodeFunctionData, decodeEventLog, encodeFunctionData, decodeAbiParameters, encodeAbiParameters, parseAbiParameters, parseAbi, type Hex } from 'viem';
 import { ChainValidationError, type ChainPlan } from '@nabungfi/shared/chain';
 import type { RpcTransport } from './rpc.js';
 import type { EvmReceipt, EvmTransaction } from './receipt.js';
 
 export const ENTRY_POINT = '0x0000000071727de22e5e9d8baf0edac6f37da032';
 const DELEGATES = new Set(['0x77021100bd87b7008e5e1989d0eb38555d0d0000', '0x69007702764179f14f51cdce752f4f775d74e139']);
+export const KERNEL_7702 = '0xd6cedde84be40893d153be9d467cd6ad37875b28';
+export const KERNEL_ABI = parseAbi(['function execute(bytes32 mode,bytes executionCalldata)']);
+const KERNEL_BATCH = parseAbiParameters('(address target,uint256 value,bytes data)[]');
+const ZERO32 = '0x'+'0'.repeat(64);
 export const USER_OP_TUPLE = '(address sender,uint256 nonce,bytes initCode,bytes callData,bytes32 accountGasLimits,uint256 preVerificationGas,bytes32 gasFees,bytes paymasterAndData,bytes signature)';
 export const ENTRY_ABI = parseAbi([
   `function handleOps(${USER_OP_TUPLE}[] ops,address beneficiary)`,
@@ -21,26 +25,42 @@ export const ACCOUNT_ABI = parseAbi([
 function bad(): never { throw new ChainValidationError('TRANSACTION_SUBSTITUTION', 'The sponsored operation does not prove this exact owner action.'); }
 
 /** ERC-4337 v0.7 + Alchemy's canonical 7702 account. Unsupported envelopes fail closed.
- * Sources: eth-infinitism/account-abstraction v0.7.0; alchemyplatform/modular-account v2.0.2. */
+ * Sources: eth-infinitism/account-abstraction v0.7.0; alchemyplatform/modular-account v2.0.2; zerodevapp/kernel v3.3. */
 export async function sponsoredEvmReceipt(rpc: RpcTransport, plan: ChainPlan, tx: EvmTransaction, receipt: EvmReceipt): Promise<{receipt:EvmReceipt;userOperationHash:string;success:boolean}> {
   if (plan.gasPayment !== 'privy-testnet' || plan.transaction.kind !== 'evm' || plan.network === 'solana'
-    || tx.to?.toLowerCase() !== ENTRY_POINT || BigInt(tx.value) !== 0n || tx.chainId === undefined || BigInt(tx.chainId) !== BigInt(plan.transaction.chainId)
+    || tx.to?.toLowerCase() !== ENTRY_POINT || tx.from.toLowerCase() === plan.owner.toLowerCase() || BigInt(tx.value) !== 0n || tx.chainId === undefined || BigInt(tx.chainId) !== BigInt(plan.transaction.chainId)
     || receipt.status !== '0x1' || receipt.logs.some(log => log.removed)) bad();
   const code = (await rpc.call<string>(plan.network, 'eth_getCode', [plan.owner, receipt.blockNumber])).toLowerCase();
-  if (!code.startsWith('0xef0100') || code.length !== 48 || !DELEGATES.has('0x' + code.slice(8))) bad();
+  const delegate = '0x'+code.slice(8);
+  if (!code.startsWith('0xef0100') || code.length !== 48 || !(DELEGATES.has(delegate) || delegate === KERNEL_7702)) bad();
   const decoded = decodeFunctionData({abi:ENTRY_ABI,data:tx.input as Hex});
   if (decoded.functionName !== 'handleOps' || encodeFunctionData({abi:ENTRY_ABI,...decoded}).toLowerCase() !== tx.input.toLowerCase()) bad();
   const ops = decoded.args[0];
   const matches = ops.filter(op => op.sender.toLowerCase() === plan.owner.toLowerCase());
   if (matches.length !== 1) bad();
   const op = matches[0]!;
-  if (op.initCode !== '0x' || op.signature === '0x' || op.paymasterAndData.length < 106 || BigInt(op.paymasterAndData.slice(0,42)) === 0n) bad();
+  const zeroFee = op.paymasterAndData === '0x' && op.gasFees === ZERO32;
+  if (op.initCode !== '0x' || op.signature === '0x' || (!zeroFee && (op.paymasterAndData.length < 106 || BigInt(op.paymasterAndData.slice(0,42)) === 0n))) bad();
   // executeUserOp is a four-byte prefix followed by the inner execute/executeBatch calldata, not an ABI tuple here.
   const prefix = encodeFunctionData({abi:ACCOUNT_ABI,functionName:'executeUserOp',args:[op,'0x'+'0'.repeat(64) as Hex]}).slice(0,10);
   const data = (op.callData.slice(0,10).toLowerCase() === prefix.toLowerCase() ? '0x' + op.callData.slice(10) : op.callData) as Hex;
-  const execution = decodeFunctionData({abi:ACCOUNT_ABI,data});
-  if (execution.functionName === 'executeUserOp' || encodeFunctionData({abi:ACCOUNT_ABI,...execution}).toLowerCase() !== data.toLowerCase()) bad();
-  const calls = execution.functionName === 'execute' ? [{target:execution.args[0],value:execution.args[1],data:execution.args[2]}] : execution.args[0];
+  let calls: readonly {target:string;value:bigint;data:string}[];
+  if (delegate === KERNEL_7702) {
+    const execution = decodeFunctionData({abi:KERNEL_ABI,data});
+    if (encodeFunctionData({abi:KERNEL_ABI,...execution}).toLowerCase() !== data.toLowerCase()) bad();
+    const [mode,payload] = execution.args;
+    // Default/reverting single or one-call batch only. Reject TRY, delegatecall, plugins and mode payloads.
+    if (mode === ZERO32 && payload.length >= 106) calls=[{target:'0x'+payload.slice(2,42),value:BigInt('0x'+payload.slice(42,106)),data:'0x'+payload.slice(106)}];
+    else if (mode === '0x01'+'0'.repeat(62)) {
+      const args=decodeAbiParameters(KERNEL_BATCH,payload);
+      if (encodeAbiParameters(KERNEL_BATCH,args).toLowerCase() !== payload.toLowerCase()) bad();
+      calls=args[0];
+    } else bad();
+  } else {
+    const execution = decodeFunctionData({abi:ACCOUNT_ABI,data});
+    if (execution.functionName === 'executeUserOp' || encodeFunctionData({abi:ACCOUNT_ABI,...execution}).toLowerCase() !== data.toLowerCase()) bad();
+    calls = execution.functionName === 'execute' ? [{target:execution.args[0],value:execution.args[1],data:execution.args[2]}] : execution.args[0];
+  }
   const call = calls[0];
   if (calls.length !== 1 || !call || call.target.toLowerCase() !== plan.transaction.to.toLowerCase() || call.value !== BigInt(plan.transaction.value) || call.data.toLowerCase() !== plan.transaction.data.toLowerCase()) bad();
   const userOperationHash = (await rpc.call<string>(plan.network, 'eth_call', [{to:ENTRY_POINT,data:encodeFunctionData({abi:ENTRY_ABI,functionName:'getUserOpHash',args:[op]})},receipt.blockNumber])).toLowerCase();
@@ -56,7 +76,8 @@ export async function sponsoredEvmReceipt(rpc: RpcTransport, plan: ChainPlan, tx
     if (event.eventName === 'UserOperationEvent') {
       if (start < 0) bad(); events++;
       if (event.args.userOpHash.toLowerCase() === userOperationHash) {
-        if (found || event.args.sender.toLowerCase() !== plan.owner.toLowerCase() || event.args.nonce !== op.nonce || event.args.paymaster.toLowerCase() !== op.paymasterAndData.slice(0,42).toLowerCase()) bad();
+        const paymaster=zeroFee?'0x'+'0'.repeat(40):op.paymasterAndData.slice(0,42).toLowerCase();
+        if (found || event.args.sender.toLowerCase() !== plan.owner.toLowerCase() || event.args.nonce !== op.nonce || event.args.paymaster.toLowerCase() !== paymaster || (zeroFee && event.args.actualGasCost !== 0n)) bad();
         found={end:i,success:event.args.success};
         // Snapshot the segment now; later operations must not enlarge it.
         returnSegment = receipt.logs.slice(start+1,i);

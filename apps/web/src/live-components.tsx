@@ -40,6 +40,7 @@ import { actions, networks, phases, short } from "./live-config";
 import { nextPieceProgress, formatNativeGas } from "./savings-progress";
 import { ChainAllocation } from "./ChainAllocation";
 import { VaultAddress } from "./VaultAddress";
+import { TransactionReference } from "./TransactionReference";
 import { LoadingState } from "./LoadingState";
 const CarWorkshop = lazy(() => import("./CarWorkshop"));
 const activityDateFormat = new Intl.DateTimeFormat("en-GB", {
@@ -918,8 +919,9 @@ export function WalletStepModal({
     );
     return () => window.clearTimeout(timeout);
   }, [plan?.expiresAt]);
-  const canSign =
-    recovery?.state === "planned" &&
+  const unsigned = recovery?.state === "planned" && step.status === "planned" && !step.transactionHash && !recovery.transactionHash;
+  const expired = plan && new Date(plan.expiresAt).getTime() <= Math.max(clock,Date.now());
+  const canSign = unsigned &&
     plan &&
     new Date(plan.expiresAt).getTime() > Math.max(clock, Date.now());
   // A native modal makes the SDK's body portal inert and covers it in the top layer.
@@ -981,11 +983,12 @@ export function WalletStepModal({
         {plan?.gasPayment && step.network === "solana" && step.action === "initialize" && <p className="live-help">Solana account creation can still require SOL for rent. Network fee sponsorship does not change your goal’s account funding.</p>}
         {!canSign && (
           <p className="live-help">
-            This request already started or its plan expired. Keep its original
-            identity and check it from the recovery panel.
+            {unsigned && expired ? "This unsigned plan expired. Refresh the same step before opening your wallet."
+              : recovery ? "Wallet confirmation already started. Check the original transaction from recovery; this step will not be sent again."
+              : "The saved recovery state is unavailable. Close this review and check the original request before continuing."}
           </p>
         )}
-        {!canSign && recovery?.state === "planned" && plan && (
+        {!canSign && unsigned && plan && (
           <Button
             variant="secondary"
             busy={busy}
@@ -995,7 +998,8 @@ export function WalletStepModal({
             Refresh unsigned plan
           </Button>
         )}
-        <Button
+        {!canSign && !unsigned && <Button variant="build" disabled={offline} onClick={onClose}>View recovery options<ArrowRight size={18}/></Button>}
+        {unsigned && <Button
           variant="build"
           busy={busy}
           disabled={!canSign || offline}
@@ -1003,9 +1007,9 @@ export function WalletStepModal({
         >
           Confirm in wallet
           <Wallet size={18} />
-        </Button>
+        </Button>}
         <Button variant="quiet" disabled={busy} onClick={onClose}>
-          {recovery?.state === "planned" ? "Cancel unsigned step" : "Close review"}
+          {unsigned ? "Cancel unsigned step" : "Close review"}
         </Button>
       </div>
     </Dialog>
@@ -1075,13 +1079,11 @@ export function RecoveryPanel({
               {actions[record.action as GoalStepAction]} ·{" "}
               {networks[record.network as AppNetwork]}
             </strong>
-            <p>
-              {record.transactionHash
-                ? short(record.transactionHash)
-                : record.state === "planned"
+            {record.transactionHash ? <TransactionReference hash={record.transactionHash} network={record.network as AppNetwork}/> : <p>
+              {record.state === "planned"
                   ? "Wallet confirmation has not started."
                   : "Wallet request started; inspect its outcome before proceeding."}
-            </p>
+            </p>}
             {!record.transactionHash && record.state !== "planned" && (
               <label className="live-field">
                 Original transaction hash

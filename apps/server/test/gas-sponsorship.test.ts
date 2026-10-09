@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Keypair,PublicKey,TransactionMessage,VersionedTransaction} from '@solana/web3.js';
 import {encodeAbiParameters,encodeEventTopics,encodeFunctionData,parseAbiParameters,type Hex} from 'viem';
-import {ENTRY_POINT,ENTRY_ABI,ACCOUNT_ABI,sponsoredEvmReceipt,assertSponsoredSolanaMessage} from '../src/chain/sponsored-receipt.js';
+import {ENTRY_POINT,ENTRY_ABI,ACCOUNT_ABI,KERNEL_ABI,KERNEL_7702,sponsoredEvmReceipt,assertSponsoredSolanaMessage} from '../src/chain/sponsored-receipt.js';
 import {deriveGoalBinding,configurationHash,financialInstruction,ABI,word,addressWord,solanaAddressWord} from '../src/chain/codec.js';
 import {assertUsablePlan,assertPlan,planFingerprint,sponsoredFeeSimulationError} from '../src/chain/planner.js';
 import {resolveExpiredSolana} from '../src/chain/expired-solana.js';
@@ -67,6 +67,33 @@ test('7702 executeUserOp prefix can wrap one exact execution; changed calldata i
  const prefixed={...op,callData:(prefix+callData.slice(2)) as Hex};
  const wrapped={...tx,input:encodeFunctionData({abi:ENTRY_ABI,functionName:'handleOps',args:[[prefixed],paymaster]})};
  assert.equal((await sponsoredEvmReceipt(rpc,p,wrapped,receipt)).success,true);
+});
+test('Kernel v3.3 default single and one-call batch preserve the exact owner action',async()=>{
+ const payload=('0x'+b.participants[0]!.vault!.slice(2)+'0'.repeat(64)+('0x'+ABI.deposit+word('1000000')).slice(2)) as Hex;
+ const kernelRpc={call:async(_n:string,m:string)=>m==='eth_getCode'?'0xef0100'+KERNEL_7702.slice(2):hash} as unknown as RpcTransport;
+ for(const [mode,data] of [[zero32,payload],[('0x01'+'0'.repeat(62)) as Hex,encodeAbiParameters(parseAbiParameters('(address target,uint256 value,bytes data)[]'),[[{target:b.participants[0]!.vault! as Hex,value:0n,data:('0x'+ABI.deposit+word('1000000')) as Hex}]])]] as const){
+  const kernelOp={...op,callData:encodeFunctionData({abi:KERNEL_ABI,functionName:'execute',args:[mode,data]})};
+  const kernelTx={...tx,input:encodeFunctionData({abi:ENTRY_ABI,functionName:'handleOps',args:[[kernelOp],paymaster]})};
+  assert.equal((await sponsoredEvmReceipt(kernelRpc,p,kernelTx,receipt)).success,true);
+ }
+});
+test('zero-fee testnet bundler is accepted only with no owner charge; Kernel TRY/delegatecall/multiple calls remain rejected',async()=>{
+ const payload=('0x'+b.participants[0]!.vault!.slice(2)+'0'.repeat(64)+('0x'+ABI.deposit+word('1000000')).slice(2)) as Hex;
+ const kernelRpc={call:async(_n:string,m:string)=>m==='eth_getCode'?'0xef0100'+KERNEL_7702.slice(2):hash} as unknown as RpcTransport;
+ const kernelOp={...op,paymasterAndData:'0x' as Hex,callData:encodeFunctionData({abi:KERNEL_ABI,functionName:'execute',args:[zero32,payload]})};
+ const kernelTx={...tx,input:encodeFunctionData({abi:ENTRY_ABI,functionName:'handleOps',args:[[kernelOp],paymaster]})};
+ const zeroEvent={...event(hash),topics:[...encodeEventTopics({abi:ENTRY_ABI,eventName:'UserOperationEvent',args:{userOpHash:hash,sender:op.sender,paymaster:('0x'+'0'.repeat(40)) as Hex}})],data:encodeAbiParameters(parseAbiParameters('uint256,bool,uint256,uint256'),[1n,true,0n,200n])};
+ const zeroReceipt={...receipt,logs:[before,transfer,zeroEvent]};
+ assert.equal((await sponsoredEvmReceipt(kernelRpc,p,kernelTx,zeroReceipt)).success,true);
+ await assert.rejects(sponsoredEvmReceipt(kernelRpc,p,{...kernelTx,from:p.owner},zeroReceipt));
+ await assert.rejects(sponsoredEvmReceipt(kernelRpc,p,kernelTx,{...zeroReceipt,logs:[before,transfer,{...zeroEvent,data:encodeAbiParameters(parseAbiParameters('uint256,bool,uint256,uint256'),[1n,true,1n,200n])}]}));
+ for(const mode of [('0x0001'+'0'.repeat(60)) as Hex,('0xff'+'0'.repeat(62)) as Hex]){
+  const changed={...kernelOp,callData:encodeFunctionData({abi:KERNEL_ABI,functionName:'execute',args:[mode,payload]})};
+  await assert.rejects(sponsoredEvmReceipt(kernelRpc,p,{...tx,input:encodeFunctionData({abi:ENTRY_ABI,functionName:'handleOps',args:[[changed],paymaster]})},zeroReceipt));
+ }
+ const multiple=encodeAbiParameters(parseAbiParameters('(address target,uint256 value,bytes data)[]'),[[{target:paymaster,value:0n,data:'0x'},{target:b.participants[0]!.vault! as Hex,value:0n,data:('0x'+ABI.deposit+word('1000000')) as Hex}]]);
+ const extra={...kernelOp,callData:encodeFunctionData({abi:KERNEL_ABI,functionName:'execute',args:[('0x01'+'0'.repeat(62)) as Hex,multiple]})};
+ await assert.rejects(sponsoredEvmReceipt(kernelRpc,p,{...tx,input:encodeFunctionData({abi:ENTRY_ABI,functionName:'handleOps',args:[[extra],paymaster]})},zeroReceipt));
 });
 const solRaw={id:'sol-fixture',goalId:b.goalId,owner:owner.solana,action:'deposit' as const,network:'solana' as const,amountRaw:'1000000',gasPayment:'privy-testnet' as const,createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+60000).toISOString()};
 const original=new VersionedTransaction(new TransactionMessage({payerKey:new PublicKey(owner.solana),recentBlockhash:b.solanaGoal,instructions:[financialInstruction(b,'deposit','1000000')]}).compileToV0Message());

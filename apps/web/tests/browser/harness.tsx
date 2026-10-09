@@ -248,7 +248,7 @@ function Harness() {
               action: "deposit",
               network: "base",
               amountRaw: "1000000",
-              status: "planned",
+              status: params.has("attempted") ? "signing" : "planned",
               transactionHash: null,
               createdAt: walletExpiry,
               updatedAt: walletExpiry,
@@ -267,7 +267,7 @@ function Harness() {
             action: "deposit",
             network: "base",
             amountRaw: "1000000",
-            state: "planned",
+            state: params.has("attempted") ? "awaiting-wallet" : "planned",
             createdAt: walletExpiry,
           }}
           busy={walletBusy}

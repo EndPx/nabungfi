@@ -1,5 +1,9 @@
 # NabungFi interface system
 
+## Sponsored recovery correction — 9 October 2026
+
+Wallet review distinguishes an expired unsigned plan, an already-started wallet request, and missing recovery data. An attempted request stays on its original receipt even when its unsigned plan expires; never describe it as an unsigned expiry or enable signing again. Its primary action opens the recovery panel. Recovery transaction references provide an explorer link, an explicit Copy transaction hash control, and a Full transaction hash disclosure using the existing address wrapping, controls and surface tokens. Clipboard failure reveals the complete selectable hash. These read-only controls remain available while an operation is unresolved; they never sign, resubmit, replace an original hash, or change goal ownership.
+
 ## Blind-review repairs — 8 October 2026
 
 Preserve the approved block identity, warm paper surfaces, original 3D geometry and existing tokens. Dashboard names its headline balance Current savings and explains that it counts funds still in goal vaults; collected card values are historical amounts. A partial financial read withholds the portfolio total rather than displaying the known subtotal as the complete balance. Cards label funded pieces and their images as build templates. Workshop counters label assembled pieces, show the funded count and explain that visual assembly never changes funds or unlocks them. Completed/collected progress may exceed the target; label target and total funded separately.
