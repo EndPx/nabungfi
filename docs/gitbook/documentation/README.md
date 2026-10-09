@@ -4,6 +4,8 @@ description: "Build what you\u2019re saving for."
 
 # Overview
 
+![NabungFi overview: choose a goal, save USDC in chain-local vaults, then verify completion and claim savings.](assets/nabungfi-product-overview.png)
+
 NabungFi helps people save USDC toward a specific goal across Solana and EVM networks. A user chooses what they are saving for, sets a target, and adds funds to dedicated goal vaults. Each deposit earns pieces of a 100-part model, making a long-term commitment visible as something taking shape.
 
 The application supports Solana Devnet, Base Sepolia, Arbitrum Sepolia and Ethereum Sepolia. Funds remain in the vaults on the networks where they were deposited. LayerZero carries registration, balance and completion messages so one goal can be evaluated across its selected chains without moving all its assets onto one chain.
