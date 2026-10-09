@@ -22,6 +22,8 @@ Local server tests cover substituted operations, extra calls, unsupported networ
 
 ## Provider references
 
+Full sponsored Base + Solana browser lifecycle acceptance, including both deposits, completion and both claims, is recorded in [SPONSORED_E2E_ACCEPTANCE.md](SPONSORED_E2E_ACCEPTANCE.md). Eight original owner receipts were confirmed and independently re-verified; final vault USDC was zero and wallet balances were restored.
+
 - [Privy gas sponsorship overview](https://docs.privy.io/wallets/gas-and-asset-management/gas/overview)
 - [Privy setup and client SDK options](https://docs.privy.io/wallets/gas-and-asset-management/gas/setup)
 - [Privy sponsored transaction lifecycle](https://docs.privy.io/wallets/gas-and-asset-management/gas/transaction-handling)
