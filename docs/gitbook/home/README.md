@@ -24,6 +24,6 @@ layout:
 
 ## Quick Start
 
-{% content-ref url="https://nabungfi.gitbook.io/nabungfi-docs/documentation/" %}
-[Documentation](https://nabungfi.gitbook.io/nabungfi-docs/documentation/)
+{% content-ref url="https://app.gitbook.com/o/s16kz9mNXmJ6TVcHdb8j/s/Vz38vTroGrhQefVKL6Ig/" %}
+[Documentation](https://app.gitbook.com/o/s16kz9mNXmJ6TVcHdb8j/s/Vz38vTroGrhQefVKL6Ig/)
 {% endcontent-ref %}
