@@ -12,8 +12,10 @@ import {boundedChainRead} from './server-runtime.js';
 import type {ExpiredSolanaResolution} from './chain/expired-solana.js';
 import {inFlightReads} from './in-flight-reads.js';
 import {testnetGasPayment,assertGasEligibility} from './gas-policy.js';
+import type { VerifiedWallet, WalletBalanceDTO } from '@nabungfi/shared/application';
 
 export interface ChainServices {
+ readWalletBalances?(wallets: readonly VerifiedWallet[]):Promise<WalletBalanceDTO[]>;
  deriveGoalBinding(input:{goalId:string;targetRaw:string;owner:{solana:string;evm:string};networks:typeof APP_NETWORKS[number][]}):GoalBinding;
  readGoalState(binding:GoalBinding):Promise<GoalChainState>;
  planGoalStep(binding:GoalBinding,input:GoalStepInput):Promise<ChainPlan>;
@@ -53,6 +55,7 @@ function respond(res:ServerResponse,status:number,value:unknown){if(res.destroye
 export function applicationServer(config:AppConfig,repo:ApplicationRepository,auth:Authentication,chain:ChainServices,runtime?:ApplicationRuntime){
  const requests=new Map<string,{count:number;reset:number}>();
  const readDetail=inFlightReads<GoalDTO>();
+ const readWallets=inFlightReads<WalletBalanceDTO[]>();
  const server=createServer(async(req,res)=>{const correlation=randomUUID();try{
   const origin=req.headers.origin;if(origin&&!config.origins.includes(origin))throw new ApiError('ORIGIN_REJECTED',403,'This origin is not allowed.');
   if(origin){res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type, Idempotency-Key, X-NabungFi-Plan-Version');}
@@ -69,6 +72,12 @@ export function applicationServer(config:AppConfig,repo:ApplicationRepository,au
   // Old installed PWA clients send direct transactions and must never receive a bundler-only plan.
   const clientSponsorship=config.testnetGasSponsorship===true&&req.headers['x-nabungfi-plan-version']==='gas-v1';
   if(req.method==='GET'&&path==='/api/session'){const session:SessionDTO={user:{id:user.id,privySubject:identity.subject,wallets:identity.wallets},profile:'testnet',privyAppId:config.privyAppId,chains:[...APP_NETWORKS]};return respond(res,200,session);}
+  if(req.method==='GET'&&path==='/api/wallet-balances'){
+   if(!chain.readWalletBalances)throw new ApiError('WALLET_READ_UNAVAILABLE',503,'Wallet balances could not be read.');
+   const key=JSON.stringify([user.id,identity.wallets.map(w=>[w.chainType,w.address]).sort()]);
+   const balances=await readWallets(key,()=>boundedChainRead(()=>chain.readWalletBalances!(identity.wallets)));
+   return respond(res,200,{balances});
+  }
   if(req.method==='GET'&&path==='/api/goals'){const goals=await repo.goals(user.id);return respond(res,200,{goals:goals.map(metadataGoal),financialReads:'detail-only'});}
   if(req.method==='POST'&&path==='/api/goals'){
    const id=requestId(req.headers['idempotency-key']),input=createInput(await body(req));const owners={solana:input.solanaOwner,evm:input.evmOwner};requireGoalWallets(identity,owners);

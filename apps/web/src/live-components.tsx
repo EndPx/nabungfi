@@ -477,15 +477,16 @@ export function GoalDetail({
                       <span>Cash USDC</span>
                       {position && BigInt(position.claimableRaw) > 0n && (
                         <Button
-                          variant="quiet"
+                          variant="build"
                           disabled={busy || !state?.claimable}
                           onClick={() =>
                             step("claim", network, position.claimableRaw)
                           }
                         >
-                          Claim
+                          {state?.claimable ? "Claim" : "Waiting for chains"}
                         </Button>
                       )}
+                      {position && BigInt(position.claimableRaw) > 0n && !state?.claimable && <small className="live-help">Every selected vault must confirm completion before you can claim.</small>}
                     </div>
                     <VaultAddress network={network} address={vault} />
                   </div>

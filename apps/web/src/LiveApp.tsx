@@ -70,6 +70,7 @@ export default function LiveApp() {
 function AuthenticatedApp() {
   const {
     sponsoredNetworks,
+    readWalletBalances,
     ready,
     authenticated,
     user,
@@ -288,6 +289,8 @@ function AuthenticatedApp() {
             )
           ) : destination === "wallets" ? (
             <WalletsPage
+              readBalances={readWalletBalances}
+              offline={pwa.offline}
               wallets={session?.user.wallets ?? []}
               verified={Boolean(session)}
               busy={busy}

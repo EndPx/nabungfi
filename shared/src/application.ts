@@ -16,6 +16,10 @@ export function isGoalModel(value: unknown): value is GoalModel {
 export type GoalStepAction = 'create-vault' | 'initialize' | 'approve' | 'deposit' | 'prepare' | 'abort' | 'claim';
 export interface VerifiedWallet { chainType: 'ethereum' | 'solana'; address: string; walletId?: string; walletClientType?: 'privy' }
 export interface SessionDTO { user: { id: string; privySubject: string; wallets: VerifiedWallet[] }; profile: 'testnet'; privyAppId: string; chains: AppNetwork[] }
+export interface WalletBalanceDTO {
+  network: AppNetwork; address: string; status: 'available' | 'unavailable';
+  usdcRaw: string | null; nativeRaw: string | null; observedAt: string;
+}
 export interface CreateGoalRequest { name: string; targetAmount: string; model: GoalModel; solanaOwner: string; evmOwner: string; chains: AppNetwork[] }
 export interface GoalDTO {
   id: string; goalId: string; name: string; model: GoalModel; targetRaw: string;

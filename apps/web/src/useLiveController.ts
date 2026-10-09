@@ -13,6 +13,7 @@ import type {
   GoalStepAction,
   GoalStepDTO,
   SessionDTO,
+  WalletBalanceDTO,
 } from "@nabungfi/shared/application";
 import type { Destination } from "./Shell";
 import {
@@ -161,6 +162,7 @@ export function useLiveController() {
     readSession: () => request<SessionDTO>("/api/session"),
   });
   const error = walletOnboarding.error || recoveryError || requestError;
+  const readWalletBalances = useCallback(async () => (await request<{balances: WalletBalanceDTO[]}>("/api/wallet-balances")).balances, [request]);
   useEffect(() => {
     if (!userId) return;
     const changed = (event: StorageEvent) => {
@@ -1005,6 +1007,7 @@ export function useLiveController() {
   };
   return {
     sponsoredNetworks:selected&&session?sponsoredGoalNetworks(selected.binding,session.user.wallets,gasSponsorshipEnabled):[],
+    readWalletBalances,
     ready,
     authenticated,
     user,

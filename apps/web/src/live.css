@@ -442,6 +442,12 @@ html {
   color: var(--muted);
   font-size: var(--text-sm);
 }
+.wallet-balances { margin-block: var(--space-4); }
+.wallet-balance-network { padding-block: var(--space-4); border-top: 1px solid var(--line); }
+.wallet-balance-heading { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+.wallet-token-values { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0 0 var(--space-2); }
+.wallet-token-values dt { color: var(--muted); font-size: var(--text-sm); }
+.wallet-token-values dd { margin: var(--space-1) 0 0; font-weight: 500; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 .goal-illustration svg {
   max-width: 260px;
   height: 160px;

@@ -9,6 +9,7 @@ import type {
   GoalHistoryEntry,
   GoalStepAction,
   AppNetwork,
+  WalletBalanceDTO,
 } from "@nabungfi/shared/application";
 import type { GoalChainState, GoalPositionState } from "@nabungfi/shared/chain";
 import fixtures from "../fixtures/unsigned-plans.json";
@@ -41,6 +42,20 @@ import "../../src/live.css";
 import "../../src/app-refinement.css";
 
 const params = new URLSearchParams(location.search);
+let walletReadCount = 0;
+const readWalletBalanceExamples = async (): Promise<WalletBalanceDTO[]> => {
+  walletReadCount++;
+  if (params.has("wallet-delay")) await new Promise(resolve => setTimeout(resolve,700));
+  if (params.has("wallet-error")) throw new Error("Fixture read failure");
+  return (["solana","base","arbitrum","ethereum"] as const).map(network => {
+    const failed = params.has("wallet-partial") && network === "base";
+    return {network,address:network === "solana" ? fixtures.binding.owner.solana : fixtures.binding.owner.evm,
+      status:failed ? "unavailable" : "available",
+      usdcRaw:failed ? null : {solana:"2000001",base:"5250000",arbitrum:"7500000",ethereum:"0"}[network],
+      nativeRaw:failed ? null : {solana:"180951200",base:"1",arbitrum:"20000000000000000",ethereum:"0"}[network],
+      observedAt:new Date(Date.UTC(2026,9,9,9,walletReadCount)).toISOString()};
+  });
+};
 registerPwa();
 const phase = params.get("phase") ?? "saving";
 const amount = params.get("amount") ?? "250000";
@@ -85,7 +100,7 @@ const goal = {
     achievedTotalRaw: phase === "achieved" || phase === "claimed" ? targetRaw : "0",
     totalClaimedRaw: phase === "claimed" ? "10000000" : "0",
     linked: true,
-    claimable: phase === "achieved",
+    claimable: phase === "achieved" && !params.has("delivery-pending"),
     canPrepare: !params.has("syncing") && BigInt(amount) >= BigInt(targetRaw) && phase === "saving",
     positions,
   } as GoalChainState,
@@ -189,6 +204,8 @@ function Harness() {
       )}
       {destination === "wallets" && (
         <WalletsPage
+          readBalances={readWalletBalanceExamples}
+          offline={params.has("wallet-offline")}
           wallets={[
             { chainType: "solana", address: goal.binding.owner.solana },
             { chainType: "ethereum", address: goal.binding.owner.evm },

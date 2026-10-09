@@ -1,4 +1,4 @@
-import type { GoalDTO, GoalHistoryEntry, SessionDTO } from "@nabungfi/shared/application";
+import type { GoalDTO, GoalHistoryEntry, SessionDTO, WalletBalanceDTO } from "@nabungfi/shared/application";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   Box,
@@ -18,6 +18,9 @@ import { InstallPanel } from "./Shell";
 import { phases } from "./live-config";
 import { WalletAddress } from "./WalletAddress";
 import { HistoryList } from "./live-components";
+import { walletNetworks, validateWalletBalances, walletGasLabel } from "./wallet-balances";
+import { formatExactUsdc } from "./savings-progress";
+import { networks } from "./live-config";
 
 export function GoalHistoryPage({goal,history,loading,error,offline,refresh,back,openGoal}: {
   goal: GoalDTO; history: GoalHistoryEntry[]; loading: boolean; error: string; offline: boolean;
@@ -113,6 +116,8 @@ export function WalletsPage({
   createWallet,
   connect,
   link,
+  readBalances,
+  offline = false,
 }: {
   wallets: SessionDTO["user"]["wallets"];
   busy: boolean;
@@ -121,7 +126,33 @@ export function WalletsPage({
   createWallet: (chain: "ethereum" | "solana") => void;
   connect: () => void;
   link: () => void;
+  readBalances?: () => Promise<WalletBalanceDTO[]>;
+  offline?: boolean;
 }) {
+  const walletKey = wallets.map(wallet => `${wallet.chainType}:${wallet.address}`).sort().join("|");
+  const [revision, setRevision] = useState(0);
+  const [balanceRead, setBalanceRead] = useState<{key: string; rows: WalletBalanceDTO[]; loading: boolean; error: string}>({key: "", rows: [], loading: false, error: ""});
+  useEffect(() => {
+    if (!readBalances || !verified || offline || !walletKey) return;
+    let active = true, inFlight = false;
+    const loadBalances = async () => {
+      if (inFlight) return;
+      inFlight = true;
+      setBalanceRead(prior => ({key: walletKey, rows: prior.key === walletKey ? prior.rows : [], loading: true, error: ""}));
+      try {
+        const rows = validateWalletBalances(await readBalances(), wallets);
+        if (active) setBalanceRead({key: walletKey, rows, loading: false, error: ""});
+      } catch {
+        if (active) setBalanceRead({key: walletKey, rows: [], loading: false, error: "Wallet balances couldn’t be verified. Refresh to try again."});
+      } finally { inFlight = false; }
+    };
+    void loadBalances();
+    const timer = window.setInterval(() => { if (document.visibilityState === "visible" && navigator.onLine) void loadBalances(); }, 30000);
+    return () => { active = false; window.clearInterval(timer); };
+    // Membership changes only when authoritative wallet identities change.
+  }, [walletKey, readBalances, verified, offline, revision]);
+  const balances = balanceRead.key === walletKey ? balanceRead.rows : [];
+  const balancesLoading = !offline && Boolean(readBalances) && (balanceRead.key !== walletKey || balanceRead.loading);
   const [copied, setCopied] = useState("");
   const [copyError, setCopyError] = useState("");
   const copyAddress = async (address: string) => {
@@ -136,6 +167,7 @@ export function WalletsPage({
         description="Verified owners of your savings goals. Your wallet confirms each financial action."
       >
         <div className="live-actions">
+          {wallets.length > 0 && readBalances && <Button variant="secondary" busy={balancesLoading} disabled={balancesLoading || offline} onClick={() => setRevision(value => value + 1)}><RefreshCw size={18} />Refresh balances</Button>}
           {verified &&
             !wallets.some((wallet) => wallet.chainType === "ethereum") && (
               <Button
@@ -160,6 +192,7 @@ export function WalletsPage({
             )}
         </div>
       </PageHeading>
+      {wallets.length > 0 && <p className="live-help" role="status">{offline ? "You’re offline. Displayed balances are from the last verified read." : balancesLoading ? balances.length ? "Updating wallet balances. Showing the last verified read." : "Loading wallet balances…" : balanceRead.key === walletKey && balanceRead.error ? balanceRead.error : "Wallet balances are separate from savings held in your goal vaults."}</p>}
       <div className="wallet-list">
         {wallets.map((wallet) => (
           <section
@@ -185,8 +218,20 @@ export function WalletsPage({
                 ? "Solana Devnet"
                 : "Base, Arbitrum and Ethereum Sepolia"}
             </p>
-            <div className="wallet-network-marks" role="img" aria-label={wallet.chainType === "solana" ? "Solana" : "Base, Arbitrum and Ethereum"}>
-              {wallet.chainType === "solana" ? <NetworkMark network="solana" /> : <><NetworkMark network="base" /><NetworkMark network="arbitrum" /><NetworkMark network="ethereum" /></>}
+            <div className="wallet-balances" aria-label={`${wallet.chainType === "solana" ? "Solana" : "EVM"} token balances`}>
+              {walletNetworks(wallet.chainType).map(network => {
+                const balance = balances.find(row => row.address === wallet.address && row.network === network);
+                const known = balance?.status === "available";
+                const gas = known ? walletGasLabel(balance.nativeRaw!, network) : null;
+                return <div key={network} className="wallet-balance-network">
+                  <div className="wallet-balance-heading"><NetworkMark network={network} /><strong>{networks[network]}</strong></div>
+                  <dl className="wallet-token-values">
+                    <div><dt>USDC</dt><dd>{known ? `${formatExactUsdc(balance.usdcRaw!)} USDC` : "—"}</dd></div>
+                    <div><dt>{network === "solana" ? "SOL" : "ETH"} · Gas</dt><dd>{gas ? <span title={gas.exact} aria-label={gas.exact}>{gas.display}</span> : "—"}</dd></div>
+                  </dl>
+                  {known ? <small className="live-help">Last verified <time dateTime={balance.observedAt}>{new Date(balance.observedAt).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}</time></small> : <small className="live-help">{balancesLoading ? "Loading balances…" : offline ? "Reconnect to verify balances" : "Balances unavailable"}</small>}
+                </div>;
+              })}
             </div>
             <Button className="wallet-copy" variant="secondary" onClick={() => void copyAddress(wallet.address)} aria-label={`Copy ${wallet.chainType === "solana" ? "Solana" : "EVM"} wallet address`}><Copy size={18} />{copied === wallet.address ? "Copied" : "Copy address"}</Button>
           </section>

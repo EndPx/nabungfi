@@ -1,5 +1,11 @@
 # NabungFi interface system
 
+## Wallet balances and claim affordance — 9 October 2026
+
+Gas labels show up to eight fractional digits to fit mobile cards; a truncated positive amount is labelled approximately, and sub-display-unit balances use a less-than label rather than zero. The complete exact decimal remains in the accessible label and native tooltip.
+
+Wallets shows current wallet cash independently of goal creation or vault balances: USDC and SOL on Solana Devnet; USDC and ETH separately on Base, Arbitrum and Ethereum Sepolia. Reuse NetworkMark and compact two-column balance definitions within each wallet card. Read authoritative linked wallet addresses through an authenticated no-store endpoint. Preserve atomic strings and exact decimal formatting. A missing USDC account is a verified zero; failed reads are unavailable. Refresh on entry, explicit refresh and bounded visible online polling. Wallet changes discard prior identity reads; show loading, last verified time and offline/error reasons. Available Claim buttons use the yellow build variant. If all-vault completion is pending, keep claim disabled and label Waiting for chains with an explanation. Existing signing, eligibility and busy guards remain authoritative.
+
 ## Completion and cancellation clarity — 9 October 2026
 
 At a funded target, make Prepare completion the primary action. Financial progress may be 100% while the model waits at 99 parts until verified achievement; explain this without implying funds are lost. Preparing says Verifying completion with a live status explaining that selected vaults, including zero-balance vaults, must confirm before claims unlock. Aborting says Cancelling completion and explains that funds stay in the vaults while acknowledgements return, after which the owner can prepare again. A funded saving goal awaiting eligibility says Syncing vault balances and asks for a read refresh, never a second signed transaction. Put the owner-initiated Cancel completion button behind a native Completion options disclosure and describe its effect in both the disclosure and wallet review. Do not show a disabled Add savings as the only action during these transitions. Reuse existing typography, status text, disclosure, button and surface tokens. No new automatic signatures, claim eligibility or keeper policy changes.
