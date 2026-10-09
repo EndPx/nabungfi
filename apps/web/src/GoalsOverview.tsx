@@ -42,7 +42,7 @@ export function GoalsOverview({ goals, balance, scope, blocked, create, open, ac
       <Button variant="secondary" onClick={wallets}><Wallet size={21} />Your wallets</Button>
     </div>
     <section className="goal-collection" aria-labelledby="goal-collection-heading">
-      <div className="collection-heading"><h2 id="goal-collection-heading">Your builds <span>{goals.length}</span></h2><span className="live-help">Images preview the template. Funded pieces show savings progress.</span></div>
+      <div className="collection-heading"><h2 id="goal-collection-heading">Your builds <span>{goals.length}</span></h2><span className="live-help">Your builds take shape as your savings grow.</span></div>
       {goals.length > 0 && <>
         <div className="goals-tools">
           <label className="app-search" htmlFor={searchId}><Search size={19} /><span className="sr-only">Search goals</span><input id={searchId} type="search" placeholder="Search your goals" value={query} onChange={event => setQuery(event.target.value)} />{query && <IconButton label="Clear goal search" onClick={() => setQuery("")}><X size={16} /></IconButton>}</label>

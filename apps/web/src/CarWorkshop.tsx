@@ -67,6 +67,8 @@ interface WorkshopProps {
   reducedMotion: boolean;
   model?: WorkshopModel;
   preview?: boolean;
+  /** Isolated poster capture: exact funded parts, no ghosts or preferences. */
+  poster?: boolean;
   introBuild?: boolean;
   nextPiece?: {
     fractionBasisPoints: number;
@@ -332,6 +334,7 @@ function Car({
   onCelebrating,
   onPiece,
   onComplete,
+  showUnbuilt = true,
 }: {
   pieces: readonly CarPiece[];
   built: number;
@@ -342,6 +345,7 @@ function Car({
   onCelebrating: (value: boolean) => void;
   onPiece: (count: number) => void;
   onComplete: () => void;
+  showUnbuilt?: boolean;
 }) {
   const groups = useRef<(Group | null)[]>([]);
   const assembled = useRef<Group>(null);
@@ -448,7 +452,7 @@ function Car({
     <group ref={assembled} position={MODEL_HOME}>
       {pieces.map((piece) => (
         <group key={piece.id}>
-          {piece.id >= built && (
+          {showUnbuilt && piece.id >= built && (
             <group
               position={piece.position}
               rotation={piece.rotation}
@@ -623,6 +627,7 @@ export default function CarWorkshop({
   reducedMotion,
   model = "car",
   preview = false,
+  poster = false,
   introBuild = false,
   nextPiece,
 }: WorkshopProps) {
@@ -657,7 +662,7 @@ export default function CarWorkshop({
   const [celebrating, setCelebrating] = useState(false);
   const [preparing, setPreparing] = useState(false);
   const starting = useRef<symbol | null>(null);
-  const cursor = Math.min(built, funded);
+  const cursor = poster ? funded : Math.min(built, funded);
   const unbuilt = Math.max(0, funded - cursor);
   const validSequence = sequence && sequence.to === funded ? sequence : null;
   const active = validSequence !== null;
@@ -667,6 +672,7 @@ export default function CarWorkshop({
   // Parent keys this workshop by goal + funded count. A funding change destroys
   // an older animation before it can draw or announce an unfunded piece.
   useEffect(() => {
+    if (poster) return;
     setAudioEnabled(sound);
     try {
       if (!(preview && introBuild))
@@ -674,15 +680,17 @@ export default function CarWorkshop({
     } catch {
       /* Optional sound preference only. */
     }
-  }, [sound, preview, introBuild]);
+  }, [sound, preview, introBuild, poster]);
 
   useLayoutEffect(() => {
+    if (poster) return;
     starting.current=null;
     setPreparing(false);
     return () => {starting.current=null;stopBuildAudio();};
-  }, [goalId,model,funded]);
+  }, [goalId,model,funded,poster]);
 
   useEffect(() => {
+    if (poster) return;
     try {
       localStorage.setItem(
         `nabungfi:built:${goalId}`,
@@ -691,7 +699,7 @@ export default function CarWorkshop({
     } catch {
       /* Optional visual persistence only. */
     }
-  }, [goalId, built, funded]);
+  }, [goalId, built, funded, poster]);
 
   const start = async (replay = false) => {
     if (active || !funded || starting.current) return;
@@ -799,6 +807,7 @@ export default function CarWorkshop({
                 onCelebrating={setCelebrating}
                 onPiece={setBuilt}
                 onComplete={() => setSequence(null)}
+                showUnbuilt={!poster}
               />
               <group visible={!belowView}>
                 <mesh position={[0, -0.07, 0]} receiveShadow>
@@ -806,6 +815,7 @@ export default function CarWorkshop({
                   <meshStandardMaterial color="#eeeddf" roughness={0.85} />
                 </mesh>
                 <ContactShadows
+                  key={poster ? funded : "workshop"}
                   position={[0, -0.01, 0]}
                   opacity={0.3}
                   scale={10}

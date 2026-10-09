@@ -49,6 +49,19 @@ try {
   await page.reload();
   await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
   checks.push("Generated service worker installs and controls the production fixture");
+  const cachedPosters = () => page.evaluate(async () => {
+    const keys = await Promise.all((await caches.keys()).map(async key => (await (await caches.open(key)).keys()).map(request => new URL(request.url).pathname)));
+    return keys.flat().filter(path => path.startsWith("/models/progress-v1/"));
+  });
+  assert.deepEqual(await cachedPosters(), [], "Installing the PWA does not download the progress catalog");
+  const snapshot = "/models/progress-v1/car/25.jpg";
+  await page.evaluate(async path => { const response = await fetch(path); if (!response.ok || !response.headers.get("content-type")?.includes("image/jpeg")) throw new Error("Progress image missing"); await response.arrayBuffer(); }, snapshot);
+  await page.waitForFunction(async path => Boolean(await caches.match(path)), snapshot);
+  assert.deepEqual(await cachedPosters(), [snapshot], "Only the requested progress snapshot is cached");
+  await context.setOffline(true);
+  assert.equal(await page.evaluate(async path => (await fetch(path)).ok, snapshot), true, "A previously viewed progress snapshot stays available offline");
+  await context.setOffline(false);
+  checks.push("Progress posters cache on demand and remain readable offline without precaching the catalog");
   await page.evaluate(async () => {
     await fetch("/api/private", { headers: { authorization: "Bearer fixture-only" } });
     await fetch("/api/mutation", { method: "POST", body: "fixture" });

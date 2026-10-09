@@ -21,7 +21,9 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(fetch(request).catch(() => caches.match("/index.html")));
     return;
   }
-  if (!ASSETS.includes(url.pathname)) return;
+  // Load exact progress snapshots on demand, not the entire 1,000-image catalog.
+  const progressPoster = /^\/models\/progress-v1\/(car|laptop|house|custom|console|camera|motorcycle|bicycle|phone|travel)\/([0-9]|[1-9][0-9])\.jpg$/.test(url.pathname);
+  if (!ASSETS.includes(url.pathname) && !progressPoster) return;
   event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {
     const type = response.headers.get("content-type") || "";
     if (response.ok && ((/\.m?js$/.test(url.pathname) && !/(?:java|ecma)script/i.test(type)) || (/\.css$/.test(url.pathname) && !/text\/css/i.test(type))))

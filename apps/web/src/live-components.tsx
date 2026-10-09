@@ -131,7 +131,7 @@ export function GoalCard({
   );
   return (
     <button type="button" className="goal-card" data-model={goal.model} data-state={state?.phase ?? "unprovisioned"} data-read={goal.chainStatus} onClick={onOpen}>
-      <GoalIllustration model={goal.model} />
+      <GoalIllustration model={goal.model} funded={available ? pieces : null} />
       <div className="goal-card-body">
         <div className="goal-card-title">
           <h2>{goal.name}</h2>
