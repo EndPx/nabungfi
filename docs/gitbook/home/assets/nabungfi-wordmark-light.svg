@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="290" height="64" viewBox="0 0 290 64" role="img" aria-label="NabungFi"><g transform="translate(0,2) scale(.36)">
+  <g id="left-column">
+    <rect data-row-from-bottom="6" x="12" y="12" width="24" height="24" fill="#2D87D8"/>
+    <rect data-row-from-bottom="5" x="12" y="36" width="48" height="24" fill="#FFD94E"/>
+    <rect data-row-from-bottom="4" x="12" y="60" width="24" height="24" fill="#E9473D"/>
+    <rect data-row-from-bottom="3" x="12" y="84" width="24" height="24" fill="#2D87D8"/>
+    <rect data-row-from-bottom="2" x="12" y="108" width="24" height="24" fill="#E9473D"/>
+    <rect data-row-from-bottom="1" x="12" y="132" width="24" height="24" fill="#FFD94E"/>
+  </g>
+  <g id="right-column">
+    <rect data-row-from-bottom="6" x="144" y="12" width="24" height="24" fill="#E9473D"/>
+    <rect data-row-from-bottom="5" x="144" y="36" width="24" height="24" fill="#FFD94E"/>
+    <rect data-row-from-bottom="4" x="144" y="60" width="24" height="24" fill="#2D87D8"/>
+    <rect data-row-from-bottom="3" x="144" y="84" width="24" height="24" fill="#FFD94E"/>
+    <rect data-row-from-bottom="2" x="120" y="108" width="48" height="24" fill="#2D87D8"/>
+    <rect data-row-from-bottom="1" x="144" y="132" width="24" height="24" fill="#E9473D"/>
+  </g>
+  <rect id="middle-upper-connector" x="48" y="60" width="48" height="24" fill="#2D87D8"/>
+  <rect id="middle-lower-connector" x="84" y="84" width="48" height="24" fill="#E9473D"/>
+  <g id="exposed-studs">
+    <rect x="15" y="9" width="6" height="3" rx=".75" fill="#2D87D8"/>
+    <rect x="27" y="9" width="6" height="3" rx=".75" fill="#2D87D8"/>
+    <rect x="147" y="9" width="6" height="3" rx=".75" fill="#E9473D"/>
+    <rect x="159" y="9" width="6" height="3" rx=".75" fill="#E9473D"/>
+    <rect x="39" y="33" width="6" height="3" rx=".75" fill="#FFD94E"/>
+    <rect x="51" y="33" width="6" height="3" rx=".75" fill="#FFD94E"/>
+    <rect x="63" y="57" width="6" height="3" rx=".75" fill="#2D87D8"/>
+    <rect x="75" y="57" width="6" height="3" rx=".75" fill="#2D87D8"/>
+    <rect x="87" y="57" width="6" height="3" rx=".75" fill="#2D87D8"/>
+    <rect x="99" y="81" width="6" height="3" rx=".75" fill="#E9473D"/>
+    <rect x="111" y="81" width="6" height="3" rx=".75" fill="#E9473D"/>
+    <rect x="123" y="81" width="6" height="3" rx=".75" fill="#E9473D"/>
+    <rect x="135" y="105" width="6" height="3" rx=".75" fill="#2D87D8"/>
+  </g>
+</g><g fill="#20281f"><path d="M72 0V703H167L519 247V703H656V0H558L208 453V0Z" transform="translate(80.000,51) scale(0.04600,-0.04600)"/><path d="M260 -10Q194 -10 141.0 23.0Q88 56 58.0 113.0Q28 170 28 241Q28 313 58.0 370.0Q88 427 141.0 460.0Q194 493 260 493Q312 493 353 472Q380 458 400 437V483H530V0H400V47Q380 26 353 12Q312 -10 260 -10ZM284 111Q339 111 373.0 147.5Q407 184 407 242Q407 280 391.5 309.5Q376 339 348.5 355.5Q321 372 284 372Q248 372 220.5 355.5Q193 339 177.5 309.5Q162 280 162 242Q162 203 177.5 173.5Q193 144 220.5 127.5Q248 111 284 111Z" transform="translate(113.442,51) scale(0.04600,-0.04600)"/><path d="M326 -10Q274 -10 232 12Q207 25 188 44V0H58V723H189V441Q208 460 233 472Q275 493 326 493Q393 493 446.0 460.0Q499 427 529.5 370.0Q560 313 560 241Q560 170 529.5 113.0Q499 56 446.0 23.0Q393 -10 326 -10ZM304 111Q340 111 367.5 127.5Q395 144 410.5 173.5Q426 203 426 242Q426 280 410.5 309.5Q395 339 367.0 355.5Q339 372 303.0 372.0Q267 372 239.5 355.5Q212 339 196.5 309.5Q181 280 181 242Q181 203 196.5 173.5Q212 144 240.0 127.5Q268 111 304 111Z" transform="translate(140.490,51) scale(0.04600,-0.04600)"/><path d="M264 -10Q200 -10 150.5 17.0Q101 44 73.0 92.0Q45 140 45 203V483H177V206Q177 176 187.0 154.5Q197 133 217.0 122.0Q237 111 264 111Q305 111 328.0 136.0Q351 161 351 206V483H482V203Q482 139 454.5 91.0Q427 43 377.5 16.5Q328 -10 264 -10Z" transform="translate(167.538,51) scale(0.04600,-0.04600)"/><path d="M383 0V277Q383 320 356.0 347.0Q329 374 286 374Q258 374 236.0 362.0Q214 350 201.5 328.0Q189 306 189 277V0H58V483H189V438Q207 456 231 469Q274 493 329 493Q382 493 424.0 466.5Q466 440 490.0 397.5Q514 355 514 306V0Z" transform="translate(191.826,51) scale(0.04600,-0.04600)"/><path d="M260 -214Q183 -214 124.0 -186.5Q65 -159 30 -109L113 -26Q141 -59 175.5 -76.5Q210 -94 259 -94Q320 -94 355.5 -63.0Q391 -32 391 23V63Q373 45 349 34Q307 13 254 13Q189 13 137.0 44.5Q85 76 55.5 131.0Q26 186 26.0 254.0Q26 322 55.5 376.0Q85 430 137.0 461.5Q189 493 254 493Q308 493 350 472Q374 460 392 442V483H522V25Q522 -47 488.5 -100.5Q455 -154 396.0 -184.0Q337 -214 260 -214ZM280 132Q316 132 342.5 147.5Q369 163 384.0 190.5Q399 218 399 253Q399 289 384.0 316.0Q369 343 342.5 358.5Q316 374 280.0 374.0Q244 374 217.0 358.5Q190 343 175.0 315.5Q160 288 160 253Q160 219 175.0 191.5Q190 164 217.0 148.0Q244 132 280 132Z" transform="translate(217.678,51) scale(0.04600,-0.04600)"/><path d="M72 0V703H543V583H208V409H526V288H208V0Z" transform="translate(244.312,51) scale(0.04600,-0.04600)"/><path d="M58 0V483H190V0ZM124 561Q92 561 71.0 582.5Q50 604 50 636Q50 667 71.0 689.0Q92 711 124 711Q157 711 177.5 689.0Q198 667 198 636Q198 604 177.5 582.5Q157 561 124 561Z" transform="translate(270.900,51) scale(0.04600,-0.04600)"/></g></svg>
