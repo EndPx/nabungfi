@@ -52,7 +52,7 @@ const positions = ["solana", "base"].map((network) => ({
   claimedRaw: phase === "claimed" ? "5000000" : "0",
   claimableRaw: phase === "achieved" ? "5000000" : "0",
   walletUsdcRaw: "10000000",
-  nativeBalanceRaw: "100000000",
+  nativeBalanceRaw: params.has("zero-native") ? "0" : "100000000",
   phase: phase === "achieved" || phase === "claimed" ? "achieved" : "locked",
   initialized: true,
   registered: true,
@@ -231,6 +231,8 @@ function Harness() {
       {modal === "deposit" && (
         <DepositModal
           goal={selectedGoal}
+          sponsoredNetworks={params.has("sponsored") ? ["solana","base"] : []}
+          busy={params.has("deposit-refreshing")}
           onClose={() => setModal(null)}
           plan={(network, amount, approve) => {
             recordStep(approve ? "approve" : "deposit", network, amount);

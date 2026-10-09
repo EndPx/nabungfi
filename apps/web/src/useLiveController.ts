@@ -51,6 +51,7 @@ import { hasOwnerWallets } from "./wallet-onboarding";
 import { GOAL_TEMPLATES, type GoalModel } from "@nabungfi/shared/application";
 import { useGoalSetup } from "./useGoalSetup";
 import { goalSetupStage } from "./goal-setup";
+import { sponsoredGoalNetworks } from "./gas-sponsorship";
 export function useLiveController() {
   const {
     ready,
@@ -74,6 +75,7 @@ export function useLiveController() {
     () => readAppRoute(location).destination,
   );
   const [session, setSession] = useState<SessionDTO | null>(null);
+  const [gasSponsorshipEnabled,setGasSponsorshipEnabled] = useState(false);
   const [goals, setGoals] = useState<GoalDTO[]>([]);
   const [goalModels, setGoalModels] = useState<GoalModel[]>(["car", "laptop", "house"]);
   const [selectedId, setSelectedId] = useState<string | null>(
@@ -181,7 +183,7 @@ export function useLiveController() {
       const [nextSession, portfolio, config] = await Promise.all([
         request<SessionDTO>("/api/session"),
         request<{ goals: GoalDTO[] }>("/api/goals"),
-        request<{ goalModels?: string[] }>("/api/config"),
+        request<{ goalModels?: string[];gasSponsorship?:string|null }>("/api/config"),
       ]);
       if (
         identityRef.current !== identity ||
@@ -196,6 +198,7 @@ export function useLiveController() {
       if (!hasOwnerWallets(nextSession.user.wallets))
         throw new Error("Your wallet ownership is still syncing. Retry verification to finish setup.");
       setSession(nextSession);
+      setGasSponsorshipEnabled(config.gasSponsorship==='privy-testnet');
       const available = Array.isArray(config.goalModels) ? config.goalModels : ["car", "laptop", "house"];
       setGoalModels(GOAL_TEMPLATES.filter(template=>available.includes(template.id)).map(template=>template.id));
       setGoals(prior => retainGoalPresentation(portfolio.goals,prior));
@@ -237,6 +240,7 @@ export function useLiveController() {
 
   useEffect(() => {
     setSession(null);
+    setGasSponsorshipEnabled(false);
     setLoading(false);
     setError("");
     readGeneration.current++;
@@ -1000,6 +1004,7 @@ export function useLiveController() {
     }
   };
   return {
+    sponsoredNetworks:selected&&session?sponsoredGoalNetworks(selected.binding,session.user.wallets,gasSponsorshipEnabled):[],
     ready,
     authenticated,
     user,

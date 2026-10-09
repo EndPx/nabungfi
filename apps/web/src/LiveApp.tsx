@@ -69,6 +69,7 @@ export default function LiveApp() {
 
 function AuthenticatedApp() {
   const {
+    sponsoredNetworks,
     ready,
     authenticated,
     user,
@@ -324,12 +325,14 @@ function AuthenticatedApp() {
           {depositing && selected && (
             <DepositModal
               goal={selected}
+              busy={hasPending||loading||pwa.offline}
+              sponsoredNetworks={sponsoredNetworks}
               initial={
                 depositDraft?.goalId === selected.id ? depositDraft : undefined
               }
               onClose={() => setDepositing(false)}
               plan={(network, amount, approve) =>
-                void planStep(
+                planStep(
                   selected,
                   approve ? "approve" : "deposit",
                   network,

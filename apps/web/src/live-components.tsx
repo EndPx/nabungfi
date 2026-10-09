@@ -762,11 +762,15 @@ export function DepositModal({
   initial,
   onClose,
   plan,
+  busy=false,
+  sponsoredNetworks=[],
 }: {
   goal: GoalDTO;
   initial?: { network: AppNetwork; amountRaw: string };
   onClose: () => void;
-  plan: (network: AppNetwork, amount: string, approve: boolean) => void;
+  plan: (network: AppNetwork, amount: string, approve: boolean) => void|boolean|Promise<void|boolean>;
+  busy?:boolean;
+  sponsoredNetworks?:AppNetwork[];
 }) {
   const [network, setNetwork] = useState<AppNetwork>(
     initial?.network ?? "solana",
@@ -776,7 +780,7 @@ export function DepositModal({
   );
   const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState("");
-  const submit = (approve: boolean) => {
+  const submit = async (approve: boolean) => {
     try {
       setError("");
       if (!accepted)
@@ -788,11 +792,11 @@ export function DepositModal({
         throw new Error(
           "This amount exceeds your USDC balance on the selected chain.",
         );
-      if (BigInt(position.nativeBalanceRaw) === 0n)
+      if (BigInt(position.nativeBalanceRaw) === 0n && !sponsoredNetworks.includes(network))
         throw new Error(
           `Add testnet ${network === "solana" ? "SOL" : "ETH"} to this owner wallet for transaction fees first.`,
         );
-      plan(network, raw, approve);
+      if(await plan(network, raw, approve)===false)throw new Error("This step could not be prepared. Check the original request status before trying again.");
     } catch (failure) {
       setError(
         failure instanceof Error ? failure.message : "Enter a valid amount.",
@@ -836,11 +840,11 @@ export function DepositModal({
             : "Read unavailable"}
         </p>
         <p className="live-help">
-          Gas token balance:{" "}
+          {sponsoredNetworks.includes(network)?"Testnet gas sponsorship is available for this linked Privy wallet. Review the fee in the next step.":<>Gas token balance:{" "}
           {position
             ? formatNativeGas(position.nativeBalanceRaw, network)
             : "Read unavailable"}
-          . Your wallet shows the exact fee before confirmation.
+          . Your wallet shows the exact fee before confirmation.</>}
         </p>
         <label className="live-field">
           Amount in USDC
@@ -861,6 +865,7 @@ export function DepositModal({
           target is reached.
         </label>
         {error && <FormError>{error}</FormError>}
+        {busy && <p className="live-help" role="status">Checking your wallet balances or original request. Your entered amount stays here.</p>}
         {network !== "solana" && (
           <>
             <p className="live-help">
@@ -870,8 +875,8 @@ export function DepositModal({
             </p>
             <Button
               variant="secondary"
-              disabled={!accepted}
-              onClick={() => submit(true)}
+              disabled={!accepted||busy}
+              onClick={() => void submit(true)}
             >
               1. Review exact approval
             </Button>
@@ -879,8 +884,8 @@ export function DepositModal({
         )}
         <Button
           variant="build"
-          disabled={!accepted || !position}
-          onClick={() => submit(false)}
+          disabled={!accepted || !position || busy}
+          onClick={() => void submit(false)}
         >
           {network === "solana" ? "Review deposit" : "2. Review deposit"}
           <ArrowRight size={18} />
