@@ -54,4 +54,6 @@
 
 ## Other
 
+* [Videos](other/videos.md)
+* [Pitch Deck](other/pitch-deck.md)
 * [Links](other/links.md)
