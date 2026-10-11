@@ -7,6 +7,10 @@
 /apps/web/assets/audio/finish-progress-source.mp3
 /apps/web/assets/audio/finish-goal-source.mp3
 
+# Local production/editing workspace; public review assets are curated in docs/media.
+/output/
+/media/
+
 # Dependencies, generated files and local state.
 node_modules/
 dist/

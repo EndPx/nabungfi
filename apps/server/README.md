@@ -39,7 +39,7 @@ Every private endpoint requires `Authorization: Bearer <Privy access token>`. Pu
 | `POST .../steps/:stepId/wallet-rejected` | `{fingerprint,providerCode:4001}`; explicit owner attestation of provider rejection, with no transaction hash |
 | `POST .../steps/:stepId/reconcile` | `{transactionHash}`; check sticky original receipt; `{step}` |
 
-Create-goal input is `{name,model,targetAmount,solanaOwner,evmOwner,chains}`. `targetAmount` is a decimal **string** with at most six places. Models are `car`, `laptop`, `house`, or `custom`. Action amounts use positive raw USDC strings (`"1000000"` = 1 USDC). Immutable bindings contain target, goal ID, owner pair, selected domain/EID/token/router/factory identities and Solana accounts. EVM vault/configuration identities are bound only after a verified actual creation receipt.
+Create-goal input is `{name,model,targetAmount,solanaOwner,evmOwner,chains}`. `targetAmount` is a decimal **string** with at most six places. The shared model catalog includes car, laptop, house, game console, camera, motorcycle, bicycle, smartphone and travel suitcase; canonical IDs come from `shared/src/application.ts`. Action amounts use positive raw USDC strings (`"1000000"` = 1 USDC). Immutable bindings contain target, goal ID, owner pair, selected domain/EID/token/router/factory identities and Solana accounts. EVM vault/configuration identities are bound only after a verified actual creation receipt.
 
 Actions are `create-vault`, `initialize`, `approve`, `deposit`, `prepare`, `abort`, and `claim`. EVM approval is a separate exact-amount operation. On Solana the owner signs preparation/abort; the keeper does not substitute for this consent.
 

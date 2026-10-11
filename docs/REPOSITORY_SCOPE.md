@@ -5,7 +5,7 @@ The public repository contains the application prototype, shared package, onchai
 | Included | Purpose |
 | --- | --- |
 | `apps/web/` | React/Vite interface, procedural 3D model, integrated sound assets and recovery tests |
-| `apps/server/` | Local-demo HTTP API, simulated-ledger persistence and API tests |
+| `apps/server/` | Privy-authenticated API, Neon persistence, unsigned plans, original receipt verification and tests |
 | `shared/` | Common TypeScript model, response types and tests |
 | `contracts/evm/` | USDC vault, optional Aave adapter, Foundry script/tests/mocks, public environment template and dependency pins |
 | `contracts/solana/` | Anchor program, tests, public account fixture and Cargo lockfile |
@@ -35,6 +35,6 @@ git diff --cached --name-only
 
 Commit and push verified steps under the owner's current authorization; review staged paths and private-value exclusions before each publication.
 
-## Published local application
+## Current public application
 
-`pnpm dev` starts the local simulator and frontend. After `pnpm build`, `pnpm preview` serves the built UI. Root build/test/typecheck commands include the applications, shared model and keeper. This source is a runnable local simulation, while public contract/LayerZero receipts remain separate evidence. Publishing the app does not complete its wallet, Privy, Neon or multiple-goal integration.
+`pnpm dev` starts the authenticated local API and frontend with configured Privy/Neon credentials. After `pnpm build`, `pnpm preview` serves the built UI alongside that API. Root build/test/typecheck commands include the applications, shared model and keeper. The live release is at https://nabungfi.endpx.cloud/app; browser-signed multiple-goal and sponsored testnet execution are documented in [browser acceptance](BROWSER_E2E_ACCEPTANCE.md), [sponsored acceptance](SPONSORED_E2E_ACCEPTANCE.md) and [the 11 October demo](DEMO_EVIDENCE.md). The retained local simulator is separate development tooling. Working video exports and raw recordings stay under ignored `output/`, `media/` and `.local/`; reviewed public screenshots are promoted deliberately into `docs/media/`.

@@ -1,0 +1,107 @@
+{
+  "recordedDate": "2026-10-11",
+  "demoUrl": "https://youtu.be/IL7THrY67Gk",
+  "goal": "Dream car",
+  "goalId": "0x65e8d1f9d0fe752d7d8777223601350adf685b6cecd72f332275f909d4a9ff1f",
+  "targetRaw": "10000000",
+  "asset": "USDC testnet",
+  "evidenceClass": "Original owner transactions confirmed by the application receipt verifier; final balances observed through the application chain-read path.",
+  "finalState": {
+    "assembledPieces": 100,
+    "totalClaimedRaw": "10000000",
+    "remainingVaultRaw": {
+      "solana": "0",
+      "base": "0"
+    }
+  },
+  "transactions": [
+    {
+      "action": "create-vault",
+      "network": "base",
+      "amount_raw": null,
+      "status": "confirmed",
+      "transaction_hash": "0x2e4136a9b40d5c7efd9bbed23facbca8cdae430a75f5e4ab1d362af8af62359f",
+      "reason_code": null,
+      "gas_payment": "privy-testnet",
+      "created_at": "2026-10-11T14:31:36.264Z",
+      "updated_at": "2026-10-11T14:44:56.444Z"
+    },
+    {
+      "action": "initialize",
+      "network": "solana",
+      "amount_raw": null,
+      "status": "confirmed",
+      "transaction_hash": "3dxjz9PhMM9xnfjiyvoWN6CfzsuV7U5WTLpRmvCcSFEeEEuK88rGqbHUFoRab8svFPbiWELhvNGkcQqmCXCq6Syj",
+      "reason_code": null,
+      "gas_payment": "privy-testnet",
+      "created_at": "2026-10-11T14:45:10.812Z",
+      "updated_at": "2026-10-11T14:46:48.801Z"
+    },
+    {
+      "action": "deposit",
+      "network": "solana",
+      "amount_raw": "5000000",
+      "status": "confirmed",
+      "transaction_hash": "4hQ4MfdK3ivHnESa7pAruw9y6UrSxV2vKgfAtnKMavzHhi3tFGM2gFpo6xgqNGAai5fDKtSMxZekPgTfNFBkvtWB",
+      "reason_code": null,
+      "gas_payment": "privy-testnet",
+      "created_at": "2026-10-11T14:54:49.008Z",
+      "updated_at": "2026-10-11T14:56:06.474Z"
+    },
+    {
+      "action": "approve",
+      "network": "base",
+      "amount_raw": "5000000",
+      "status": "confirmed",
+      "transaction_hash": "0xd47142c7d59344dbb1c0e9278d27160ae4a76bdf4cc72c14194258a3e7119cfe",
+      "reason_code": null,
+      "gas_payment": "privy-testnet",
+      "created_at": "2026-10-11T15:01:04.147Z",
+      "updated_at": "2026-10-11T15:03:26.799Z"
+    },
+    {
+      "action": "deposit",
+      "network": "base",
+      "amount_raw": "5000000",
+      "status": "confirmed",
+      "transaction_hash": "0x1067697db59c0470fe3ec401818e89af64db57dd51ba1f857566c4ba7e66a729",
+      "reason_code": null,
+      "gas_payment": "privy-testnet",
+      "created_at": "2026-10-11T15:04:12.255Z",
+      "updated_at": "2026-10-11T15:05:22.505Z"
+    },
+    {
+      "action": "prepare",
+      "network": "solana",
+      "amount_raw": null,
+      "status": "confirmed",
+      "transaction_hash": "3KMJ24VAmGSve6AybWXV4mYYzvwPQjz8TJcmv4Mwzw6g2272Ln2koCQ8EPx3ptAGYgw9dJP3FfRTzP7zyTtDtcEF",
+      "reason_code": null,
+      "gas_payment": "privy-testnet",
+      "created_at": "2026-10-11T15:07:57.024Z",
+      "updated_at": "2026-10-11T15:13:12.968Z"
+    },
+    {
+      "action": "claim",
+      "network": "solana",
+      "amount_raw": "5000000",
+      "status": "confirmed",
+      "transaction_hash": "sftiitDoyotQDAXX5EWaG3JbvFmk5i4KKUfZU1nDWK3pBXSNVYHCuWT1Afr75WPfzQh2tGFugiGV7hGDDBtE7jr",
+      "reason_code": null,
+      "gas_payment": "privy-testnet",
+      "created_at": "2026-10-11T15:20:30.741Z",
+      "updated_at": "2026-10-11T15:21:19.162Z"
+    },
+    {
+      "action": "claim",
+      "network": "base",
+      "amount_raw": "5000000",
+      "status": "confirmed",
+      "transaction_hash": "0x25030e9971bfdace055dbd5ca89971bd242da5b51a083502d4ab3219ce9d6dce",
+      "reason_code": null,
+      "gas_payment": "privy-testnet",
+      "created_at": "2026-10-11T15:22:36.755Z",
+      "updated_at": "2026-10-11T15:23:46.800Z"
+    }
+  ]
+}
